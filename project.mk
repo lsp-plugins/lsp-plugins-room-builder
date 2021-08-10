@@ -21,10 +21,10 @@
 # Package version
 ARTIFACT_ID                 = LSP_PLUGINS_ROOM_BUILDER
 ARTIFACT_NAME               = lsp-plugins-room-builder
-ARTIFACT_DESC               = Trigger plugin series
+ARTIFACT_DESC               = Room Builder plugin series
 ARTIFACT_HEADERS            = lsp-plug.in
 ARTIFACT_EXPORT_ALL         = 1
-ARTIFACT_VERSION            = 1.0.5-devel
+ARTIFACT_VERSION            = 1.0.2-devel
 
 #------------------------------------------------------------------------------
 # List of all dependencies
