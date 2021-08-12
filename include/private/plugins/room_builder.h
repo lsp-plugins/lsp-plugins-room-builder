@@ -247,13 +247,11 @@ namespace lsp
                             pCore       = NULL;
                         }
 
-                        virtual ~SceneLoader();
-
-                        void init(room_builder *base);
-                        void destroy();
+                        void                init(room_builder *base);
+                        void                destroy();
 
                     public:
-                        virtual status_t run();
+                        virtual status_t    run();
                 };
 
                 class RenderLauncher: public ipc::ITask
@@ -262,7 +260,7 @@ namespace lsp
                         room_builder  *pBuilder;
 
                     public:
-                        inline RenderLauncher(room_builder *builder): pBuilder(builder) {}
+                        explicit inline RenderLauncher(room_builder *builder): pBuilder(builder) {}
 
                     public:
                         virtual status_t run();
@@ -284,9 +282,9 @@ namespace lsp
                             vSamples.swap(&samples);
                         }
 
-                        virtual status_t run();
+                        virtual status_t    run();
 
-                        void            terminate();
+                        void                terminate();
                 };
 
                 class Configurator: public ipc::ITask
@@ -305,13 +303,13 @@ namespace lsp
                             nChangeResp     = 0;
                         }
 
-                        virtual status_t run();
+                        virtual status_t    run();
 
-                        inline bool need_launch() const { return nChangeReq != nChangeResp; }
+                        inline bool         need_launch() const { return nChangeReq != nChangeResp; }
 
-                        inline void queue_launch() { atomic_add(&nChangeReq, 1); }
+                        inline void         queue_launch() { atomic_add(&nChangeReq, 1); }
 
-                        inline void launched() { nChangeResp = nChangeReq; }
+                        inline void         launched() { nChangeResp = nChangeReq; }
                 };
 
                 class SampleSaver: public ipc::ITask
@@ -329,10 +327,10 @@ namespace lsp
                             nSampleID   = 0;
                         }
 
-                        void bind(size_t sample_id, capture_t *capture);
+                        void                bind(size_t sample_id, capture_t *capture);
 
                     public:
-                        virtual status_t run();
+                        virtual status_t    run();
                 };
 
             protected:

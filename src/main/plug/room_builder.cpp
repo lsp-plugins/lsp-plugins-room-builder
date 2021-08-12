@@ -48,28 +48,36 @@ namespace lsp
             6849.0f
         };
 
+        //---------------------------------------------------------------------
+        // Plugin factory
+        static const meta::plugin_t *plugins[] =
+        {
+            &meta::room_builder_mono,
+            &meta::room_builder_stereo
+        };
+
+        static plug::Module *plugin_factory(const meta::plugin_t *meta)
+        {
+            return new room_builder(meta, (meta == &meta::room_builder_stereo) ? 2 : 1);
+        }
+
+        static plug::Factory factory(plugin_factory, plugins, 2);
+
         //-------------------------------------------------------------------------
-        // 3D Scene loader
-        room_builder::SceneLoader::~SceneLoader()
-        {
-        }
+        template <class T>
+            static bool kvt_fetch(core::KVTStorage *s, const char *base, const char *branch, T *value, T dfl)
+            {
+                char name[0x100]; // Should be enough;
+                size_t len = ::strlen(base) + ::strlen(branch) + 2;
+                if (len >= 0x100)
+                    return false;
 
+                char *tail = ::stpcpy(name, base);
+                *(tail++)  = '/';
+                stpcpy(tail, branch);
 
-        void room_builder::SceneLoader::init(room_builder *base)
-        {
-            pCore   = base;
-            sScene.clear();
-        }
-
-        void room_builder::SceneLoader::destroy()
-        {
-            sScene.destroy();
-        }
-
-        status_t room_builder::RenderLauncher::run()
-        {
-            return pBuilder->start_rendering();
-        }
+                return s->get_dfl(name, value, dfl);
+            }
 
         template <class T>
             static bool kvt_deploy(core::KVTStorage *s, const char *base, const char *branch, T value, size_t flags)
@@ -85,6 +93,19 @@ namespace lsp
 
                 return s->put(name, value, flags) == STATUS_OK;
             }
+
+        //-------------------------------------------------------------------------
+        // 3D Scene loader
+        void room_builder::SceneLoader::init(room_builder *base)
+        {
+            pCore   = base;
+            sScene.clear();
+        }
+
+        void room_builder::SceneLoader::destroy()
+        {
+            sScene.destroy();
+        }
 
         status_t room_builder::SceneLoader::run()
         {
@@ -177,120 +198,13 @@ namespace lsp
             return res;
         }
 
-        void room_builder::kvt_cleanup_objects(core::KVTStorage *kvt, size_t objects)
+        //-------------------------------------------------------------------------
+        status_t room_builder::RenderLauncher::run()
         {
-            core::KVTIterator *it = kvt->enum_branch("/scene/object");
-            while (it->next() == STATUS_OK)
-            {
-                const char *id = it->id();
-                if (id == NULL)
-                    continue;
-
-                // Must be a pure object identifier
-                errno = 0;
-                char *endptr;
-                long value = ::strtol(id, &endptr, 10);
-                if ((errno != 0) || (size_t(endptr - id) != size_t(::strlen(id))))
-                    continue;
-
-                // Remove the object
-                if ((value < 0) || (value >= ssize_t(objects)))
-                {
-                    lsp_trace("Removing KVT parameters from %s", it->name());
-                    it->remove_branch();
-                }
-            }
+            return pBuilder->start_rendering();
         }
 
-        template <class T>
-            static bool kvt_fetch(core::KVTStorage *s, const char *base, const char *branch, T *value, T dfl)
-            {
-                char name[0x100]; // Should be enough;
-                size_t len = ::strlen(base) + ::strlen(branch) + 2;
-                if (len >= 0x100)
-                    return false;
-
-                char *tail = ::stpcpy(name, base);
-                *(tail++)  = '/';
-                stpcpy(tail, branch);
-
-                return s->get_dfl(name, value, dfl);
-            }
-
-        void room_builder::read_object_properties(obj_props_t *props, const char *base, core::KVTStorage *kvt)
-        {
-            float enabled;
-
-            kvt_fetch(kvt, base, "name", &props->sName, "unnamed");
-            kvt_fetch(kvt, base, "enabled", &enabled, 1.0f);
-            kvt_fetch(kvt, base, "center/x", &props->sCenter.x, 0.0f);
-            kvt_fetch(kvt, base, "center/y", &props->sCenter.y, 0.0f);
-            kvt_fetch(kvt, base, "center/z", &props->sCenter.z, 0.0f);
-            kvt_fetch(kvt, base, "position/x", &props->sMove.dx, 0.0f);
-            kvt_fetch(kvt, base, "position/y", &props->sMove.dy, 0.0f);
-            kvt_fetch(kvt, base, "position/z", &props->sMove.dz, 0.0f);
-            kvt_fetch(kvt, base, "rotation/yaw", &props->fYaw, 0.0f);
-            kvt_fetch(kvt, base, "rotation/pitch", &props->fPitch, 0.0f);
-            kvt_fetch(kvt, base, "rotation/roll", &props->fRoll, 0.0f);
-            kvt_fetch(kvt, base, "scale/x", &props->sScale.dx, 1.0f);
-            kvt_fetch(kvt, base, "scale/y", &props->sScale.dy, 1.0f);
-            kvt_fetch(kvt, base, "scale/z", &props->sScale.dz, 1.0f);
-            kvt_fetch(kvt, base, "color/hue", &props->fHue, 0.0f);
-
-            kvt_fetch(kvt, base, "material/absorption/outer", &props->fAbsorption[0], 1.5f);
-            kvt_fetch(kvt, base, "material/dispersion/outer", &props->fDispersion[0], 1.0f);
-            kvt_fetch(kvt, base, "material/dissipation/outer", &props->fDiffusion[0], 1.0f);
-            kvt_fetch(kvt, base, "material/transparency/outer", &props->fTransparency[0], 48.0f);
-
-            kvt_fetch(kvt, base, "material/absorption/inner", &props->fAbsorption[1], 1.5f);
-            kvt_fetch(kvt, base, "material/dispersion/inner", &props->fDispersion[1], 1.0f);
-            kvt_fetch(kvt, base, "material/diffusion/inner", &props->fDiffusion[1], 1.0f);
-            kvt_fetch(kvt, base, "material/transparency/inner", &props->fTransparency[1], 52.0f);
-
-            kvt_fetch(kvt, base, "material/absorption/link", &props->lnkAbsorption, 1.0f);
-            kvt_fetch(kvt, base, "material/dispersion/link", &props->lnkDispersion, 1.0f);
-            kvt_fetch(kvt, base, "material/diffusion/link", &props->lnkDiffusion, 1.0f);
-            kvt_fetch(kvt, base, "material/transparency/link", &props->lnkTransparency, 1.0f);
-
-            kvt_fetch(kvt, base, "material/sound_speed", &props->fSndSpeed, 4250.0f);
-
-            props->bEnabled = (enabled >= 0.5f);
-        }
-
-        void room_builder::build_object_matrix(dsp::matrix3d_t *m, const obj_props_t *props, const dsp::matrix3d_t *world)
-        {
-            dsp::matrix3d_t tmp;
-
-            // Copy world matrix
-            *m  = *world;
-
-            // Apply translation
-            dsp::init_matrix3d_translate(&tmp,
-                    props->sCenter.x + props->sMove.dx,
-                    props->sCenter.y + props->sMove.dy,
-                    props->sCenter.z + props->sMove.dz
-            );
-            dsp::apply_matrix3d_mm1(m, &tmp);
-
-            // Apply rotation
-            dsp::init_matrix3d_rotate_z(&tmp, props->fYaw * M_PI / 180.0f);
-            dsp::apply_matrix3d_mm1(m, &tmp);
-
-            dsp::init_matrix3d_rotate_y(&tmp, props->fPitch * M_PI / 180.0f);
-            dsp::apply_matrix3d_mm1(m, &tmp);
-
-            dsp::init_matrix3d_rotate_x(&tmp, props->fRoll * M_PI / 180.0f);
-            dsp::apply_matrix3d_mm1(m, &tmp);
-
-            // Apply scale
-            dsp::init_matrix3d_scale(&tmp, props->sScale.dx * 0.01f, props->sScale.dy * 0.01f, props->sScale.dz * 0.01f);
-            dsp::apply_matrix3d_mm1(m, &tmp);
-
-            // Move center to (0, 0, 0) point
-            dsp::init_matrix3d_translate(&tmp, -props->sCenter.x, -props->sCenter.y, -props->sCenter.z);
-            dsp::apply_matrix3d_mm1(m, &tmp);
-        }
-
+        //-------------------------------------------------------------------------
         status_t room_builder::Renderer::run()
         {
             // Perform processing
@@ -326,11 +240,13 @@ namespace lsp
             }
         }
 
+        //-------------------------------------------------------------------------
         status_t room_builder::Configurator::run()
         {
             return pBuilder->reconfigure(&sConfig);
         }
 
+        //-------------------------------------------------------------------------
         void room_builder::SampleSaver::bind(size_t sample_id, capture_t *capture)
         {
             nSampleID       = sample_id;
@@ -2200,6 +2116,105 @@ namespace lsp
             // Synchronize thumbnails with UI
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
                 vCaptures[i].bSync  = true;
+        }
+
+        void room_builder::kvt_cleanup_objects(core::KVTStorage *kvt, size_t objects)
+        {
+            core::KVTIterator *it = kvt->enum_branch("/scene/object");
+            while (it->next() == STATUS_OK)
+            {
+                const char *id = it->id();
+                if (id == NULL)
+                    continue;
+
+                // Must be a pure object identifier
+                errno = 0;
+                char *endptr;
+                long value = ::strtol(id, &endptr, 10);
+                if ((errno != 0) || (size_t(endptr - id) != size_t(::strlen(id))))
+                    continue;
+
+                // Remove the object
+                if ((value < 0) || (value >= ssize_t(objects)))
+                {
+                    lsp_trace("Removing KVT parameters from %s", it->name());
+                    it->remove_branch();
+                }
+            }
+        }
+
+        void room_builder::read_object_properties(obj_props_t *props, const char *base, core::KVTStorage *kvt)
+        {
+            float enabled;
+
+            kvt_fetch(kvt, base, "name", &props->sName, "unnamed");
+            kvt_fetch(kvt, base, "enabled", &enabled, 1.0f);
+            kvt_fetch(kvt, base, "center/x", &props->sCenter.x, 0.0f);
+            kvt_fetch(kvt, base, "center/y", &props->sCenter.y, 0.0f);
+            kvt_fetch(kvt, base, "center/z", &props->sCenter.z, 0.0f);
+            kvt_fetch(kvt, base, "position/x", &props->sMove.dx, 0.0f);
+            kvt_fetch(kvt, base, "position/y", &props->sMove.dy, 0.0f);
+            kvt_fetch(kvt, base, "position/z", &props->sMove.dz, 0.0f);
+            kvt_fetch(kvt, base, "rotation/yaw", &props->fYaw, 0.0f);
+            kvt_fetch(kvt, base, "rotation/pitch", &props->fPitch, 0.0f);
+            kvt_fetch(kvt, base, "rotation/roll", &props->fRoll, 0.0f);
+            kvt_fetch(kvt, base, "scale/x", &props->sScale.dx, 1.0f);
+            kvt_fetch(kvt, base, "scale/y", &props->sScale.dy, 1.0f);
+            kvt_fetch(kvt, base, "scale/z", &props->sScale.dz, 1.0f);
+            kvt_fetch(kvt, base, "color/hue", &props->fHue, 0.0f);
+
+            kvt_fetch(kvt, base, "material/absorption/outer", &props->fAbsorption[0], 1.5f);
+            kvt_fetch(kvt, base, "material/dispersion/outer", &props->fDispersion[0], 1.0f);
+            kvt_fetch(kvt, base, "material/dissipation/outer", &props->fDiffusion[0], 1.0f);
+            kvt_fetch(kvt, base, "material/transparency/outer", &props->fTransparency[0], 48.0f);
+
+            kvt_fetch(kvt, base, "material/absorption/inner", &props->fAbsorption[1], 1.5f);
+            kvt_fetch(kvt, base, "material/dispersion/inner", &props->fDispersion[1], 1.0f);
+            kvt_fetch(kvt, base, "material/diffusion/inner", &props->fDiffusion[1], 1.0f);
+            kvt_fetch(kvt, base, "material/transparency/inner", &props->fTransparency[1], 52.0f);
+
+            kvt_fetch(kvt, base, "material/absorption/link", &props->lnkAbsorption, 1.0f);
+            kvt_fetch(kvt, base, "material/dispersion/link", &props->lnkDispersion, 1.0f);
+            kvt_fetch(kvt, base, "material/diffusion/link", &props->lnkDiffusion, 1.0f);
+            kvt_fetch(kvt, base, "material/transparency/link", &props->lnkTransparency, 1.0f);
+
+            kvt_fetch(kvt, base, "material/sound_speed", &props->fSndSpeed, 4250.0f);
+
+            props->bEnabled = (enabled >= 0.5f);
+        }
+
+        void room_builder::build_object_matrix(dsp::matrix3d_t *m, const obj_props_t *props, const dsp::matrix3d_t *world)
+        {
+            dsp::matrix3d_t tmp;
+
+            // Copy world matrix
+            *m  = *world;
+
+            // Apply translation
+            dsp::init_matrix3d_translate(&tmp,
+                    props->sCenter.x + props->sMove.dx,
+                    props->sCenter.y + props->sMove.dy,
+                    props->sCenter.z + props->sMove.dz
+            );
+            dsp::apply_matrix3d_mm1(m, &tmp);
+
+            // Apply rotation
+            dsp::init_matrix3d_rotate_z(&tmp, props->fYaw * M_PI / 180.0f);
+            dsp::apply_matrix3d_mm1(m, &tmp);
+
+            dsp::init_matrix3d_rotate_y(&tmp, props->fPitch * M_PI / 180.0f);
+            dsp::apply_matrix3d_mm1(m, &tmp);
+
+            dsp::init_matrix3d_rotate_x(&tmp, props->fRoll * M_PI / 180.0f);
+            dsp::apply_matrix3d_mm1(m, &tmp);
+
+            // Apply scale
+            dsp::init_matrix3d_scale(&tmp, props->sScale.dx * 0.01f, props->sScale.dy * 0.01f, props->sScale.dz * 0.01f);
+            dsp::apply_matrix3d_mm1(m, &tmp);
+
+            // Move center to (0, 0, 0) point
+            dsp::init_matrix3d_translate(&tmp, -props->sCenter.x, -props->sCenter.y, -props->sCenter.z);
+            dsp::apply_matrix3d_mm1(m, &tmp);
         }
 
     } // namespace plugins
