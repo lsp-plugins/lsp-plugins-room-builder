@@ -661,7 +661,7 @@ namespace lsp
         {
             status_t res = ui::Module::post_init();
             if (res == STATUS_OK)
-                sPresets.init("mpreset", UI_KVT_PORT_PREFIX "oid", UI_KVT_PORT_PREFIX "kvt:speed", UI_KVT_PORT_PREFIX "oabs");
+                sPresets.init("mpreset", UI_KVT_PORT_PREFIX "oid", UI_KVT_PORT_PREFIX "speed", UI_KVT_PORT_PREFIX "oabs");
             return res;
         }
 
