@@ -41,13 +41,14 @@
 						<void hexpand="true" />
 					</hbox>
 				
-					<viewer3d expand="true"
+					<area3d expand="true"
 						id="ifn"
-						width="340" height="210" fov="70"
+						width.min="340" height.min="210"
+						pos.x.id="cposx" pos.y.id="cposy" pos.z.id="cposz"
+						scale.x.id="xscale" scale.y.id="yscale" scale.z.id="zscale"
+						yaw.id="cyaw" pitch.id="cpitch"
+						fov="70"
 						orientation_id="ifo" status_id="ifs"
-						xscale_id="xscale" yscale_id="yscale" zscale_id="zscale"
-						xpos_id="cposx" ypos_id="cposy" zpos_id="cposz"
-						yaw_id="cyaw" pitch_id="cpitch"
 						kvt_root="/scene/object/">
 						<ui:for id="i" first="0" last="7">
 							<source3d
@@ -70,7 +71,7 @@
 								size_id="sccs_${i}" angle_id="sca_${i}" distance_id="scab_${i}"
 							/>
 						</ui:for>
-					</viewer3d>
+					</area3d>
 					
 					<grid rows="4" cols="7">
 						<label text="labels.3d.3d_model" />

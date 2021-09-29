@@ -41,9 +41,9 @@
 						<void hexpand="true" />
 					</hbox>
 				
-					<viewer3d expand="true"
+					<area3d expand="true"
 						id="ifn"
-						width.min="340" height.min="256"
+						width.min="340" height.min="210"
 						pos.x.id="cposx" pos.y.id="cposy" pos.z.id="cposz"
 						scale.x.id="xscale" scale.y.id="yscale" scale.z.id="zscale"
 						yaw.id="cyaw" pitch.id="cpitch"
@@ -71,7 +71,7 @@
 								size_id="sccs_${i}" angle_id="sca_${i}" distance_id="scab_${i}"
 							/>
 						</ui:for>
-					</viewer3d>
+					</area3d>
 					
 					<grid rows="4" cols="7">
 						<label text="labels.3d.3d_model" />
