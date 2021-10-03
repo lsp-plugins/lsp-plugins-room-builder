@@ -50,6 +50,9 @@
 						fov="70"
 						orientation_id="ifo" status_id="ifs"
 						kvt_root="/scene/object/">
+						
+						<origin3d />
+						
 						<ui:for id="i" first="0" last="7">
 							<source3d
 								visibility=":sse_${i}" 
