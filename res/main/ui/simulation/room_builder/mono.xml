@@ -56,22 +56,23 @@
 						<ui:for id="i" first="0" last="7">
 							<source3d
 								visibility=":sse_${i}" 
-								mode_id="sscf_${i}"
-								hue_id="ssh_${i}" hue_shift="0.1"
-								xpos_id="sspx_${i}" ypos_id="sspy_${i}" zpos_id="sspz_${i}"
-								yaw_id="ssay_${i}" pitch_id="ssap_${i}" roll_id="ssar_${i}"
-								size_id="sss_${i}" angle_id="ssa_${i}" height_id="shh_${i}" curvature_id="sscv_${i}"
+								type=":sscf_${i}"
+								color.hue=":ssh_${i}" lcolor.hue="(:ssh_${i} + 0.25) fmod 1.0"
+								x=":sspx_${i}" y=":sspy_${i}" z=":sspz_${i}"
+								yaw=":ssay_${i}" pitch=":ssap_${i}" roll=":ssar_${i}"
+								size=":sss_${i} * 0.005" height=":shh_${i} * 0.01"
+								angle=":ssa_${i}" curvature=":sscv_${i}"
 							/>
 						</ui:for>
 						
 						<ui:for id="i" first="0" last="7" >
 							<capture3d
 								visibility=":sce_${i}" 
-								mode_id="sccf_${i}"
-								hue_id="sch_${i}" hue_shift="0.1"
-								xpos_id="scpx_${i}" ypos_id="scpy_${i}" zpos_id="scpz_${i}"
-								yaw_id="scay_${i}" pitch_id="scap_${i}" roll_id="scar_${i}"
-								size_id="sccs_${i}" angle_id="sca_${i}" distance_id="scab_${i}"
+								type=":sccf_${i}"
+								color.hue=":sch_${i}" lcolor.hue="(:sch_${i} + 0.25) fmod 1.0"
+								x=":scpx_${i}" y=":scpy_${i}" z=":scpz_${i}"
+								yaw=":scay_${i}" pitch=":scap_${i}" roll=":scar_${i}"
+								size=":sccs_${i}" angle=":sca_${i}" distance=":scab_${i}"
 							/>
 						</ui:for>
 					</area3d>
