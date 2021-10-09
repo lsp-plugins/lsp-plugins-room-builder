@@ -22,13 +22,55 @@
 #include <private/meta/room_builder.h>
 #include <private/ui/room_builder.h>
 #include <lsp-plug.in/plug-fw/ui.h>
+#include <lsp-plug.in/plug-fw/meta/types.h>
+#include <lsp-plug.in/plug-fw/meta/ports.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/stdlib/stdio.h>
 
 namespace lsp
 {
+    namespace meta
+    {
+        //---------------------------------------------------------------------
+        #define KVT_PORT(id)    UI_KVT_PORT_PREFIX id
+
+        static const port_t room_builder_kvt_ports[] =
+        {
+            COMBO(KVT_PORT("oid"), "Selected object index", 0, NULL),
+            SWITCH(KVT_PORT("enabled"), "Object enable", 0),
+            CONTROL_DFL(KVT_PORT("xpos"), "Object position X", U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", U_M, room_builder_metadata::POSITION, 0.0f),
+            { KVT_PORT("yaw"), "Object Yaw angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0.0f, 360, 0.0f, 0.1f, NULL, NULL },
+            { KVT_PORT("pitch"), "Object Pitch angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP, -90.0f, 90.0f, 0, 0.1f, NULL, NULL },
+            { KVT_PORT("roll"), "Object Roll angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 0, 0.1f, NULL, NULL },
+            CONTROL(KVT_PORT("xscale"), "Object scaling X", U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("yscale"), "Object scaling Y", U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("zscale"), "Object scaling Z", U_PERCENT, room_builder_metadata::OSIZE),
+            { KVT_PORT("hue"), "Object hue", U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, 0.0f, 0.25f/360.0f, NULL     },
+            LOG_CONTROL(KVT_PORT("oabs"), "Outer absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
+            LOG_CONTROL(KVT_PORT("iabs"), "Inner absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
+            SWITCH(KVT_PORT("labs"), "Link absorption parameters", 1.0f),
+            LOG_CONTROL(KVT_PORT("odisp"), "Refracted wave outer dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
+            LOG_CONTROL(KVT_PORT("idisp"), "Refracted wave inner dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
+            SWITCH(KVT_PORT("ldisp"), "Link refracted wave dispersion parameters", 1.0f),
+            LOG_CONTROL(KVT_PORT("odiff"), "Reflected wave outer diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
+            LOG_CONTROL(KVT_PORT("idiff"), "Reflected wave inner diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
+            SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", 1.0f),
+            CONTROL(KVT_PORT("otransp"), "Material outer transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            CONTROL(KVT_PORT("itransp"), "Material inner transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", 1.0f),
+            CONTROL(KVT_PORT("speed"), "Sound speed in material", U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
+        };
+    }
+
     namespace plugui
     {
+
+
+
+
+
         //---------------------------------------------------------------------
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
@@ -349,6 +391,7 @@ namespace lsp
             return false;
         }
 
+        //---------------------------------------------------------------------
         room_builder_ui::CtlMaterialPreset::CtlMaterialPreset(room_builder_ui *ui)
         {
             pUI         = ui;
@@ -386,13 +429,13 @@ namespace lsp
                 if (li == NULL)
                     return;
 
+                size_t tag = -1;
                 li->init();
                 li->text()->set("lists.room_bld.select_mat");
-                li->tag()->set(-1);
+                li->tag()->set(tag++);
                 pCBox->items()->madd(li);
                 pCBox->selected()->set(li);
 
-                size_t i=0;
                 for (const meta::room_material_t *m = meta::room_builder_metadata::materials; m->name != NULL; ++m)
                 {
                     li = new tk::ListBoxItem(pCBox->display());
@@ -408,12 +451,12 @@ namespace lsp
                     }
                     else
                         li->text()->set_raw(m->name);
-                    li->tag()->set(i++);
+                    li->tag()->set(tag++);
                     pCBox->items()->madd(li);
                 }
 
                 // Bind listener
-                hHandler    = pCBox->slots()->bind(tk::SLOT_SUBMIT, slot_change, this);
+                hHandler    = pCBox->slots()->bind(tk::SLOT_SUBMIT, slot_submit, this);
             }
 
             // Bind handlers and notify changes
@@ -434,7 +477,7 @@ namespace lsp
             }
         }
 
-        status_t room_builder_ui::CtlMaterialPreset::slot_change(tk::Widget *sender, void *ptr, void *data)
+        status_t room_builder_ui::CtlMaterialPreset::slot_submit(tk::Widget *sender, void *ptr, void *data)
         {
             CtlMaterialPreset *_this = static_cast<CtlMaterialPreset *>(ptr);
             if (ptr == NULL)
@@ -446,21 +489,34 @@ namespace lsp
 
             tk::ListBoxItem *li = _this->pCBox->selected()->get();
             ssize_t idx = (li != NULL) ? li->tag()->get() : -1;
+
+            lsp_trace("idx = %d", int(idx));
+
             if (idx < 0)
                 return STATUS_OK;
 
             const meta::room_material_t *m = &meta::room_builder_metadata::materials[idx];
 
+            // Change modified ports
+            lltl::parray<ui::IPort> notify;
+
             if (_this->pAbsorption->value() != m->absorption)
             {
                 _this->pAbsorption->set_value(m->absorption);
-                _this->pAbsorption->notify_all();
+                notify.add(_this->pAbsorption);
             }
-
             if (_this->pSpeed->value() != m->speed)
             {
                 _this->pSpeed->set_value(m->speed);
-                _this->pSpeed->notify_all();
+                notify.add(_this->pSpeed);
+            }
+
+            // Notify for changes
+            for (size_t i=0, n=notify.size(); i<n; ++i)
+            {
+                ui::IPort *port     = notify.uget(i);
+                if (port != NULL)
+                    port->notify_all();
             }
 
             return STATUS_OK;
@@ -490,14 +546,20 @@ namespace lsp
 
             if ((li == NULL) || (li->tag()->get() != idx))
             {
-                li = pCBox->items()->get(idx);
-
-                pCBox->slots()->disable(tk::SLOT_SUBMIT, hHandler);
-                pCBox->selected()->set(li);
-                pCBox->slots()->enable(tk::SLOT_SUBMIT, hHandler);
+                for (size_t i=0, n=pCBox->items()->size(); i < n; ++i)
+                {
+                    li = pCBox->items()->get(i);
+                    if (li->tag()->get() == idx)
+                    {
+                        pCBox->slots()->disable(tk::SLOT_SUBMIT, hHandler);
+                        pCBox->selected()->set(li);
+                        pCBox->slots()->enable(tk::SLOT_SUBMIT, hHandler);
+                    }
+                }
             }
         }
 
+        //---------------------------------------------------------------------
         room_builder_ui::CtlKnobBinding::CtlKnobBinding(room_builder_ui *ui, bool reverse)
         {
             pUI         = ui;
@@ -583,7 +645,6 @@ namespace lsp
 
         //-------------------------------------------------------------------------
         // Main class methods
-
         room_builder_ui::room_builder_ui(const meta::plugin_t *metadata):
             ui::Module(metadata),
             sPresets(this),
@@ -605,7 +666,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            const meta::port_t *meta = meta::room_builder_metadata::kvt_ports;
+            const meta::port_t *meta = meta::room_builder_kvt_ports;
 
             // Create object identifier port
             CtlListPort *kvt_list = new CtlListPort(this, meta++);

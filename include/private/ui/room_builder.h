@@ -103,7 +103,7 @@ namespace lsp
                     public:
                         virtual void        notify(ui::IPort *port);
 
-                        static status_t     slot_change(tk::Widget *sender, void *ptr, void *data);
+                        static status_t     slot_submit(tk::Widget *sender, void *ptr, void *data);
                 };
 
                 class CtlKnobBinding: public ui::IPortListener

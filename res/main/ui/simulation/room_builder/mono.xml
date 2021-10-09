@@ -336,11 +336,11 @@
 					<align hpos="-1" vpos="-1">
 						<hbox spacing="8">
 							<label text="labels.obj.object:" />
-							<button id="kvt:enabled" size="16" led="true" color="red" hue_id="kvt:hue" />
+							<button id="_kvt_enabled" size="16" led="true" color="red" hue_id="_kvt_hue" />
 							<label text="labels.obj.enabled" />
 						</hbox>
 					</align>
-					<combo id="kvt:oid" width="192" />
+					<combo id="_kvt_oid" width="192" />
 					
 					<grid rows="12" cols="3">
 						<cell cols="3"><hsep /></cell>
@@ -348,46 +348,46 @@
 						<label text="labels.3d.move_y" />
 						<label text="labels.3d.move_z" />
 						
-						<knob id="kvt:xpos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:ypos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:zpos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_xpos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_ypos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_zpos" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
-						<value id="kvt:xpos" sline="true" />
-						<value id="kvt:ypos" sline="true" />
-						<value id="kvt:zpos" sline="true" />
+						<value id="_kvt_xpos" sline="true" />
+						<value id="_kvt_ypos" sline="true" />
+						<value id="_kvt_zpos" sline="true" />
 						
 						<cell cols="3"><hsep /></cell>
 						<label text="labels.3d.yaw" />
 						<label text="labels.3d.pitch" />
 						<label text="labels.3d.roll" />
 						
-						<knob id="kvt:yaw" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:pitch" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:roll" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_yaw" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_pitch" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_roll" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
-						<value id="kvt:yaw" sline="true" />
-						<value id="kvt:pitch" sline="true" />
-						<value id="kvt:roll" sline="true" />
+						<value id="_kvt_yaw" sline="true" />
+						<value id="_kvt_pitch" sline="true" />
+						<value id="_kvt_roll" sline="true" />
 						
 						<cell cols="3"><hsep /></cell>
 						<label text="labels.3d.scale_x" />
 						<label text="labels.3d.scale_y" />
 						<label text="labels.3d.scale_z" />
 						
-						<knob id="kvt:xscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:yscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<knob id="kvt:zscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_xscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_yscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_zscale" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
-						<value id="kvt:xscale" sline="true" />
-						<value id="kvt:yscale" sline="true" />
-						<value id="kvt:zscale" sline="true" />
+						<value id="_kvt_xscale" sline="true" />
+						<value id="_kvt_yscale" sline="true" />
+						<value id="_kvt_zscale" sline="true" />
 					</grid>
 					
 					<hsep />
 					<grid rows="3" cols="1">
 						<label text="labels.obj.hue" />
-						<knob id="kvt:hue" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<value id="kvt:hue" sline="true" />
+						<knob id="_kvt_hue" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<value id="_kvt_hue" sline="true" />
 					</grid>
 				</vbox>
 				
@@ -397,11 +397,11 @@
 					<align hpos="-1" vpos="-1">
 						<hbox spacing="8">
 							<label text="labels.obj.object:" />
-							<button id="kvt:enabled" size="16" led="true" color="red" hue_id="kvt:hue" />
+							<button id="_kvt_enabled" size="16" led="true" color="red" hue_id="_kvt_hue" />
 							<label text="labels.obj.enabled" />
 						</hbox>
 					</align>
-					<combo id="kvt:oid" width="192" />
+					<combo id="_kvt_oid" width="192" />
 					<align hpos="-1" vpos="-1">
 						<label text="labels.material.material_preset:" />
 					</align>
@@ -410,8 +410,8 @@
 					<hsep />
 					<hbox>
 						<label text="labels.material.sound_speed" />
-						<knob id="kvt:speed" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
-						<value id="kvt:speed" sline="true" />
+						<knob id="_kvt_speed" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<value id="_kvt_speed" sline="true" />
 					</hbox>
 					<hsep />
 					<align hpos="-1" vpos="-1">
@@ -425,63 +425,63 @@
 						
 						<!-- Absorption -->
 						<label text="labels.material.absorption" />
-						<knob id="kvt:oabs" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_oabs" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						<cell rows="2">
 							<vbox>
-								<button id="kvt:labs" size="12" led="true" color="red" hue_id="kvt:hue" />
+								<button id="_kvt_labs" size="12" led="true" color="red" hue_id="_kvt_hue" />
 								<label font.size="9" text="labels.material.link" />
 							</vbox>
 						</cell>
-						<knob id="kvt:iabs" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_iabs" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
 						<label text="labels.units.:pc" />
-						<value id="kvt:oabs" detailed="false" />
-						<value id="kvt:iabs" detailed="false" />
+						<value id="_kvt_oabs" detailed="false" />
+						<value id="_kvt_iabs" detailed="false" />
 						
 						<!-- Transparency -->
 						<label text="labels.material.transparency" />
-						<knob id="kvt:otransp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_otransp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						<cell rows="2">
 							<vbox>
-								<button id="kvt:ltransp" size="12" led="true" color="red" hue_id="kvt:hue" />
+								<button id="_kvt_ltransp" size="12" led="true" color="red" hue_id="_kvt_hue" />
 								<label font.size="9" text="labels.material.link" />
 							</vbox>
 						</cell>
-						<knob id="kvt:itransp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_itransp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
 						<label text="labels.units.:pc" />
-						<value id="kvt:otransp" detailed="false" />
-						<value id="kvt:itransp" detailed="false" />
+						<value id="_kvt_otransp" detailed="false" />
+						<value id="_kvt_itransp" detailed="false" />
 						
 						<!-- Dispersion -->
 						<label text="labels.material.dispersion" />
-						<knob id="kvt:odisp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_odisp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						<cell rows="2">
 							<vbox>
-								<button id="kvt:ldisp" size="12" led="true" color="red" hue_id="kvt:hue" />
+								<button id="_kvt_ldisp" size="12" led="true" color="red" hue_id="_kvt_hue" />
 								<label font.size="9" text="labels.material.link" />
 							</vbox>
 						</cell>
-						<knob id="kvt:idisp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_idisp" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
 						<label />
-						<value id="kvt:odisp" detailed="false" />
-						<value id="kvt:idisp" detailed="false" />
+						<value id="_kvt_odisp" detailed="false" />
+						<value id="_kvt_idisp" detailed="false" />
 						
 						<!-- Diffusion -->
 						<label text="labels.material.diffusion" />
-						<knob id="kvt:odiff" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_odiff" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						<cell rows="2">
 							<vbox>
-								<button id="kvt:ldiff" size="12" led="true" color="red" hue_id="kvt:hue" />
+								<button id="_kvt_ldiff" size="12" led="true" color="red" hue_id="_kvt_hue" />
 								<label font.size="9" text="labels.material.link" />
 							</vbox>
 						</cell>
-						<knob id="kvt:idiff" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
+						<knob id="_kvt_idiff" size="16" scale_hue="0" scolor.hue=":kvt:hue" />
 						
 						<label />
-						<value id="kvt:odiff" detailed="false" />
-						<value id="kvt:idiff" detailed="false" />
+						<value id="_kvt_odiff" detailed="false" />
+						<value id="_kvt_idiff" detailed="false" />
 					</grid>
 				</vbox>
 			</cgroup>

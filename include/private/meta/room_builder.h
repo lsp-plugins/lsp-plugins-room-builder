@@ -157,7 +157,6 @@ namespace lsp
                 FFT_RANK_DEFAULT = FFT_RANK_32767
             };
 
-            static const port_t kvt_ports[];
             static const room_material_t materials[];
         };
 

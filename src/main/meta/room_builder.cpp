@@ -434,35 +434,6 @@ namespace lsp
 
         static const int room_builder_classes[] = { C_REVERB, -1 };
 
-        const port_t room_builder_metadata::kvt_ports[] =
-        {
-            COMBO("kvt:oid", "Selected object index", 0, NULL),
-            SWITCH("kvt:enabled", "Object enable", 0),
-            CONTROL_DFL("kvt:xpos", "Object position X", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL("kvt:ypos", "Object position Y", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL("kvt:zpos", "Object position Z", U_M, room_builder_metadata::POSITION, 0.0f),
-            { "kvt:yaw", "Object Yaw angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0.0f, 360, 0.0f, 0.1f, NULL, NULL },
-            { "kvt:pitch", "Object Pitch angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP, -90.0f, 90.0f, 0, 0.1f, NULL, NULL },
-            { "kvt:roll", "Object Roll angle", U_DEG, R_CONTROL, F_IN | F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 0, 0.1f, NULL, NULL },
-            CONTROL("kvt:xscale", "Object scaling X", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL("kvt:yscale", "Object scaling Y", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL("kvt:zscale", "Object scaling Z", U_PERCENT, room_builder_metadata::OSIZE),
-            { "kvt:hue", "Object hue", U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, 0.0f, 0.25f/360.0f, NULL     },
-            LOG_CONTROL("kvt:oabs", "Outer absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
-            LOG_CONTROL("kvt:iabs", "Inner absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
-            SWITCH("kvt:labs", "Link absorption parameters", 1.0f),
-            LOG_CONTROL("kvt:odisp", "Refracted wave outer dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            LOG_CONTROL("kvt:idisp", "Refracted wave inner dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH("kvt:ldisp", "Link refracted wave dispersion parameters", 1.0f),
-            LOG_CONTROL("kvt:odiff", "Reflected wave outer diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            LOG_CONTROL("kvt:idiff", "Reflected wave inner diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH("kvt:ldiff", "Link reflected wave inner diffusion parameters", 1.0f),
-            CONTROL("kvt:otransp", "Material outer transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            CONTROL("kvt:itransp", "Material inner transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            SWITCH("kvt:ltransp", "Link material transparency parameters", 1.0f),
-            CONTROL("kvt:speed", "Sound speed in material", U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
-        };
-
         const room_material_t room_builder_metadata::materials[] =
         {
             { "Alder",          "room_bld.mat.alder",           5060.0f,    6.0f    },
