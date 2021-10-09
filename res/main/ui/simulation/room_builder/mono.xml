@@ -44,12 +44,9 @@
 					<area3d expand="true"
 						id="ifn"
 						width.min="340" height.min="210"
-						pos.x.id="cposx" pos.y.id="cposy" pos.z.id="cposz"
-						scale.x.id="xscale" scale.y.id="yscale" scale.z.id="zscale"
-						yaw.id="cyaw" pitch.id="cpitch"
 						fov="70"
-						orientation_id="ifo" status_id="ifs"
-						kvt_root="/scene/object/">
+						x.id="cposx" y.id="cposy" z.id="cposz"
+						yaw.id="cyaw" pitch.id="cpitch">
 						
 						<origin3d />
 						
