@@ -43,10 +43,10 @@
 				
 					<area3d expand="true"
 						id="ifn"
-						width.min="340" height.min="210"
-						fov="70"
 						x.id="cposx" y.id="cposy" z.id="cposz"
-						yaw.id="cyaw" pitch.id="cpitch">
+						yaw.id="cyaw" pitch.id="cpitch"
+						width.min="340" height.min="210"
+						fov="70">
 						
 						<origin3d />
 						
@@ -72,6 +72,11 @@
 								size=":sccs_${i}" angle=":sca_${i}" distance=":scab_${i}"
 							/>
 						</ui:for>
+						
+						<model3d id="ifn" status=":ifs" orientation=":ifo"
+							kvt.root="/scene/object"
+							scale.x=":xscale * 0.01" scale.y=":yscale * 0.01" scale.z=":zscale * 0.01"
+							/>
 					</area3d>
 					
 					<grid rows="4" cols="7">
