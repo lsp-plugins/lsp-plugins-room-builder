@@ -66,11 +66,6 @@ namespace lsp
 
     namespace plugui
     {
-
-
-
-
-
         //---------------------------------------------------------------------
         // Plugin UI factory
         static const meta::plugin_t *plugin_uis[] =
