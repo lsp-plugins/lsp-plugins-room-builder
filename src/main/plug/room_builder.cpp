@@ -2073,8 +2073,7 @@ namespace lsp
             else
             {
                 dspu::Sample af;
-                res     = af.init(hdr.channels, hdr.samples, hdr.samples);
-                if (res != STATUS_OK)
+                if (!af.init(hdr.channels, hdr.samples, hdr.samples))
                 {
                     kvt_release();
                     return res;
@@ -2093,6 +2092,7 @@ namespace lsp
                 af.set_sample_rate(hdr.sample_rate);
                 res     = af.save(&sp);
                 af.destroy();
+                res     = (res < 0) ? -res : STATUS_OK;
             }
 
             // Release KVT storage and return result

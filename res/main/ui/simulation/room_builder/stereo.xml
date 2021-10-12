@@ -114,13 +114,18 @@
 				<ui:for id="i" first="0" last="7">
 					<vbox spacing="2">
 						<hbox border="2">
-							<sample
-								head_id="ihc_${i}" tail_id="itc_${i}"
-								fadein_id="ifi_${i}" fadeout_id="ifo_${i}" length_id="ifl_${i}"
-								duration_id="sdur_${i}" max_duration_id="smdur_${i}"
-								status_id="ifs_${i}" mesh_id="ifd_${i}"
-								width="340" height="210"
-							/>
+							<asample
+								expand="true"
+								mesh_id="ifd_${i}"
+								path_id="_ui_dlg_ir_path"
+								hcut=":ihc_${i}"
+								tcut=":itc_${i}"
+								fadein=":ifi_${i}"
+								fadeout=":ifo_${i}"
+								length=":ifl_${i}"
+								status=":ifs_${i}"
+								width.min="340"
+								height.min="210" />
 						</hbox>
 						
 						<grid rows="4" cols="8" hspacing="4">
