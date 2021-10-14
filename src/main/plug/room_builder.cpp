@@ -121,7 +121,19 @@ namespace lsp
                 res = STATUS_UNKNOWN_ERR;
             else if (::strlen(sPath) > 0)
             {
-                res = sScene.load(sPath);
+                lsp_trace("Loading scene from %s", sPath);
+
+                // Load file from resources
+                io::IInStream *is = pCore->pWrapper->resources()->read_stream(sPath);
+                if (is == NULL)
+                    return pCore->pWrapper->resources()->last_error();
+
+                res = sScene.load(is);
+                status_t res2 = is->close();
+                delete is;
+
+                res = (res == STATUS_OK) ? res2 : res;
+
                 if (res == STATUS_OK)
                 {
                     // Initialize object properties
