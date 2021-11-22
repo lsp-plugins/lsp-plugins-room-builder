@@ -407,16 +407,16 @@ namespace lsp
                 virtual ~room_builder();
 
             public:
-                virtual void init(plug::IWrapper *wrapper);
-                virtual void destroy();
+                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports);
+                virtual void        destroy();
 
-                virtual void update_settings();
-                virtual void update_sample_rate(long sr);
+                virtual void        update_settings();
+                virtual void        update_sample_rate(long sr);
 
-                virtual void process(size_t samples);
+                virtual void        process(size_t samples);
 
-                virtual void state_loaded();
-                virtual void ui_activated();
+                virtual void        state_loaded();
+                virtual void        ui_activated();
 
             public:
                 static dspu::rt_capture_config_t  decode_config(float value);

@@ -337,10 +337,10 @@ namespace lsp
         {
         }
 
-        void room_builder::init(plug::IWrapper *wrapper)
+        void room_builder::init(plug::IWrapper *wrapper, plug::IPort **ports)
         {
             // Pass wrapper
-            plug::Module::init(wrapper);
+            plug::Module::init(wrapper, ports);
 
             // Remember executor service
             pExecutor       = wrapper->executor();
@@ -547,196 +547,196 @@ namespace lsp
             lsp_trace("Binding audio ports");
             for (size_t i=0; i<nInputs; ++i)
             {
-                TRACE_PORT(vPorts[port_id]);
-                vInputs[i].pIn      = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                vInputs[i].pIn      = ports[port_id++];
             }
             for (size_t i=0; i<2; ++i)
             {
-                TRACE_PORT(vPorts[port_id]);
-                vChannels[i].pOut   = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                vChannels[i].pOut   = ports[port_id++];
             }
 
             // Bind controlling ports
             lsp_trace("Binding common ports");
-            TRACE_PORT(vPorts[port_id]);
-            pBypass         = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);            // Skip view selector
+            TRACE_PORT(ports[port_id]);
+            pBypass         = ports[port_id++];
+            TRACE_PORT(ports[port_id]);            // Skip view selector
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip editor selector
+            TRACE_PORT(ports[port_id]);            // Skip editor selector
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip processor selector
+            TRACE_PORT(ports[port_id]);            // Skip processor selector
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // FFT rank
-            pRank           = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);            // Pre-delay
-            pPredelay       = vPorts[port_id++];
+            TRACE_PORT(ports[port_id]);            // FFT rank
+            pRank           = ports[port_id++];
+            TRACE_PORT(ports[port_id]);            // Pre-delay
+            pPredelay       = ports[port_id++];
 
             for (size_t i=0; i<nInputs; ++i)        // Panning ports
             {
-                TRACE_PORT(vPorts[port_id]);
-                vInputs[i].pPan     = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                vInputs[i].pPan     = ports[port_id++];
             }
 
-            TRACE_PORT(vPorts[port_id]);
-            pDry            = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pWet            = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pOutGain        = vPorts[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pDry            = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pWet            = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pOutGain        = ports[port_id++];
 
-            TRACE_PORT(vPorts[port_id]);
-            pRenderThreads  = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pRenderQuality  = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pRenderStatus   = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pRenderProgress = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pRenderNormalize= vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pRenderCmd      = vPorts[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderThreads  = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderQuality  = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderStatus   = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderProgress = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderNormalize= ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pRenderCmd      = ports[port_id++];
 
-            TRACE_PORT(vPorts[port_id]);
-            p3DFile         = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            p3DStatus       = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            p3DProgress     = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            p3DOrientation  = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pScaleX         = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pScaleY         = vPorts[port_id++];
-            TRACE_PORT(vPorts[port_id]);
-            pScaleZ         = vPorts[port_id++];
+            TRACE_PORT(ports[port_id]);
+            p3DFile         = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            p3DStatus       = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            p3DProgress     = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            p3DOrientation  = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pScaleX         = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pScaleY         = ports[port_id++];
+            TRACE_PORT(ports[port_id]);
+            pScaleZ         = ports[port_id++];
 
             // Skip camera settings
-            TRACE_PORT(vPorts[port_id]);            // Skip camera x
+            TRACE_PORT(ports[port_id]);            // Skip camera x
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip camera y
+            TRACE_PORT(ports[port_id]);            // Skip camera y
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip camera z
+            TRACE_PORT(ports[port_id]);            // Skip camera z
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip camera yaw
+            TRACE_PORT(ports[port_id]);            // Skip camera yaw
             port_id++;
-            TRACE_PORT(vPorts[port_id]);            // Skip camera pitch
+            TRACE_PORT(ports[port_id]);            // Skip camera pitch
             port_id++;
 
             // Bind sources
-            TRACE_PORT(vPorts[port_id]);            // Skip source selector
+            TRACE_PORT(ports[port_id]);            // Skip source selector
             port_id++;
 
             for (size_t i=0; i<meta::room_builder_metadata::SOURCES; ++i)
             {
                 source_t *src   = &vSources[i];
 
-                TRACE_PORT(vPorts[port_id]);
-                src->pEnabled       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pType          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pPhase         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pPosX          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pPosY          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pPosZ          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pYaw           = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pPitch         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pRoll          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pSize          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pHeight        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pAngle         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                src->pCurvature     = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pEnabled       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pType          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pPhase         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pPosX          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pPosY          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pPosZ          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pYaw           = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pPitch         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pRoll          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pSize          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pHeight        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pAngle         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                src->pCurvature     = ports[port_id++];
 
-                TRACE_PORT(vPorts[port_id]);
+                TRACE_PORT(ports[port_id]);
                 port_id++;          // Skip hue value
             }
 
             // Bind captures
-            TRACE_PORT(vPorts[port_id]);            // Skip capture selector
+            TRACE_PORT(ports[port_id]);            // Skip capture selector
             port_id++;
 
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *cap  = &vCaptures[i];
 
-                TRACE_PORT(vPorts[port_id]);
-                cap->pEnabled       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pRMin          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pRMax          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pPosX          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pPosY          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pPosZ          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pYaw           = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pPitch         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pRoll          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pCapsule       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pConfig        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pAngle         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pDistance      = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pDirection     = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pSide          = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pEnabled       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pRMin          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pRMax          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pPosX          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pPosY          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pPosZ          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pYaw           = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pPitch         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pRoll          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pCapsule       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pConfig        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pAngle         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pDistance      = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pDirection     = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pSide          = ports[port_id++];
 
-                TRACE_PORT(vPorts[port_id]);
-                cap->pHeadCut       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pTailCut       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pFadeIn        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pFadeOut       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pListen        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pReverse       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pMakeup        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pStatus        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pLength        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pCurrLen       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pMaxLen        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pThumbs        = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pHeadCut       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pTailCut       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pFadeIn        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pFadeOut       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pListen        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pReverse       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pMakeup        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pStatus        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pLength        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pCurrLen       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pMaxLen        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pThumbs        = ports[port_id++];
 
-                TRACE_PORT(vPorts[port_id]);
-                cap->pOutFile       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pSaveCmd       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pSaveStatus    = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                cap->pSaveProgress  = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pOutFile       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pSaveCmd       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pSaveStatus    = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                cap->pSaveProgress  = ports[port_id++];
 
-                TRACE_PORT(vPorts[port_id]);
+                TRACE_PORT(ports[port_id]);
                 port_id++;          // Skip hue value
             }
 
@@ -748,24 +748,24 @@ namespace lsp
 
                 if (nInputs > 1)    // Input panning
                 {
-                    TRACE_PORT(vPorts[port_id]);
-                    c->pPanIn       = vPorts[port_id++];
+                    TRACE_PORT(ports[port_id]);
+                    c->pPanIn       = ports[port_id++];
                 }
 
-                TRACE_PORT(vPorts[port_id]);
-                c->pSample      = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pTrack       = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pMakeup      = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pMute        = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pActivity    = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pPredelay    = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pPanOut      = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pSample      = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pTrack       = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pMakeup      = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pMute        = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pActivity    = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pPredelay    = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pPanOut      = ports[port_id++];
             }
 
             // Bind wet processing ports
@@ -775,23 +775,23 @@ namespace lsp
             {
                 channel_t *c        = &vChannels[i];
 
-                TRACE_PORT(vPorts[port_id]);
-                c->pWetEq           = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pLowCut          = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pLowFreq         = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pWetEq           = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pLowCut          = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pLowFreq         = ports[port_id++];
 
                 for (size_t j=0; j<meta::room_builder_metadata::EQ_BANDS; ++j)
                 {
-                    TRACE_PORT(vPorts[port_id]);
-                    c->pFreqGain[j]     = vPorts[port_id++];
+                    TRACE_PORT(ports[port_id]);
+                    c->pFreqGain[j]     = ports[port_id++];
                 }
 
-                TRACE_PORT(vPorts[port_id]);
-                c->pHighCut         = vPorts[port_id++];
-                TRACE_PORT(vPorts[port_id]);
-                c->pHighFreq        = vPorts[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pHighCut         = ports[port_id++];
+                TRACE_PORT(ports[port_id]);
+                c->pHighFreq        = ports[port_id++];
 
                 port_id         = port;
             }
