@@ -18,13 +18,6 @@
 # along with lsp-plugins-room-builder.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# Package version
-ARTIFACT_ID                 = LSP_PLUGINS_ROOM_BUILDER
-ARTIFACT_NAME               = lsp-plugins-room-builder
-ARTIFACT_TYPE               = plug
-ARTIFACT_DESC               = LSP Room Builder Plugin Series
-ARTIFACT_HEADERS            = lsp-plug.in
-ARTIFACT_VERSION            = 1.0.2-devel
-
-
-
+# Variables that describe dependencies
+PLUGIN_DEPENDENCIES     = LSP_PLUGINS_ROOM_BUILDER
+PLUGIN_PACKAGE_NAME     = lsp-plugins
