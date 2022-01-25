@@ -161,7 +161,10 @@ namespace lsp
             {
                 dspu::Object3D *obj = sScene.object(i);
                 if (obj == NULL)
-                    return STATUS_UNKNOWN_ERR;
+                {
+                    res = STATUS_UNKNOWN_ERR;
+                    break;
+                }
                 const dsp::point3d_t *c  = obj->center();
 
                 sprintf(base, "/scene/object/%d", int(i));
