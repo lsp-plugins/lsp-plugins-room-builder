@@ -236,7 +236,7 @@ namespace lsp
                 {
                     public:
                         size_t                  nFlags;
-                        char                    sPath[PATH_MAX+1];
+                        char                    sPath[PATH_MAX];
                         room_builder           *pCore;
                         dspu::Scene3D           sScene;
 

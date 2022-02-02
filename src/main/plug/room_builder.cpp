@@ -140,6 +140,8 @@ namespace lsp
                     nobjs = sScene.num_objects();
                 }
             }
+            else
+                lsp_trace("Scene file name not specified");
 
             // Get KVT storage and deploy new values
             core::KVTStorage *kvt = pCore->kvt_lock();
@@ -271,7 +273,7 @@ namespace lsp
             plug::path_t *path = p->buffer<plug::path_t>();
             if (path == NULL)
                 return;
-            const char *spath = path->get_path();
+            const char *spath = path->path();
             if (spath != NULL)
             {
                 ::strncpy(sPath, spath, PATH_MAX);
@@ -1344,9 +1346,9 @@ namespace lsp
                 if ((path->pending()) && (s3DLoader.idle()) && (s3DLauncher.idle())) // There is pending request for 3D file reload
                 {
                     // Copy path
-                    ::strncpy(s3DLoader.sPath, path->get_path(), PATH_MAX);
-                    s3DLoader.nFlags            = path->get_flags();
-                    s3DLoader.sPath[PATH_MAX]   = '\0';
+                    ::strncpy(s3DLoader.sPath, path->path(), PATH_MAX-1);
+                    s3DLoader.nFlags            = path->flags();
+                    s3DLoader.sPath[PATH_MAX-1] = '\0';
                     lsp_trace("Submitted scene file %s", s3DLoader.sPath);
 
                     // Try to submit task
