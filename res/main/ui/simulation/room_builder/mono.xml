@@ -21,7 +21,7 @@
 			<!-- IR editor -->
 			<cgroup id="view" expand="true">
 				<vbox>
-					<hbox >
+					<hbox>
 						<align halign="-1"><label text="labels.room_orientation:" pad.l="6" pad.v="4"/></align>
 						<align halign="-1"><combo id="ifo" pad.r="6" pad.v="4"/></align>
 
@@ -49,7 +49,6 @@
 					</hbox>
 
 					<area3d expand="true" id="ifn" x.id="cposx" y.id="cposy" z.id="cposz" yaw.id="cyaw" pitch.id="cpitch" width.min="340" height.min="210" fov="70">
-
 						<origin3d/>
 
 						<ui:for id="i" first="0" last="7">
@@ -139,7 +138,14 @@
 				<!-- Sample editors -->
 				<ui:for id="i" first="0" last="7">
 					<vbox>
-						<asample expand="true" mesh_id="ifd_${i}" path_id="_ui_dlg_ir_path" hcut=":ihc_${i}" tcut=":itc_${i}" fadein=":ifi_${i}" fadeout=":ifo_${i}" length=":ifl_${i}" status=":ifs_${i}" width.min="340" height.min="210" active="false" pointer="arrow"/>
+						<asample expand="true"
+							mesh_id="ifd_${i}" path_id="_ui_dlg_ir_path"
+							hcut=":ihc_${i}" tcut=":itc_${i}"
+							fadein=":ifi_${i}" fadeout=":ifo_${i}"
+							length=":ifl_${i}"
+							status=":ifs_${i}"
+							width.min="340" height.min="210"
+							active="false" pointer="arrow" />
 
 						<grid rows="4" cols="9" bg.color="bg_schema">
 							<!-- r1 -->
@@ -156,14 +162,12 @@
 							<align halign="-1" valign="1">
 								<label text="labels.export" pad.h="6" vreduce="true" height="20" bg.color="bg_schema_name"/>
 							</align>
+
 							<!-- r2 -->
-
 							<cell cols="7"><hsep bg.color="bg" pad.v="2" vreduce="true"/></cell>
-
 							<cell rows="3"><save id="ofn_${i}" command.id="ofc_${i}" progress.id="ofp_${i}" status=":ofs_${i}" fill="false" format="wav,lspc,all" path.id="_ui_dlg_sample_path" pad.v="4" pad.h="6"/></cell>
 
 							<!-- r3 -->
-
 							<ui:with pad.h="6" pad.v="4">
 								<knob id="ihc_${i}" size="20"/>
 								<knob id="itc_${i}" size="20"/>
@@ -171,7 +175,6 @@
 								<knob id="ifo_${i}" size="20" scolor="fade_out"/>
 								<knob id="imkp_${i}" size="20" scolor="fade_out"/>
 							</ui:with>
-
 							<cell rows="2"><vsep pad.h="2" hreduce="true" bg.color="bg"/></cell>
 							<cell rows="2">
 								<vbox fill="false" spacing="6">
@@ -179,6 +182,7 @@
 									<button id="ils_${i}" text="labels.listen" height="19" hfill="true" ui:inject="Button_yellow" toggle="false"/>
 								</vbox>
 							</cell>
+
 							<!-- r4 -->
 							<ui:with pad.h="6" pad.b="4" width.min="48" sline="true">
 								<value id="ihc_${i}"/>
