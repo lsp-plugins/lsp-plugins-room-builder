@@ -1,0 +1,7 @@
+{
+	"room_builder": {
+		"name": "Room Builder",
+		"description": "This plugin allows to simulate impulse response of any modelled room or space.\nThe basic principle is based on generating of unit audio impulse and then\ncapturing all it's reflections from environment by special capturing objects\nthat simulate microphone capsules. So, in fact, this algorithm is a kind of\nraytracing algorithm but instead of single rays it performs tracing of ray\ngroups. This allows to simulate large spaces withous significant loosing\nof quality and precision."
+	}
+}
+

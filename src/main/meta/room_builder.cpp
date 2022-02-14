@@ -477,6 +477,15 @@ namespace lsp
             { NULL,             NULL,                           0.0f,       0.0f    }
         };
 
+        const meta::bundle_t room_builder_bundle =
+        {
+            "room_builder",
+            "Room Builder",
+            B_CONVOLUTION,
+            "J-ruYw9TwCE",
+            "This plugin allows to simulate impulse response of any modelled room or space.\nThe basic principle is based on generating of unit audio impulse and then\ncapturing all it's reflections from environment by special capturing objects\nthat simulate microphone capsules. So, in fact, this algorithm is a kind of\nraytracing algorithm but instead of single rays it performs tracing of ray\ngroups. This allows to simulate large spaces withous significant loosing\nof quality and precision."
+        };
+
         const meta::plugin_t  room_builder_mono =
         {
             "Raumbaumeister Mono",
@@ -495,7 +504,8 @@ namespace lsp
             room_builder_mono_ports,
             "simulation/room_builder/mono.xml",
             "simulation/room_builder",
-            mono_to_stereo_plugin_port_groups
+            mono_to_stereo_plugin_port_groups,
+            &room_builder_bundle
         };
 
         const meta::plugin_t  room_builder_stereo =
@@ -516,7 +526,8 @@ namespace lsp
             room_builder_stereo_ports,
             "simulation/room_builder/stereo.xml",
             "simulation/room_builder",
-            stereo_plugin_port_groups
+            stereo_plugin_port_groups,
+            &room_builder_bundle
         };
     } // namespace meta
 } // namespace lsp
