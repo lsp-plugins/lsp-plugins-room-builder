@@ -1,0 +1,903 @@
+<plugin resizable="true">
+	<grid rows="9" cols="3">
+
+		<!-- r1 -->
+		<cell cols="3">
+			<!-- Main settings -->
+			<align halign="-1" fill="true">
+				<hbox pad.l="6" pad.r="6" pad.t="4" pad.b="4" spacing="8" fill="false" bg.color="bg_schema">
+					<label text="labels.fft.frame"/>
+					<combo id="fft"/>
+					<button id="wpp" pad.l="10" ui:inject="Button_cyan" text="labels.ir_equalizer" size="16" width="64"/>
+				</hbox>
+			</align>
+		</cell>
+
+		<!-- r2 -->
+		<cell cols="3"><void bg.color="bg" height="4" vreduce="true"/></cell>
+
+		<!-- r3 -->
+		<cell rows="5">
+			<!-- IR editor -->
+			<cgroup id="view" expand="true">
+				<vbox>
+					<hbox>
+						<align halign="-1"><label text="labels.room_orientation:" pad.l="6" pad.v="4"/></align>
+						<align halign="-1"><combo id="ifo" pad.r="6" pad.v="4"/></align>
+
+						<align halign="1">
+							<hbox >
+								<knob id="xscale" scolor="red" size="16" ssize="3" pad.l="6" pad.v="4"/>
+								<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+									<label text="labels.3d.s_ize_x:"/>
+									<value id="xscale" sline="true"/>
+								</vbox>
+
+								<knob id="yscale" scolor="green" size="16" ssize="3" pad.l="6" pad.v="4"/>
+								<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+									<label text="labels.3d.s_ize_y:"/>
+									<value id="yscale" sline="true"/>
+								</vbox>
+
+								<knob id="zscale" scolor="blue" size="16" ssize="3" pad.l="6" pad.v="4"/>
+								<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+									<label text="labels.3d.s_ize_z:"/>
+									<value id="zscale" sline="true"/>
+								</vbox>
+							</hbox>
+						</align>
+					</hbox>
+
+					<area3d expand="true" id="ifn" x.id="cposx" y.id="cposy" z.id="cposz" yaw.id="cyaw" pitch.id="cpitch" width.min="340" height.min="210" fov="70">
+						<origin3d/>
+
+						<ui:for id="i" first="0" last="7">
+							<source3d
+								visibility=":sse_${i}"
+								type=":sscf_${i}"
+								color.hue=":ssh_${i}"
+								lcolor.hue="(:ssh_${i} + 0.25) fmod 1.0"
+								x=":sspx_${i}"
+								y=":sspy_${i}"
+								z=":sspz_${i}"
+								yaw=":ssay_${i}"
+								pitch=":ssap_${i}"
+								roll=":ssar_${i}"
+								size=":sss_${i} * 0.005"
+								height=":shh_${i} * 0.01"
+								angle=":ssa_${i}"
+								curvature=":sscv_${i}"/>
+						</ui:for>
+
+						<ui:for id="i" first="0" last="7">
+							<capture3d
+								visibility=":sce_${i}"
+								type=":sccf_${i}"
+								color.hue=":sch_${i}"
+								lcolor.hue="(:sch_${i} + 0.25) fmod 1.0"
+								x=":scpx_${i}"
+								y=":scpy_${i}"
+								z=":scpz_${i}"
+								yaw=":scay_${i}"
+								pitch=":scap_${i}"
+								roll=":scar_${i}"
+								size=":sccs_${i}"
+								angle=":sca_${i}"
+								distance=":scab_${i}"/>
+						</ui:for>
+
+						<model3d id="ifn" status=":ifs" orientation=":ifo" kvt.root="/scene/object" scale.x=":xscale * 0.01" scale.y=":yscale * 0.01" scale.z=":zscale * 0.01"/>
+					</area3d>
+
+					<grid rows="2" cols="12">
+						<cell cols="10">
+							<align halign="-1">
+								<label text="labels.3d.camera" pad.h="6" height="20" bg.color="bg_schema_name"/>
+							</align>
+						</cell>
+						<cell rows="2"><vsep pad.h="2" hreduce="true" bg.color="bg"/></cell>
+						<align halign="-1" valign="1">
+							<label text="labels.3d.3d_model" pad.h="6" height="20" bg.color="bg_schema_name"/>
+						</align>
+
+						<knob id="cposx" scolor="red" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<label text="labels.3d.x_axis"/>
+							<value id="cposx" sline="true"/>
+						</vbox>
+
+						<knob id="cposy" scolor="green" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<label text="labels.3d.y_axis"/>
+							<value id="cposy" sline="true"/>
+						</vbox>
+
+						<knob id="cposz" scolor="blue" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<label text="labels.3d.z_axis"/>
+							<value id="cposz" sline="true"/>
+						</vbox>
+
+						<knob id="cyaw" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<label text="labels.3d.yaw"/>
+							<value id="cyaw" sline="true"/>
+						</vbox>
+
+						<knob id="cpitch" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<label text="labels.3d.pitch"/>
+							<value id="cpitch" sline="true"/>
+						</vbox>
+
+						<load id="ifn" progress.id="ifp" status=":ifs" fill="false" format="obj3d" path.id="_ui_dlg_model3d_path" pad.v="4"/>
+
+					</grid>
+				</vbox>
+
+				<!-- Sample editors -->
+				<ui:for id="i" first="0" last="7">
+					<vbox>
+						<asample expand="true"
+							mesh_id="ifd_${i}" path_id="_ui_dlg_ir_path"
+							hcut=":ihc_${i}" tcut=":itc_${i}"
+							fadein=":ifi_${i}" fadeout=":ifo_${i}"
+							length=":ifl_${i}"
+							status=":ifs_${i}"
+							width.min="340" height.min="210"
+							active="false" pointer="arrow" />
+
+						<grid rows="4" cols="9" bg.color="bg_schema">
+							<!-- r1 -->
+							<ui:with pad.h="6" vreduce="true">
+								<label text="labels.sedit.head_cut"/>
+								<label text="labels.sedit.tail_cut"/>
+								<label text="labels.sedit.fade_in"/>
+								<label text="labels.sedit.fade_out"/>
+								<label text="labels.sedit.makeup"/>
+								<cell cols="2"><label/></cell>
+							</ui:with>
+
+							<cell rows="4"><vsep pad.h="2" hreduce="true" bg.color="bg"/></cell>
+							<align halign="-1" valign="1">
+								<label text="labels.export" pad.h="6" vreduce="true" height="20" bg.color="bg_schema_name"/>
+							</align>
+
+							<!-- r2 -->
+							<cell cols="7"><hsep bg.color="bg" pad.v="2" vreduce="true"/></cell>
+							<cell rows="3"><save id="ofn_${i}" command.id="ofc_${i}" progress.id="ofp_${i}" status=":ofs_${i}" fill="false" format="wav,lspc,all" path.id="_ui_dlg_sample_path" pad.v="4" pad.h="6"/></cell>
+
+							<!-- r3 -->
+							<ui:with pad.h="6" pad.v="4">
+								<knob id="ihc_${i}" size="20"/>
+								<knob id="itc_${i}" size="20"/>
+								<knob id="ifi_${i}" size="20" scolor="fade_in"/>
+								<knob id="ifo_${i}" size="20" scolor="fade_out"/>
+								<knob id="imkp_${i}" size="20" scolor="fade_out"/>
+							</ui:with>
+							<cell rows="2"><vsep pad.h="2" hreduce="true" bg.color="bg"/></cell>
+							<cell rows="2">
+								<vbox fill="false" spacing="6">
+									<button id="irv_${i}" text="labels.sedit.reverse" size="19" ui:inject="Button_cyan" toggle="false"/>
+									<button id="ils_${i}" text="labels.listen" height="19" hfill="true" ui:inject="Button_yellow" toggle="false"/>
+								</vbox>
+							</cell>
+
+							<!-- r4 -->
+							<ui:with pad.h="6" pad.b="4" width.min="48" sline="true">
+								<value id="ihc_${i}"/>
+								<value id="itc_${i}"/>
+								<value id="ifi_${i}"/>
+								<value id="ifo_${i}"/>
+								<value id="imkp_${i}" sline="true"/>
+							</ui:with>
+						</grid>
+					</vbox>
+				</ui:for>
+			</cgroup>
+		</cell>
+		<cell rows="5"><void bg.color="bg" width="4" hreduce="true"/></cell>
+
+		<cgroup id="editor" width.min="498" height.min="214">
+
+			<!-- 1 Source editor -->
+			<vbox>
+				<hbox spacing="4" pad.h="6" pad.v="4">
+					<align halign="-1">
+						<hbox spacing="4" fill="false">
+							<label text="labels.source:"/>
+							<combo id="ssel" width="20" pad.r="8"/>
+							<label text="labels.3d.shape"/>
+							<combo id="sscf[ssel]" width="20" pad.r="8"/>
+						</hbox>
+					</align>
+					<align halign="1">
+						<hbox spacing="8" fill="false">
+							<button text="labels.src.enabled" id="sse[ssel]" size="16" led="true" ui:inject="Button_green" hue_id="ssh[ssel]"/>
+							<button text="labels.signal.phase_invert" id="ssph[ssel]" size="16" led="true" ui:inject="Button_cyan" hue_id="ssh[ssel]"/>
+						</hbox>
+					</align>
+				</hbox>
+
+				<grid rows="4" cols="13" expand="true">
+					<cell cols="13"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+					<cell rows="3">
+						<vbox width.min="36" pad.h="6" pad.v="4">
+							<label text="labels.obj.hue"/>
+							<knob id="ssh[ssel]" size="16" scolor.hue=":ssh[ssel]"/>
+							<value id="ssh[ssel]"/>
+						</vbox>
+					</cell>
+
+					<cell rows="3"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<knob id="sspx[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.x_axis"/>
+						<value id="sspx[ssel]" sline="true"/>
+					</vbox>
+					<knob id="sspy[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.y_axis"/>
+						<value id="sspy[ssel]" sline="true"/>
+					</vbox>
+					<knob id="sspz[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.z_axis"/>
+						<value id="sspz[ssel]" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" hreduce="true" bg.color="bg"/>
+
+					<knob id="ssa[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.angle"/>
+						<value id="ssa[ssel]" sline="true"/>
+					</vbox>
+					<knob id="sss[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.size"/>
+						<value id="sss[ssel]" sline="true"/>
+					</vbox>
+
+					<cell cols="11"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<knob id="ssay[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.yaw"/>
+						<value id="ssay[ssel]" sline="true"/>
+					</vbox>
+					<knob id="ssap[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.pitch"/>
+						<value id="ssap[ssel]" sline="true"/>
+					</vbox>
+
+					<knob id="ssar[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":ssh[ssel]"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.roll"/>
+						<value id="ssar[ssel]" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" hreduce="true" bg.color="bg"/>
+
+					<ui:with bg.bright="((:sscf[ssel] ieq 5) or (:sscf[ssel] ieq 6) or (:sscf[ssel] ieq 10)) ? 1.0 : :const_bg_darken">
+						<knob id="shh[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor="((:sscf[ssel] ieq 5) or (:sscf[ssel] ieq 6) or (:sscf[ssel] ieq 10)) ? 'kscale' : 'kscale_inactive'" scolor.hue=":ssh[ssel]"/>
+						<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+							<ui:with bright="((:sscf[ssel] ieq 5) or (:sscf[ssel] ieq 6) or (:sscf[ssel] ieq 10)) ? 1.0 : 0.75">
+								<label text="labels.3d.height"/>
+								<value id="shh[ssel]" sline="true"/>
+							</ui:with>
+						</vbox>
+					</ui:with>
+					<ui:with bg.bright="((:sscf[ssel] ieq 10) or (:sscf[ssel] ieq 11)) ? 1.0 : :const_bg_darken">
+						<knob id="sscv[ssel]" size="16" ssize="3" pad.l="6" pad.v="4" scolor="((:sscf[ssel] ieq 10) or (:sscf[ssel] ieq 11)) ? 'kscale' : 'kscale_inactive'" scolor.hue=":ssh[ssel]"/>
+						<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+							<ui:with bright="((:sscf[ssel] ieq 10) or (:sscf[ssel] ieq 11)) ? 1.0 : 0.75">
+								<label text="labels.3d.curvature"/>
+								<value id="sscv[ssel]" sline="true"/>
+							</ui:with>
+						</vbox>
+					</ui:with>
+				</grid>
+			</vbox>
+
+			<!-- 2 Capture editor -->
+			<vbox>
+
+				<vbox>
+					<hbox spacing="4" pad.h="6" pad.v="4">
+						<align halign="-1">
+							<hbox spacing="4" fill="false">
+								<label text="labels.capture:"/>
+								<combo id="csel" width="20" pad.r="8"/>
+								<label text="labels.mode"/>
+								<combo id="sccf[csel]" pad.r="8"/>
+								<label text="labels.reflections"/>
+								<combo id="scf[csel]"/>
+								<label text=" - "/>
+								<combo id="scl[csel]" pad.r="8"/>
+							</hbox>
+						</align>
+
+						<align halign="1">
+							<hbox spacing="8" fill="false">
+								<button text="labels.src.enabled" id="sce[csel]" size="16" led="true" ui:inject="Button_green" hue_id="sch[csel]"/>
+							</hbox>
+						</align>
+					</hbox>
+
+					<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+
+					<hbox>
+						<align halign="-1">
+							<hbox >
+								<label text="labels.mic_rophone_direction" pad.l="6" pad.r="4"/>
+								<combo id="scmd[csel]" pad.r="8"/>
+							</hbox>
+						</align>
+						<align halign="1">
+							<hbox >
+								<ui:with pad.h="6" pad.v="4" bg.bright="(:sccf[csel] ieq 4) ? 1.0 : :const_bg_darken" bright="(:sccf[csel] ieq 4) ? 1.0 : 0.75">
+									<label text="labels.side_direction" pad.r="4"/>
+									<combo id="scsd[csel]"/>
+								</ui:with>
+							</hbox>
+						</align>
+					</hbox>
+				</vbox>
+
+				<grid rows="4" cols="13" expand="true">
+
+					<cell cols="13"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<cell rows="3">
+						<vbox width.min="36" pad.h="6" pad.v="4">
+							<label text="labels.obj.hue"/>
+							<knob id="sch[csel]" size="16" scolor.hue=":sch[csel]"/>
+							<value id="sch[csel]"/>
+						</vbox>
+					</cell>
+
+					<cell rows="3"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<knob id="scpx[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.x_axis"/>
+						<value id="scpx[csel]" sline="true"/>
+					</vbox>
+
+					<knob id="scpy[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+						<label text="labels.3d.y_axis"/>
+						<value id="scpy[csel]" sline="true"/>
+					</vbox>
+
+					<knob id="scpz[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.z_axis"/>
+						<value id="scpz[csel]" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" bg.color="bg" hreduce="true"/>
+
+					<knob id="sccs[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+						<label text="labels.capsule"/>
+						<value id="sccs[csel]" sline="true"/>
+					</vbox>
+
+					<cell rows="3"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell rows="3">
+
+						<ui:with bg.bright="(:sccf[csel] ieq 2) ? 1.0 : :const_bg_darken">
+							<vbox width.min="36" pad.h="6" pad.v="4">
+								<label text="labels.3d.distance" bright="(:sccf[csel] ieq 2) ? 1.0 : 0.75"/>
+								<knob id="scab[csel]" size="16" scolor.hue=":sch[csel]" scolor="(:sccf[csel] ieq 2) ? 'kscale' : 'kscale_inactive'"/>
+								<value id="scab[csel]" sline="true" bright="(:sccf[csel] ieq 2) ? 1.0 : 0.75"/>
+							</vbox>
+						</ui:with>
+					</cell>
+
+					<cell cols="9"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<knob id="scay[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+						<label text="labels.3d.yaw"/>
+						<value id="scay[csel]" sline="true"/>
+					</vbox>
+
+					<knob id="scap[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+						<label text="labels.3d.pitch"/>
+						<value id="scap[csel]" sline="true"/>
+					</vbox>
+
+					<knob id="scar[csel]" scolor.hue=":sch[csel]" size="16" ssize="3" pad.l="6" pad.v="4"/>
+					<vbox vfill="false" pad.r="6" pad.l="2">
+						<label text="labels.3d.roll"/>
+						<value id="scar[csel]" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" bg.color="bg" hreduce="true"/>
+
+					<ui:with bg.bright="((:sccf[csel] ieq 1) or (:sccf[csel] ieq 3)) ? 1.0 : :const_bg_darken">
+						<knob id="sca[csel]" scolor.hue=":sch[csel]" scolor="((:sccf[csel] ieq 1) or (:sccf[csel] ieq 3)) ? 'kscale' : 'kscale_inactive'" size="16" ssize="3" pad.l="6" pad.v="4"/>
+						<vbox vfill="false" width.min="36" pad.r="6" pad.l="2">
+							<ui:with bright="((:sccf[csel] ieq 1) or (:sccf[csel] ieq 3)) ? 1.0 : 0.75">
+								<label text="labels.3d.angle"/>
+								<value id="sca[csel]" sline="true"/>
+							</ui:with>
+						</vbox>
+					</ui:with>
+				</grid>
+
+			</vbox>
+
+			<!-- 3 Object editor -->
+			<vbox>
+				<hbox spacing="4" pad.h="6" pad.v="4">
+					<align halign="-1">
+						<hbox spacing="4" fill="false">
+							<label text="labels.obj.object:"/>
+							<combo id="_kvt_oid" width="192"/>
+						</hbox>
+					</align>
+					<align halign="1">
+						<hbox spacing="8" fill="false">
+							<button text="labels.obj.enabled" id="_kvt_enabled" size="16" led="true" ui:inject="Button_green" hue_id=":_kvt_hue"/>
+						</hbox>
+					</align>
+				</hbox>
+
+				<grid rows="4" cols="13" expand="true">
+					<cell cols="13"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+					<cell rows="3">
+						<vbox width.min="36" pad.h="6" pad.v="4">
+							<label text="labels.obj.hue"/>
+							<knob id="_kvt_hue" size="16" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_hue"/>
+						</vbox>
+					</cell>
+
+					<cell rows="3"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<knob id="_kvt_xpos" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.move_x"/>
+						<value id="_kvt_xpos" sline="true"/>
+					</vbox>
+					<knob id="_kvt_ypos" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.move_y"/>
+						<value id="_kvt_ypos" sline="true"/>
+					</vbox>
+					<knob id="_kvt_zpos" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.move_z"/>
+						<value id="_kvt_zpos" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" hreduce="true" bg.color="bg"/>
+
+					<cell rows="3" cols="4">
+						<grid rows="3" cols="3" transpose="true">
+
+							<label text="labels.3d.scale_x"/>
+							<knob id="_kvt_xscale" size="16" ssize="3" pad.v="4" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_xscale" width.min="36" pad.h="6" sline="true"/>
+
+							<label text="labels.3d.scale_y"/>
+							<knob id="_kvt_yscale" size="16" ssize="3" pad.v="4" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_yscale" width.min="36" pad.h="6" sline="true"/>
+
+							<label text="labels.3d.scale_z"/>
+							<knob id="_kvt_zscale" size="16" ssize="3" pad.v="4" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_zscale" width.min="36" pad.h="6" sline="true"/>
+						</grid>
+					</cell>
+
+					<cell cols="7"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<knob id="_kvt_yaw" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.yaw"/>
+						<value id="_kvt_yaw" sline="true"/>
+					</vbox>
+					<knob id="_kvt_pitch" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.pitch"/>
+						<value id="_kvt_pitch" sline="true"/>
+					</vbox>
+
+					<knob id="_kvt_roll" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<vbox vfill="false" width.min="44" pad.r="6" pad.l="2">
+						<label text="labels.3d.roll"/>
+						<value id="_kvt_roll" sline="true"/>
+					</vbox>
+
+					<vsep pad.h="2" hreduce="true" bg.color="bg"/>
+
+				</grid>
+			</vbox>
+
+			<!-- 4 Material editor -->
+			<vbox>
+				<!-- Object selector -->
+
+				<hbox spacing="4" pad.h="6" pad.v="4">
+					<align halign="-1">
+						<hbox spacing="4" fill="false">
+							<label text="labels.obj.object:"/>
+							<combo id="_kvt_oid" width.min="75" pad.r="8"/>
+							<label text="labels.material.material_preset:"/>
+							<combo ui:id="mpreset" width="20" pad.r="8"/>
+						</hbox>
+					</align>
+					<align halign="1">
+						<hbox spacing="8" fill="false">
+							<button text="labels.obj.enabled" id="_kvt_enabled" size="16" led="true" ui:inject="Button_green" hue_id=":_kvt_hue"/>
+						</hbox>
+					</align>
+				</hbox>
+
+				<grid rows="8" cols="15" expand="true">
+					<!-- r1 -->
+					<cell cols="15"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<!-- r2 -->
+					<cell rows="7">
+						<vbox width.min="36" pad.v="4">
+
+							<label text="labels.obj.hue"/>
+							<knob id="_kvt_hue" pad.v="4" size="16" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_hue" pad.b="4"/>
+							<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+							<label text="labels.material.sound_speed" pad.h="6" pad.t="4"/>
+							<knob id="_kvt_speed" pad.v="4" size="16" scale_hue="0" scolor.hue=":_kvt_hue"/>
+							<value id="_kvt_speed" sline="true"/>
+						</vbox>
+					</cell>
+
+					<cell rows="7"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell cols="2"><label/></cell>
+
+					<cell cols="2" vreduce="true">
+						<hbox spacing="4" pad.v="4" pad.h="6" vreduce="true">
+							<label text="labels.material.absorption"/>
+							<label text="labels.units.:pc"/>
+						</hbox>
+					</cell>
+
+					<vsep pad.h="2" bg.color="bg" hreduce="true"/>
+
+					<cell cols="2">
+						<hbox spacing="4" pad.v="4" pad.h="6" vreduce="true">
+							<label text="labels.material.transparency"/>
+							<label text="labels.units.:pc"/>
+						</hbox>
+					</cell>
+
+					<vsep pad.h="2" bg.color="bg" hreduce="true"/>
+
+					<cell cols="2"><label text="labels.material.dispersion" pad.v="4" pad.h="6" vreduce="true"/></cell>
+
+					<vsep pad.h="2" bg.color="bg" hreduce="true"/>
+
+					<cell cols="2"><label text="labels.material.diffusion" pad.v="4" pad.h="6" vreduce="true"/></cell>
+
+					<!-- r3 -->
+
+					<cell cols="13"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<!-- r4 -->
+					<label text="labels.material.link" pad.h="6" vreduce="true"/>
+
+					<cell rows="5"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell cols="2"><button id="_kvt_labs" text="labels.material.link" ui:inject="Button_cyan_8" fill="true" pad.h="6" width="62" pad.v="4"/></cell>
+
+					<cell rows="5"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell cols="2"><button id="_kvt_ltransp" text="labels.material.link" ui:inject="Button_cyan_8" fill="true" pad.h="6" width="62" pad.v="4"/></cell>
+
+					<cell rows="5"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell cols="2"><button id="_kvt_ldisp" text="labels.material.link" ui:inject="Button_cyan_8" fill="true" pad.h="6" width="62" pad.v="4"/></cell>
+
+					<cell rows="5"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+
+					<cell cols="2"><button id="_kvt_ldiff" text="labels.material.link" ui:inject="Button_cyan_8" fill="true" pad.h="6" width="62" pad.v="4"/></cell>
+
+					<!-- r5 -->
+
+					<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+					<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+					<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+					<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+					<cell cols="2"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+
+					<!-- r6 -->
+
+					<label text="labels.material.out_to_in" pad.h="6"/>
+
+					<knob id="_kvt_oabs" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_oabs" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_otransp" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_otransp" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_odisp" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_odisp" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_odiff" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_odiff" pad.h="6" detailed="false" width.min="28"/>
+
+					<!-- r7 -->
+
+					<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+					<cell cols="2">
+						<vbox>
+							<hsep pad.v="2" bg.color="bg" vreduce="true" visibility=":_kvt_labs ieq 0"/>
+							<void bg.color="bg_schema" height="4" vreduce="true" visibility=":_kvt_labs ine 0"/>
+						</vbox>
+					</cell>
+					<cell cols="2">
+						<vbox>
+							<hsep pad.v="2" bg.color="bg" vreduce="true" visibility=":_kvt_ltransp ieq 0"/>
+							<void bg.color="bg_schema" height="4" vreduce="true" visibility=":_kvt_ltransp ine 0"/>
+						</vbox>
+					</cell>
+					<cell cols="2">
+						<vbox>
+							<hsep pad.v="2" bg.color="bg" vreduce="true" visibility=":_kvt_ldisp ieq 0"/>
+							<void bg.color="bg_schema" height="4" vreduce="true" visibility=":_kvt_ldisp ine 0"/>
+						</vbox>
+					</cell>
+					<cell cols="2">
+						<vbox>
+							<hsep pad.v="2" bg.color="bg" vreduce="true" visibility=":_kvt_ldiff ieq 0"/>
+							<void bg.color="bg_schema" height="4" vreduce="true" visibility=":_kvt_ldiff ine 0"/>
+						</vbox>
+					</cell>
+
+					<!-- r8 -->
+					<label text="labels.material.in_to_out" pad.h="6"/>
+					<knob id="_kvt_iabs" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_iabs" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_itransp" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_itransp" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_idisp" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_idisp" pad.h="6" detailed="false" width.min="28"/>
+
+					<knob id="_kvt_idiff" size="16" ssize="3" pad.l="6" pad.v="4" scolor.hue=":_kvt_hue"/>
+					<value id="_kvt_idiff" pad.h="6" detailed="false" width.min="28"/>
+
+				</grid>
+			</vbox>
+
+		</cgroup>
+		<!-- r4 -->
+		<void bg.color="bg" height="4" vreduce="true"/>
+		<!-- r5 -->
+		<!-- Rendering -->
+		<group text="groups.rendering" ipad="0" vreduce="true">
+
+			<grid rows="5" cols="4" transpose="true" vreduce="true">
+
+				<label text="labels.status" pad.h="6" pad.v="4"/>
+				<cell cols="2"><hsep pad.v="2" vreduce="true" bg.color="bg"/></cell>
+				<label text="labels.quality" pad.h="6" pad.v="4"/>
+				<cell cols="2"><hsep pad.v="2" vreduce="true" bg.color="bg"/></cell>
+				<label text="labels.progress" pad.h="6" pad.v="4"/>
+
+				<status id="status"/>
+				<hbox>
+					<fader id="quality" angle="0" fill="true" expand="true"/>
+					<value id="quality" sline="true" pad.l="4" pad.r="6"/>
+				</hbox>
+				<progress id="prog" hexpand="true" bg.color="bg_schema" pad.r="6" pad.v="4"/>
+
+				<cell rows="5"><vsep pad.h="2" hreduce="true" bg.color="bg"/></cell>
+
+				<hbox pad.h="6" pad.v="4" spacing="4">
+					<label text="labels.threads"/>
+					<threadcombo id="threads" width="32"/>
+				</hbox>
+
+				<void/>
+
+				<button id="normal" text="labels.normalize" ui:inject="Button_yellow" height="19" fill="true" pad.h="6" pad.v="4"/>
+
+				<void/>
+
+				<vbox pad.h="6" pad.v="4" spacing="4">
+					<button id="render" text="labels.launch" ui:inject="Button_green" height="19" fill="true" visibility=":status ine 3"/>
+					<button id="render" text="labels.stop" ui:inject="Button_green" height="19" fill="true" visibility=":status ieq 3"/>
+				</vbox>
+
+			</grid>
+
+		</group>
+
+		<!-- r6 -->
+		<void bg.color="bg" height="4" vreduce="true"/>
+		<!-- r7 -->
+		<!-- Output -->
+		<group text="groups.output" ipad="0">
+			<grid rows="4" cols="7" expand="true" fill="true">
+				<!-- r1 -->
+				<label text="labels.signal.dry_pan" vreduce="true" pad.v="4"/>
+				<cell rows="4"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+				<label text="labels.predelay"/>
+				<cell rows="4"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
+				<label text="labels.signal.dry"/>
+				<label text="labels.signal.wet"/>
+				<label text="labels.output"/>
+				<!-- r2 -->
+				<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+				<hsep pad.v="2" bg.color="bg" vreduce="true"/>
+				<cell cols="3"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+				<!-- r3 -->
+
+				<ui:with pad.h="6" pad.v="4">
+					<knob id="p" scolor="balance"/>
+					<knob id="pd"/>
+					<knob id="dry" scolor="yellow"/>
+					<knob id="wet" scolor="yellow"/>
+					<knob id="g_out"/>
+				</ui:with>
+				<!-- r4 -->
+				<ui:with width.min="36" pad.h="6" pad.b="4">
+					<value id="p"/>
+					<value id="pd"/>
+					<value id="dry"/>
+					<value id="wet"/>
+					<value id="g_out"/>
+				</ui:with>
+			</grid>
+		</group>
+
+		<!-- r8 -->
+		<cell cols="3"><void bg.color="bg" height="4" vreduce="true"/></cell>
+		<!-- r9 -->
+		<cell cols="3">
+			<!-- IR routing -->
+			<cgroup id="signal">
+				<grid rows="7" cols="19" expand="true">
+					<!-- r1 -->
+					<ui:with pad.h="6" pad.v="4" vreduce="true">
+						<label text="labels.specials.num"/>
+						<cell rows="7"><vsep bg.color="bg" pad.v="6" pad.h="2" hreduce="true"/></cell>
+						<label text="labels.predelay"/>
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+						<cell cols="2"><label text="labels.source"/></cell>
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+						<label text="labels.makeup"/>
+						<label text="labels.signal.out_lr"/>
+
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+
+						<label text="labels.specials.num"/>
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+						<label text="labels.predelay"/>
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+						<cell cols="2"><label text="labels.source"/></cell>
+						<cell rows="7"><vsep bg.color="bg" pad.v="0" pad.h="2" hreduce="true"/></cell>
+						<label text="labels.makeup"/>
+						<label text="labels.signal.out_lr"/>
+					</ui:with>
+
+					<!-- r3 -->
+					<ui:for id="i" first="0" last="1">
+						<!-- r2 r5 -->
+						<ui:with bg.color="bg" pad.v="2" vreduce="true">
+							<hsep/>
+							<hsep/>
+							<cell cols="2"><hsep/></cell>
+							<cell cols="2"><hsep/></cell>
+							<hsep/>
+							<hsep/>
+							<cell cols="2"><hsep/></cell>
+							<cell cols="2"><hsep/></cell>
+						</ui:with>
+
+						<!-- r3 r6 -->
+						<ui:with pad.h="6" pad.v="4">
+							<label text="labels.specials.idx" text:id="${i}" vreduce="true"/>
+							<knob id="pd${i}" size="20"/>
+							<cell cols="2" pad="0">
+								<vbox spacing="2" pad="0">
+									<combo id="csf${i}" fill="true" pad.t="4" pad.b="0"/>
+									<combo id="cst${i}" fill="true"/>
+								</vbox>
+							</cell>
+							<knob id="mk${i}" size="20"/>
+							<knob id="com${i}" size="20"/>
+
+							<label text="labels.specials.idx" text:id="${:i+2}" vreduce="true"/>
+							<knob id="pd${:i+2}" size="20"/>
+							<cell cols="2" pad="0">
+								<vbox spacing="2" pad="0">
+									<combo id="csf${:i+2}" fill="true" pad.t="4" pad.b="0"/>
+									<combo id="cst${:i+2}" fill="true"/>
+								</vbox>
+							</cell>
+							<knob id="mk${:i+2}" size="20"/>
+							<knob id="com${:i+2}" size="20"/>
+						</ui:with>
+
+						<!-- r4 r7 -->
+						<ui:with pad.h="6" pad.b="4">
+							<label/>
+							<value id="pd${i}" width.min="48" sline="true"/>
+							<button id="cam${:i}" text="labels.chan.mute" size="10" ui:inject="Button_red_8" width.min="45"/>
+							<hbox fill="false" pad.l="0" pad.r="6" spacing="4"><led id="ca${i}" size="10" pad="0"/>
+								<label text="labels.active" pad="0"/>
+							</hbox>
+							<value id="mk${i}" width.min="48" sline="true"/>
+							<value id="com${i}" width.min="38" sline="true"/>
+
+							<label/>
+							<value id="pd${:i+2}" width.min="48" sline="true"/>
+							<button id="cam${:i+2}" text="labels.chan.mute" size="10" ui:inject="Button_red_8" width.min="45"/>
+							<hbox fill="false" pad.l="0" pad.r="6" spacing="4"><led id="ca${:i+2}" size="10" pad="0"/>
+								<label text="labels.active" pad="0"/>
+							</hbox>
+							<value id="mk${:i+2}" width.min="48" sline="true"/>
+							<value id="com${:i+2}" width.min="38" sline="true"/>
+						</ui:with>
+					</ui:for>
+				</grid>
+
+				<!-- Equalizer -->
+				<grid rows="5" cols="12" height.min="194">
+
+					<label text="labels.flt.low_cut" pad.h="6" pad.v="4" bright="(:wpp) ? 1 : 0.5" bg.bright="(:wpp) ? 1 : :const_bg_darken"/>
+					<cell rows="5"><vsep bg.color="bg" pad.h="2" hreduce="true"/></cell>
+					<ui:with pad.h="6" pad.v="4" bright="(:wpp) ? 1 : 0.5" bg.bright="(:wpp) ? 1 : :const_bg_darken">
+						<label text="50"/>
+						<label text="107"/>
+						<label text="227"/>
+						<label text="484"/>
+						<label text="labels.flt.1k"/>
+						<label text="labels.flt.2_2k"/>
+						<label text="labels.flt.4_7k"/>
+						<label text="labels.flt.10k"/>
+					</ui:with>
+					<cell rows="5">
+						<vsep bg.color="bg" pad.h="2" hreduce="true"/>
+					</cell>
+					<ui:with pad.h="6" pad.v="4" bright="(:wpp) ? 1 : 0.5" bg.bright="(:wpp) ? 1 : :const_bg_darken">
+						<label text="labels.flt.high_cut"/>
+
+						<combo id="lcm" fill="false"/>
+						<ui:for id="f" first="0" last="7">
+							<cell rows="3">
+								<fader id="eq_${f}" angle="1" scolor="(:wpp) ? 'fader' : 'fader_inactive'"/>
+							</cell>
+						</ui:for>
+						<combo id="hcm" fill="false"/>
+
+						<label text="labels.frequency"/>
+						<label text="labels.frequency"/>
+
+						<knob id="lcf" scolor="(:wpp) ? 'kscale' : 'kscale_inactive'"/>
+						<knob id="hcf" scolor="(:wpp) ? 'kscale' : 'kscale_inactive'"/>
+
+						<value id="lcf"/>
+						<ui:for id="f" first="0" last="7">
+							<value width.min="32" id="eq_${f}" bright="(:wpp) ? 1 : 0.5"/>
+						</ui:for>
+						<value id="hcf"/>
+					</ui:with>
+				</grid>
+			</cgroup>
+		</cell>
+
+	</grid>
+</plugin>
