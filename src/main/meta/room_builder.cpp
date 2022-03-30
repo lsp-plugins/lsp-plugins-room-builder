@@ -483,7 +483,7 @@ namespace lsp
             "Room Builder",
             B_CONVOLUTION,
             "J-ruYw9TwCE",
-            "This plugin allows to simulate impulse response of any modelled room or space.\nThe basic principle is based on generating of unit audio impulse and then\ncapturing all it's reflections from environment by special capturing objects\nthat simulate microphone capsules. So, in fact, this algorithm is a kind of\nraytracing algorithm but instead of single rays it performs tracing of ray\ngroups. This allows to simulate large spaces withous significant loosing\nof quality and precision."
+            "This plugin allows one to simulate impulse response of any modelled room or space.\nThe basic principle is based on generating of unit audio impulse and then\ncapturing all it's reflections from environment by special capturing objects\nthat simulate microphone capsules. So, in fact, this algorithm is a kind of\nraytracing algorithm but instead of single rays it performs tracing of ray\ngroups. This allows one to simulate large spaces without significant loosing\nof quality and precision."
         };
 
         const meta::plugin_t  room_builder_mono =
