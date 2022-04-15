@@ -412,7 +412,7 @@ namespace lsp
             pSelected   = pUI->wrapper()->port(selected);
 
             // Fetch widget
-            pCBox       = tk::widget_cast<tk::ComboBox>(pUI->wrapper()->controller()->widgets()->find("mpreset"));
+            pCBox       = tk::widget_cast<tk::ComboBox>(pUI->wrapper()->controller()->widgets()->find(preset));
 
             // Initialize list of presets
             tk::ListBoxItem *li;
