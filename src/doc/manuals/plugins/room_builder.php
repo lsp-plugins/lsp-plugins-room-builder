@@ -16,7 +16,7 @@
 </p>
 <p>The typical simulation workflow is peformed in the following way:</p>
 <ul>
-	<li>Prepare a room model in <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">Wavefont OBJ file format</a>.</li>
+	<li>Prepare a room model in <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">Wavefront OBJ file format</a>.</li>
 	<li>Load room model in the plugin's main window.</li>
 	<li>Edit environment settings like: audio sources, audio captures, objects' spacial parameters and material properties.</li>
 	<li>Launch the rendering process which will simulate physical processes and generate the impulse response of the room.</li>

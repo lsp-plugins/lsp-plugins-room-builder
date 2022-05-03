@@ -2,5 +2,12 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.3 ===
+* Updated plugin metadata (contributed by Dennis Braun).
+* Fixed typo in Wavefront Object File Format name.
+* Updated dependencies and build scripts.
+* Updated build scripts and dependencies.
+
 === 1.0.2 ===
 * Initial release.
+

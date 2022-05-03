@@ -40,7 +40,6 @@ namespace lsp
                     protected:
                         room_builder_ui    *pUI;
                         const char         *sPattern;
-                        osc::pattern_t      sOscPattern;
                         float               fValue;
 
                     public:
@@ -51,8 +50,6 @@ namespace lsp
                         virtual float       value();
                         virtual void        set_value(float value);
                         virtual bool        changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value);
-                        virtual bool        match(const char *id);
-                        virtual const char *name();
                 };
 
                 class CtlListPort: public ui::IPort, public ui::IKVTListener
@@ -64,7 +61,6 @@ namespace lsp
                         size_t                      nCapacity;
                         size_t                      nItems;
                         lltl::parray<ui::IPort>     vKvtPorts;
-                        osc::pattern_t              sOscPattern;
                         ssize_t                     nSelectedReq;
 
                     protected:
@@ -78,8 +74,6 @@ namespace lsp
                         virtual float       value();
                         virtual void        set_value(float value);
                         virtual bool        changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value);
-                        virtual bool        match(const char *id);
-                        virtual const char *name();
 
                         void                add_port(ui::IPort *port);
                 };

@@ -88,9 +88,6 @@ namespace lsp
             pUI         = ui;
             sPattern    = pattern;
 
-            char name[0x100];
-            ::sprintf(name, "/scene/object/*/%s", sPattern);
-            osc::pattern_create(&sOscPattern, name);
             fValue      = default_value();
         }
 
@@ -98,13 +95,6 @@ namespace lsp
         {
             pUI         = NULL;
             sPattern    = NULL;
-            osc::pattern_destroy(&sOscPattern);
-        }
-
-        const char *room_builder_ui::CtlFloatPort::name()
-        {
-            const char *format = NULL;
-            return (osc::pattern_get_format(&sOscPattern, &format) == STATUS_OK) ? format : NULL;
         }
 
         float room_builder_ui::CtlFloatPort::value()
@@ -158,11 +148,6 @@ namespace lsp
             }
         }
 
-        bool room_builder_ui::CtlFloatPort::match(const char *id)
-        {
-            return (osc::pattern_match(&sOscPattern, id) == STATUS_OK);
-        }
-
         bool room_builder_ui::CtlFloatPort::changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value)
         {
             char name[0x100];
@@ -186,8 +171,6 @@ namespace lsp
             nCapacity   = 0;
             pItems      = NULL;
             nSelectedReq= -1;
-
-            osc::pattern_create(&sOscPattern, "/scene/object/*/name");
         }
 
         room_builder_ui::CtlListPort::~CtlListPort()
@@ -207,13 +190,6 @@ namespace lsp
                 ::free(pItems);
                 pItems      = NULL;
             }
-
-            osc::pattern_destroy(&sOscPattern);
-        }
-
-        const char *room_builder_ui::CtlListPort::name()
-        {
-            return "/scene/objects";
         }
 
         float room_builder_ui::CtlListPort::value()
@@ -285,15 +261,6 @@ namespace lsp
             // If all is bad, do this
             if (*v == NULL)
                 *v  = const_cast<char *>(UNNAMED_STR);
-        }
-
-        bool room_builder_ui::CtlListPort::match(const char *id)
-        {
-            if (!strcmp(id, "/scene/objects"))
-                return true;
-            if (!strcmp(id, "/scene/selected"))
-                return true;
-            return osc::pattern_match(&sOscPattern, id);
         }
 
         bool room_builder_ui::CtlListPort::changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value)
@@ -412,7 +379,7 @@ namespace lsp
             pSelected   = pUI->wrapper()->port(selected);
 
             // Fetch widget
-            pCBox       = tk::widget_cast<tk::ComboBox>(pUI->wrapper()->controller()->widgets()->find("mpreset"));
+            pCBox       = tk::widget_cast<tk::ComboBox>(pUI->wrapper()->controller()->widgets()->find(preset));
 
             // Initialize list of presets
             tk::ListBoxItem *li;
@@ -672,7 +639,7 @@ namespace lsp
 
             CtlFloatPort *p;
 
-    #define BIND_KVT_PORT(pattern, field)    \
+    #define BIND_KVT_PORT(pattern)    \
             p = new CtlFloatPort(this, pattern, meta++); \
             if (p == NULL) \
                 return STATUS_NO_MEM; \
@@ -680,30 +647,30 @@ namespace lsp
             pWrapper->bind_custom_port(p); \
             pWrapper->kvt_subscribe(p);
 
-            BIND_KVT_PORT("enabled", fEnabled);
-            BIND_KVT_PORT("position/x", sPos.x);
-            BIND_KVT_PORT("position/y", sPos.y);
-            BIND_KVT_PORT("position/z", sPos.z);
-            BIND_KVT_PORT("rotation/yaw", fYaw);
-            BIND_KVT_PORT("rotation/pitch", fPitch);
-            BIND_KVT_PORT("rotation/roll", fRoll);
-            BIND_KVT_PORT("scale/x", fSizeX);
-            BIND_KVT_PORT("scale/y", fSizeY);
-            BIND_KVT_PORT("scale/z", fSizeZ);
-            BIND_KVT_PORT("color/hue", fHue);
-            BIND_KVT_PORT("material/absorption/outer", fAbsorption[0]);
-            BIND_KVT_PORT("material/absorption/inner", fAbsorption[1]);
-            BIND_KVT_PORT("material/absorption/link", lnkAbsorption);
-            BIND_KVT_PORT("material/dispersion/outer", fDispersion[0]);
-            BIND_KVT_PORT("material/dispersion/inner", fDispersion[1]);
-            BIND_KVT_PORT("material/dispersion/link", lnkDispersion);
-            BIND_KVT_PORT("material/diffusion/outer", fDiffusion[0]);
-            BIND_KVT_PORT("material/diffusion/inner", fDiffusion[1]);
-            BIND_KVT_PORT("material/diffusion/link", lnkDiffusion);
-            BIND_KVT_PORT("material/transparency/outer", fTransparency[1]);
-            BIND_KVT_PORT("material/transparency/inner", fTransparency[1]);
-            BIND_KVT_PORT("material/transparency/link", lnkTransparency);
-            BIND_KVT_PORT("material/sound_speed", fSndSpeed);
+            BIND_KVT_PORT("enabled");
+            BIND_KVT_PORT("position/x");
+            BIND_KVT_PORT("position/y");
+            BIND_KVT_PORT("position/z");
+            BIND_KVT_PORT("rotation/yaw");
+            BIND_KVT_PORT("rotation/pitch");
+            BIND_KVT_PORT("rotation/roll");
+            BIND_KVT_PORT("scale/x");
+            BIND_KVT_PORT("scale/y");
+            BIND_KVT_PORT("scale/z");
+            BIND_KVT_PORT("color/hue");
+            BIND_KVT_PORT("material/absorption/outer");
+            BIND_KVT_PORT("material/absorption/inner");
+            BIND_KVT_PORT("material/absorption/link");
+            BIND_KVT_PORT("material/dispersion/outer");
+            BIND_KVT_PORT("material/dispersion/inner");
+            BIND_KVT_PORT("material/dispersion/link");
+            BIND_KVT_PORT("material/diffusion/outer");
+            BIND_KVT_PORT("material/diffusion/inner");
+            BIND_KVT_PORT("material/diffusion/link");
+            BIND_KVT_PORT("material/transparency/outer");
+            BIND_KVT_PORT("material/transparency/inner");
+            BIND_KVT_PORT("material/transparency/link");
+            BIND_KVT_PORT("material/sound_speed");
 
             sAbsorption.init(UI_KVT_PORT_PREFIX "oabs", UI_KVT_PORT_PREFIX "iabs", UI_KVT_PORT_PREFIX "labs");
             sTransparency.init(UI_KVT_PORT_PREFIX "otransp", UI_KVT_PORT_PREFIX "itransp", UI_KVT_PORT_PREFIX "ltransp");
