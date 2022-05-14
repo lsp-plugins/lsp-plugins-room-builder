@@ -1,0 +1,7 @@
+{
+	"room_builder": {
+		"name": "Room Builder",
+		"description": "Das Plugin erlaubt das Simulieren einer Impulsantwort jedes erdenklichen Raumes.\nDas zu Grunde liegende Prinzip basiert auf dem \nGenerieren von Audioimpulsen und dem anschließenden Aufzeichnen \nder Reflektionen der Umgebung durch Mikrofone. Man könnte \nsagen, es ist eine Art 'Raytracing'-Algorithmus aber anstatt \nvon einzelnen Strahlen werden Strahlengruppen simuliert. Das erlaubt \ndas Simulieren von großen Räumen ohne den Verlust von Qualität \noder Präzision."
+	}
+}
+
