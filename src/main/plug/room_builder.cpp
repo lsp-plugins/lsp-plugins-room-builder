@@ -2038,7 +2038,9 @@ namespace lsp
                 return STATUS_BAD_PATH;
 
             LSPString sp, lspc;
-            if ((!sp.set_utf8(path)) || (!lspc.set_ascii(".lspc")))
+            if (!sp.set_utf8(path))
+                return STATUS_NO_MEM;
+            if (!lspc.set_ascii(".lspc"))
                 return STATUS_NO_MEM;
 
             // Lock KVT storage
@@ -2055,9 +2057,9 @@ namespace lsp
             {
                 lspc::audio_parameters_t params;
                 params.channels         = hdr.channels;
-                params.sample_format    = (hdr.version & 1) ? LSPC_SAMPLE_FMT_F32BE : LSPC_SAMPLE_FMT_F32LE;
+                params.sample_format    = (hdr.version & 1) ? lspc::SAMPLE_FMT_F32BE : lspc::SAMPLE_FMT_F32LE;
                 params.sample_rate      = hdr.sample_rate;
-                params.codec            = LSPC_CODEC_PCM;
+                params.codec            = lspc::CODEC_PCM;
                 params.frames           = hdr.samples;
 
                 // Initialize sample array
