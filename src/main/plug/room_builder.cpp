@@ -20,14 +20,14 @@
  */
 
 #include <private/plugins/room_builder.h>
-#include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/common/endian.h>
-#include <lsp-plug.in/stdlib/stdio.h>
+#include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/dsp-units/misc/fade.h>
 #include <lsp-plug.in/fmt/lspc/lspc.h>
 #include <lsp-plug.in/fmt/lspc/AudioWriter.h>
+#include <lsp-plug.in/stdlib/stdio.h>
 
 #define TMP_BUF_SIZE            4096
 #define CONV_RANK               10
@@ -98,7 +98,7 @@ namespace lsp
         // 3D Scene loader
         void room_builder::SceneLoader::init(room_builder *base)
         {
-            pCore   = base;
+            pBuilder   = base;
             sScene.clear();
         }
 
@@ -117,16 +117,16 @@ namespace lsp
             status_t res = STATUS_UNSPECIFIED;
 
             // Load the scene file
-            if (pCore->p3DFile == NULL)
+            if (pBuilder->p3DFile == NULL)
                 res = STATUS_UNKNOWN_ERR;
             else if (::strlen(sPath) > 0)
             {
                 lsp_trace("Loading scene from %s", sPath);
 
                 // Load file from resources
-                io::IInStream *is = pCore->pWrapper->resources()->read_stream(sPath);
+                io::IInStream *is = pBuilder->pWrapper->resources()->read_stream(sPath);
                 if (is == NULL)
-                    return pCore->pWrapper->resources()->last_error();
+                    return pBuilder->pWrapper->resources()->last_error();
 
                 res = sScene.load(is);
                 status_t res2 = is->close();
@@ -144,7 +144,7 @@ namespace lsp
                 lsp_trace("Scene file name not specified");
 
             // Get KVT storage and deploy new values
-            core::KVTStorage *kvt = pCore->kvt_lock();
+            core::KVTStorage *kvt = pBuilder->kvt_lock();
             if (kvt == NULL)
                 return STATUS_UNKNOWN_ERR;
 
@@ -210,7 +210,7 @@ namespace lsp
             // Drop rare (unused) objects
             kvt_cleanup_objects(kvt, nobjs);
 
-            pCore->kvt_release();
+            pBuilder->kvt_release();
 
             return res;
         }
@@ -260,7 +260,7 @@ namespace lsp
         //-------------------------------------------------------------------------
         status_t room_builder::Configurator::run()
         {
-            return pBuilder->reconfigure(&sConfig);
+            return pBuilder->reconfigure();
         }
 
         //-------------------------------------------------------------------------
@@ -289,15 +289,36 @@ namespace lsp
         }
 
         //-------------------------------------------------------------------------
+        room_builder::GCTask::GCTask(room_builder *base)
+        {
+            pBuilder    = base;
+        }
+
+        room_builder::GCTask::~GCTask()
+        {
+            pBuilder    = NULL;
+        }
+
+        status_t room_builder::GCTask::run()
+        {
+            pBuilder->perform_gc();
+            return STATUS_OK;
+        }
+
+        void room_builder::GCTask::dump(dspu::IStateDumper *v) const
+        {
+            v->write("pBuilder", pBuilder);
+        }
+
+        //-------------------------------------------------------------------------
         room_builder::room_builder(const meta::plugin_t *metadata, size_t inputs):
             plug::Module(metadata),
             s3DLauncher(this),
             sConfigurator(this),
-            sSaver(this)
+            sSaver(this),
+            sGCTask(this)
         {
             nInputs         = inputs;
-            nReconfigReq    = 0;
-            nReconfigResp   = 0;
 
             nRenderThreads  = 0;
             fRenderQuality  = 0.5f;
@@ -306,6 +327,7 @@ namespace lsp
             fRenderProgress = 0.0f;
             fRenderCmd      = 0.0f;
             nFftRank        = 0;
+            pGCList         = NULL;
 
             nSceneStatus    = STATUS_UNSPECIFIED;
             fSceneProgress  = 0.0f;
@@ -406,7 +428,7 @@ namespace lsp
             // Initialize sources
             for (size_t i=0; i<meta::room_builder_metadata::SOURCES; ++i)
             {
-                source_t *src   = &vSources[i];
+                source_t *src       = &vSources[i];
 
                 src->bEnabled       = false;
                 src->enType         = dspu::RT_AS_TRIANGLE;
@@ -438,7 +460,9 @@ namespace lsp
             // Initialize captures
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
-                capture_t *cap  = &vCaptures[i];
+                capture_t *cap      = &vCaptures[i];
+
+                cap->sListen.init();
 
                 dsp::init_point_xyz(&cap->sPos, 0.0f, 1.0f, 0.0f);
                 cap->fYaw           = 0.0f;
@@ -466,14 +490,10 @@ namespace lsp
                 cap->fCurrLen       = 0.0f;
                 cap->fMaxLen        = 0.0f;
 
-                cap->nChangeReq     = 0;
-                cap->nChangeResp    = 0;
-                cap->bCommit        = false;
                 cap->bSync          = false;
                 cap->bExport        = false;
 
-                cap->pCurr          = NULL;
-                cap->pSwap          = NULL;
+                cap->pProcessed     = NULL;
 
                 for (size_t j=0; j<meta::room_builder_metadata::TRACKS_MAX; ++j)
                 {
@@ -822,39 +842,21 @@ namespace lsp
                 pData       = NULL;
             }
 
+            // Perform garbage collection
+            perform_gc();
+
             // Destroy captures
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *c    = &vCaptures[i];
-                if (c->pCurr != NULL)
-                {
-                    c->pCurr->destroy();
-                    delete c->pCurr;
-                    c->pCurr        = NULL;
-                }
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap        = NULL;
-                }
+                destroy_sample(c->pProcessed);
             }
 
             for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
             {
                 convolver_t *c  = &vConvolvers[i];
-                if (c->pCurr != NULL)
-                {
-                    c->pCurr->destroy();
-                    delete c->pCurr;
-                    c->pCurr    = NULL;
-                }
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap    = NULL;
-                }
+                destroy_convolver(c->pCurr);
+                destroy_convolver(c->pSwap);
 
                 c->sDelay.destroy();
             }
@@ -864,9 +866,43 @@ namespace lsp
             {
                 channel_t *c = &vChannels[i];
                 c->sEqualizer.destroy();
-                c->sPlayer.destroy(false);
+                dspu::Sample *gc_list = c->sPlayer.destroy(false);
+                destroy_gc_samples(gc_list);
                 c->vOut     = NULL;
                 c->vBuffer  = NULL;
+            }
+        }
+
+        void room_builder::destroy_sample(dspu::Sample * &s)
+        {
+            if (s == NULL)
+                return;
+
+            s->destroy();
+            delete s;
+            lsp_trace("Destroyed sample %p", s);
+            s = NULL;
+        }
+
+        void room_builder::destroy_convolver(dspu::Convolver * &c)
+        {
+            if (c == NULL)
+                return;
+
+            c->destroy();
+            delete c;
+            lsp_trace("Destroyed convolver %p", c);
+            c = NULL;
+        }
+
+        void room_builder::destroy_gc_samples(dspu::Sample *gc_list)
+        {
+            // Iterate over the list and destroy each sample in the list
+            while (gc_list != NULL)
+            {
+                dspu::Sample *next = gc_list->gc_next();
+                destroy_sample(gc_list);
+                gc_list = next;
             }
         }
 
@@ -888,7 +924,7 @@ namespace lsp
             if (rank != nFftRank)
             {
                 nFftRank            = rank;
-                sConfigurator.queue_launch();
+                sConfigurator.query_launch();
             }
 
             // Adjust size of scene and number of threads to render
@@ -1000,20 +1036,12 @@ namespace lsp
                     cap->fFadeOut       = fadeout;
                     cap->bReverse       = reverse;
 
-                    atomic_add(&cap->nChangeReq, 1);
-                    sConfigurator.queue_launch();
+                    sConfigurator.query_launch();
                 }
 
                 // Listen button pressed?
-                if (cap->pListen->value() >= 0.5f)
-                {
-                    size_t n_c = (cap->pCurr != NULL) ? cap->pCurr->channels() : 0;
-                    if (n_c > 0)
-                    {
-                        for (size_t j=0; j<2; ++j)
-                            vChannels[j].sPlayer.play(i, j % n_c, cap->fMakeup, 0);
-                    }
-                }
+                if (cap->pListen != NULL)
+                    cap->sListen.submit(cap->pListen->value());
             }
 
             // Adjust channel setup
@@ -1099,7 +1127,7 @@ namespace lsp
                 {
                     cv->nSampleID           = sampleid;
                     cv->nTrackID            = trackid;
-                    sConfigurator.queue_launch();
+                    sConfigurator.query_launch();
                 }
 
                 // Apply panning to each convolver
@@ -1193,14 +1221,194 @@ namespace lsp
                 vChannels[i].sBypass.init(sr);
                 vChannels[i].sEqualizer.set_sample_rate(sr);
             }
+
+            sConfigurator.query_launch();
         }
 
-        void room_builder::process(size_t samples)
+        void room_builder::process_render_requests()
         {
-            // Stage 1: Process reconfiguration requests and file events
-            sync_offline_tasks();
+            // The render signal is pending?
+            if ((nSync & SYNC_TOGGLE_RENDER) && (s3DLauncher.idle()) && (s3DLoader.idle()))
+            {
+                if (pExecutor->submit(&s3DLauncher))
+                {
+                    lsp_trace("Successfully submitted Render launcher task");
+                    nSync &= ~SYNC_TOGGLE_RENDER;       // Reset render request flag
+                }
+            }
+            else if (s3DLauncher.completed())
+            {
+                status_t res = s3DLauncher.code();
+                if (res != STATUS_OK)
+                {
+                    fRenderProgress = 0.0f;
+                    enRenderStatus  = s3DLauncher.code();
+                }
+                s3DLauncher.reset();
+            }
+        }
 
-            // Stage 2: Main processing
+        void room_builder::process_scene_load_requests()
+        {
+            // Check the state of input file
+            plug::path_t *path      = p3DFile->buffer<plug::path_t>();
+            if (path != NULL)
+            {
+                if ((path->pending()) && (s3DLoader.idle()) && (s3DLauncher.idle())) // There is pending request for 3D file reload
+                {
+                    // Copy path
+                    ::strncpy(s3DLoader.sPath, path->path(), PATH_MAX-1);
+                    s3DLoader.nFlags            = path->flags();
+                    s3DLoader.sPath[PATH_MAX-1] = '\0';
+                    lsp_trace("Submitted scene file %s", s3DLoader.sPath);
+
+                    // Try to submit task
+                    if (pExecutor->submit(&s3DLoader))
+                    {
+                        lsp_trace("Successfully submitted load task");
+                        nSceneStatus    = STATUS_LOADING;
+                        fSceneProgress  = 0.0f;
+                        path->accept();
+                    }
+                }
+                else if ((path->accepted()) && (s3DLoader.completed())) // The reload request has been processed
+                {
+                    // Update file status and set re-rendering flag
+                    nSceneStatus    = s3DLoader.code();
+                    fSceneProgress  = 100.0f;
+
+                    sScene.swap(&s3DLoader.sScene);
+
+                    // Now we surely can commit changes and reset task state
+                    lsp_trace("File loading task has completed with status %d", int(nSceneStatus));
+                    path->commit();
+                    s3DLoader.reset();
+                }
+            }
+        }
+
+        void room_builder::process_save_sample_requests()
+        {
+            if (sSaver.idle())
+            {
+                // Submit save requests if they are present
+                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
+                {
+                    capture_t *cap      = &vCaptures[i];
+                    if (!cap->bExport)
+                        continue;
+
+                    sSaver.bind(i, cap);
+                    if (pExecutor->submit(&sSaver))
+                    {
+                        cap->bExport        = false;
+                        cap->pSaveStatus->set_value(STATUS_LOADING);
+                        cap->pSaveProgress->set_value(0.0f);
+                        break;
+                    }
+                }
+            }
+            else if (sSaver.completed())
+            {
+                capture_t *cap = &vCaptures[sSaver.nSampleID];
+                cap->pSaveStatus->set_value(sSaver.code());
+                cap->pSaveProgress->set_value(100.0f);
+
+                sSaver.reset();
+            }
+        }
+
+        void room_builder::process_configuration_requests()
+        {
+            // Do we need to launch configurator task?
+            if ((sConfigurator.idle()) && (sConfigurator.need_launch()))
+            {
+                // Try to launch configurator
+                size_t change_req   = sConfigurator.change_req();
+
+                if (pExecutor->submit(&sConfigurator))
+                {
+                    sConfigurator.commit(change_req);
+                    lsp_trace("Successfully submitted reconfigurator task");
+                }
+            }
+            else if ((sConfigurator.completed()) && (sSaver.idle()))
+            {
+                lsp_trace("Reconfiguration task has completed with status %d", int(sConfigurator.code()));
+
+                // Commit state of convolvers
+                for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
+                {
+                    convolver_t *c      = &vConvolvers[i];
+                    dspu::Convolver *cv = c->pCurr;
+                    c->pCurr            = c->pSwap;
+                    c->pSwap            = cv;
+                }
+
+                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
+                {
+                    capture_t  *c   = &vCaptures[i];
+
+                    // Bind sample player
+                    for (size_t j=0; j<2; ++j)
+                    {
+                        channel_t *sc = &vChannels[j];
+                        sc->sPlayer.bind(i, c->pProcessed);
+                    }
+
+                    c->pProcessed       = NULL;
+                    c->bSync            = true;
+                }
+
+                // Accept the configurator task
+                sConfigurator.reset();
+            }
+        }
+
+        void room_builder::process_gc_requests()
+        {
+            if (sGCTask.completed())
+                sGCTask.reset();
+
+            if (sGCTask.idle())
+            {
+                // Obtain the list of samples for destroy
+                if (pGCList == NULL)
+                {
+                    for (size_t i=0; i<2; ++i)
+                        if ((pGCList = vChannels[i].sPlayer.gc()) != NULL)
+                            break;
+                }
+                if (pGCList != NULL)
+                    pExecutor->submit(&sGCTask);
+            }
+        }
+
+        void room_builder::process_listen_requests()
+        {
+            // Update capture settings
+            for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
+            {
+                capture_t *cap      = &vCaptures[i];
+
+                if (!cap->sListen.pending())
+                     continue;
+
+                lsp_trace("Submitted listen toggle");
+                dspu::Sample *s = vChannels[0].sPlayer.get(i);
+                size_t n_c      = (s != NULL) ? s->channels() : 0;
+                if (n_c > 0)
+                {
+                    for (size_t j=0; j<2; ++j)
+                        vChannels[j].sPlayer.play(i, j%n_c, cap->fMakeup, 0);
+                }
+                cap->sListen.commit();
+            }
+        }
+
+        void room_builder::perform_convolution(size_t samples)
+        {
+            // Bind inputs and outputs
             for (size_t i=0; i<nInputs; ++i)
                 vInputs[i].vIn      = vInputs[i].pIn->buffer<float>();
 
@@ -1269,8 +1477,10 @@ namespace lsp
 
                 samples            -= to_do;
             }
+        }
 
-            // Stage 3: output additional metering parameters
+        void room_builder::output_parameters()
+        {
             if (p3DStatus != NULL)
                 p3DStatus->set_value(nSceneStatus);
             if (p3DProgress != NULL)
@@ -1303,7 +1513,8 @@ namespace lsp
                 if ((mesh == NULL) || (!mesh->isEmpty()) || (!c->bSync))
                     continue;
 
-                size_t channels     = (c->pCurr != NULL) ? c->pCurr->channels() : 0;
+                dspu::Sample *active    = vChannels[0].sPlayer.get(i);
+                size_t channels         = (active != NULL) ? active->channels() : 0;
                 if (channels > 0)
                 {
                     // Copy thumbnails
@@ -1317,161 +1528,15 @@ namespace lsp
             }
         }
 
-        void room_builder::sync_offline_tasks()
+        void room_builder::process(size_t samples)
         {
-            // The render signal is pending?
-            if ((nSync & SYNC_TOGGLE_RENDER) && (s3DLauncher.idle()) && (s3DLoader.idle()))
-            {
-                if (pExecutor->submit(&s3DLauncher))
-                {
-                    lsp_trace("Successfully submitted Render launcher task");
-                    nSync &= ~SYNC_TOGGLE_RENDER;       // Reset render request flag
-                }
-            }
-            else if (s3DLauncher.completed())
-            {
-                status_t res = s3DLauncher.code();
-                if (res != STATUS_OK)
-                {
-                    fRenderProgress = 0.0f;
-                    enRenderStatus  = s3DLauncher.code();
-                }
-                s3DLauncher.reset();
-            }
-
-            // Check the state of input file
-            plug::path_t *path      = p3DFile->buffer<plug::path_t>();
-            if (path != NULL)
-            {
-                if ((path->pending()) && (s3DLoader.idle()) && (s3DLauncher.idle())) // There is pending request for 3D file reload
-                {
-                    // Copy path
-                    ::strncpy(s3DLoader.sPath, path->path(), PATH_MAX-1);
-                    s3DLoader.nFlags            = path->flags();
-                    s3DLoader.sPath[PATH_MAX-1] = '\0';
-                    lsp_trace("Submitted scene file %s", s3DLoader.sPath);
-
-                    // Try to submit task
-                    if (pExecutor->submit(&s3DLoader))
-                    {
-                        lsp_trace("Successfully submitted load task");
-                        nSceneStatus    = STATUS_LOADING;
-                        fSceneProgress  = 0.0f;
-                        path->accept();
-                    }
-                }
-                else if ((path->accepted()) && (s3DLoader.completed())) // The reload request has been processed
-                {
-                    // Update file status and set re-rendering flag
-                    nSceneStatus    = s3DLoader.code();
-                    fSceneProgress  = 100.0f;
-
-                    sScene.swap(&s3DLoader.sScene);
-                    nReconfigReq    ++;
-
-                    // Now we surely can commit changes and reset task state
-                    lsp_trace("File loading task has completed with status %d", int(nSceneStatus));
-                    path->commit();
-                    s3DLoader.reset();
-                }
-            }
-
-            if (sSaver.idle())
-            {
-                // Submit save requests
-                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
-                {
-                    capture_t *cap      = &vCaptures[i];
-                    if (!cap->bExport)
-                        continue;
-
-                    sSaver.bind(i, cap);
-                    if (pExecutor->submit(&sSaver))
-                    {
-                        cap->bExport        = false;
-                        cap->pSaveStatus->set_value(STATUS_LOADING);
-                        cap->pSaveProgress->set_value(0.0f);
-                        break;
-                    }
-                }
-            }
-            else if (sSaver.completed())
-            {
-                capture_t *cap = &vCaptures[sSaver.nSampleID];
-                cap->pSaveStatus->set_value(sSaver.code());
-                cap->pSaveProgress->set_value(100.0f);
-
-                sSaver.reset();
-            }
-
-            // Do we need to launch configurator task?
-            if ((sConfigurator.idle()) && (sConfigurator.need_launch()))
-            {
-                reconfig_t *cfg = &sConfigurator.sConfig;
-
-                // Deploy actual configuration to the configurator
-                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
-                {
-                    capture_t *cap      = &vCaptures[i];
-                    size_t req          = cap->nChangeReq;
-
-                    cfg->bReconfigure[i]    = (cap->nChangeResp != req);
-                    cfg->nChangeResp[i]     = req;
-                }
-
-                for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
-                {
-                    convolver_t *cv     = &vConvolvers[i];
-
-                    cfg->nSampleID[i]   = cv->nSampleID;
-                    cfg->nTrack[i]      = cv->nTrackID;
-                    cfg->nRank[i]       = nFftRank;
-                }
-
-                // Try to launch configurator
-                if (pExecutor->submit(&sConfigurator))
-                {
-                    sConfigurator.launched();
-                    lsp_trace("Successfully submitted reconfigurator task");
-                }
-            }
-            else if ((sConfigurator.completed()) && (sSaver.idle()))
-            {
-                lsp_trace("Reconfiguration task has completed with status %d", int(sConfigurator.code()));
-
-                // Commit state of convolvers
-                for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
-                {
-                    convolver_t *c      = &vConvolvers[i];
-                    dspu::Convolver *cv = c->pCurr;
-                    c->pCurr            = c->pSwap;
-                    c->pSwap            = cv;
-                }
-
-                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
-                {
-                    capture_t  *c   = &vCaptures[i];
-                    if (!c->bCommit)
-                        continue;
-
-                    c->bCommit      = false;
-                    c->bSync        = true;
-
-                    dspu::Sample *s = c->pCurr;
-                    c->pCurr        = c->pSwap;
-                    c->pSwap        = s;
-
-                    // Bind sample player
-                    for (size_t j=0; j<2; ++j)
-                    {
-                        channel_t *sc = &vChannels[j];
-                        sc->sPlayer.bind(i, c->pCurr, false);
-                    }
-                }
-
-                // Accept the configurator task
-                sConfigurator.reset();
-            }
+            process_render_requests();
+            process_scene_load_requests();
+            process_save_sample_requests();
+            process_listen_requests();
+            process_configuration_requests();
+            perform_convolution(samples);
+            output_parameters();
         }
 
         status_t room_builder::bind_sources(dspu::RayTrace3D *rt)
@@ -1739,6 +1804,12 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void room_builder::perform_gc()
+        {
+            dspu::Sample *gc_list = lsp::atomic_swap(&pGCList, NULL);
+            destroy_gc_samples(gc_list);
+        }
+
         status_t room_builder::commit_samples(lltl::parray<sample_t> &samples)
         {
             // Put each sample to KVT and toggle the reload flag
@@ -1802,54 +1873,25 @@ namespace lsp
                 else
                     return STATUS_BAD_STATE;
 
-                // Update the number of changes for the sample and toggle configurator launch
-                atomic_add(&vCaptures[s->nID].nChangeReq, 1);
-                sConfigurator.queue_launch();
+                // Toggle configurator launch
+                sConfigurator.query_launch();
             }
 
             return STATUS_OK;
         }
 
-        status_t room_builder::reconfigure(const reconfig_t *cfg)
+        status_t room_builder::reconfigure()
         {
             status_t res;
-
-            // Collect the garbage
-            for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
-            {
-                convolver_t *c  = &vConvolvers[i];
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap    = NULL;
-                }
-            }
-
-            for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
-            {
-                capture_t *c  = &vCaptures[i];
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap    = NULL;
-                }
-            }
 
             // Re-render samples
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *c    = &vCaptures[i];
-
-                // Do we need to change the sample?
-                if (!cfg->bReconfigure[i])
-                    continue;
+                destroy_sample(c->pProcessed);
 
                 // Update status and commit request
                 c->nStatus      = STATUS_OK;
-                c->nChangeResp  = cfg->nChangeResp[i];
-                c->bCommit      = true;
 
                 // Lock KVT and fetch sample data
                 core::KVTStorage *kvt = kvt_lock();
@@ -1858,6 +1900,7 @@ namespace lsp
                     c->nStatus      = STATUS_BAD_STATE;
                     continue;
                 }
+                lsp_finally { kvt_release(); };
 
                 // Fetch KVT sample
                 dspu::sample_header_t hdr;
@@ -1866,7 +1909,6 @@ namespace lsp
                 if (res != STATUS_OK)
                 {
                     c->nStatus      = res;
-                    kvt_release();
                     continue;
                 }
 
@@ -1874,19 +1916,18 @@ namespace lsp
                 dspu::Sample *s     = new dspu::Sample();
                 if (s == NULL)
                 {
-                    kvt_release();
                     c->nStatus      = STATUS_NO_MEM;
                     continue;
                 }
+                lsp_finally { destroy_sample(s); };
+
                 c->nLength          = hdr.samples;
                 c->fMaxLen          = dspu::samples_to_millis(hdr.sample_rate, hdr.samples);
-                c->pSwap            = s;
                 lsp_trace("Allocated sample=%p, original length=%d samples", s, int(c->nLength));
 
                 // Initialize sample
                 if (!s->init(hdr.channels, hdr.samples, hdr.samples))
                 {
-                    kvt_release();
                     c->nStatus      = STATUS_NO_MEM;
                     continue;
                 }
@@ -1899,7 +1940,6 @@ namespace lsp
                 {
                     s->set_length(0);
                     c->fCurrLen         = 0.0f;
-                    kvt_release();
 
                     for (size_t j=0; j<hdr.channels; ++j)
                         dsp::fill_zero(c->vThumbs[j], meta::room_builder_metadata::MESH_SIZE);
@@ -1952,8 +1992,8 @@ namespace lsp
                         dsp::mul_k2(c->vThumbs[j], norm, meta::room_builder_metadata::MESH_SIZE);
                 }
 
-                // Release KVT storage
-                kvt_release();
+                // Commit result
+                lsp::swap(c->pProcessed, s);
             }
 
             // Randomize phase of the convolver
@@ -1965,31 +2005,32 @@ namespace lsp
             for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
             {
                 convolver_t *c  = &vConvolvers[i];
+                destroy_convolver(c->pSwap);
 
                 // Check that routing has changed
-                size_t capture  = cfg->nSampleID[i];
-                size_t track    = cfg->nTrack[i];
+                size_t capture  = c->nSampleID;
+                size_t track    = c->nTrackID;
                 if ((capture <= 0) || (capture > meta::room_builder_metadata::CAPTURES))
                     continue;
                 else
                     --capture;
 
                 // Analyze sample
-                dspu::Sample *s = (vCaptures[capture].bCommit) ? vCaptures[capture].pSwap: vCaptures[capture].pCurr;
+                dspu::Sample *s = vCaptures[capture].pProcessed;
                 if ((s == NULL) || (!s->valid()) || (s->channels() <= track))
                     continue;
 
                 // Now we can create convolver
                 dspu::Convolver *cv   = new dspu::Convolver();
-                if (!cv->init(s->channel(track), s->length(), cfg->nRank[i], float((phase + i*step)& 0x7fffffff)/float(0x80000000)))
-                {
-                    cv->destroy();
-                    delete cv;
+                if (cv == NULL)
+                    continue;
+                lsp_finally { destroy_convolver(cv); };
+
+                if (!cv->init(s->channel(track), s->length(), nFftRank, float((phase + i*step)& 0x7fffffff)/float(0x80000000)))
                     return STATUS_NO_MEM;
-                }
 
                 lsp_trace("Allocated convolver pSwap=%p for channel %d (pCurr=%p)", cv, int(i), c->pCurr);
-                c->pSwap        = cv;
+                lsp::swap(c->pSwap, cv);
             }
 
             return STATUS_OK;
@@ -2121,13 +2162,7 @@ namespace lsp
 
         void room_builder::state_loaded()
         {
-            // We need to sync all loaded samples in KVT with internal state
-            for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
-            {
-                capture_t *cap      = &vCaptures[i];
-                atomic_add(&cap->nChangeReq, 1);
-                sConfigurator.queue_launch();
-            }
+            sConfigurator.query_launch();
         }
 
         void room_builder::ui_activated()
