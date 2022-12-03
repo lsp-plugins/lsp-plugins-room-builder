@@ -110,15 +110,21 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation/linear.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Bypass.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Toggle.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Equalizer.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/common.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/FilterBank.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Filter.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/Sample.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/mm/IOutAudioStream.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/mm/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/mm/IInAudioStream.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/SamplePlayer.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/helpers/batch.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/helpers/playback.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/PlaySettings.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/sampling/Playback.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/util/Convolver.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/util/Delay.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/3d/raytrace.h \
@@ -140,13 +146,13 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/endian.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/endian.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/fade.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/lspc.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/AudioWriter.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/File.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReader.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkAccessor.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReaderStream.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriter.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriterStream.h \
@@ -308,6 +314,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/base/Registry.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/cast.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Bevel.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/CheckBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
@@ -325,7 +332,6 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Bevel.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
@@ -334,6 +340,8 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/MultiLabel.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Tab.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/TabControl.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
@@ -480,6 +488,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/containers/Grid.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/containers/Cell.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/containers/MultiLabel.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/containers/TabControl.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/compound/ComboBox.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/compound/ComboGroup.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/graph/Graph.h \
