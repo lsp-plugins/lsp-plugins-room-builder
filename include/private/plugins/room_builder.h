@@ -395,6 +395,8 @@ namespace lsp
 
             protected:
                 static size_t       get_fft_rank(size_t rank);
+                static void         destroy_convolver(dspu::Convolver * &c);
+                static void         destroy_sample(dspu::Sample * &s);
                 static void         destroy_samples(lltl::parray<sample_t> &samples);
                 static void         destroy_gc_samples(dspu::Sample *gc_list);
                 static status_t     progress_callback(float progress, void *ptr);

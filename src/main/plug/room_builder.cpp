@@ -20,14 +20,14 @@
  */
 
 #include <private/plugins/room_builder.h>
-#include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/common/endian.h>
-#include <lsp-plug.in/stdlib/stdio.h>
+#include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
 #include <lsp-plug.in/dsp-units/misc/fade.h>
 #include <lsp-plug.in/fmt/lspc/lspc.h>
 #include <lsp-plug.in/fmt/lspc/AudioWriter.h>
+#include <lsp-plug.in/stdlib/stdio.h>
 
 #define TMP_BUF_SIZE            4096
 #define CONV_RANK               10
@@ -849,29 +849,14 @@ namespace lsp
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *c    = &vCaptures[i];
-                if (c->pProcessed != NULL)
-                {
-                    c->pProcessed->destroy();
-                    delete c->pProcessed;
-                    c->pProcessed   = NULL;
-                }
+                destroy_sample(c->pProcessed);
             }
 
             for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
             {
                 convolver_t *c  = &vConvolvers[i];
-                if (c->pCurr != NULL)
-                {
-                    c->pCurr->destroy();
-                    delete c->pCurr;
-                    c->pCurr    = NULL;
-                }
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap    = NULL;
-                }
+                destroy_convolver(c->pCurr);
+                destroy_convolver(c->pSwap);
 
                 c->sDelay.destroy();
             }
@@ -881,10 +866,33 @@ namespace lsp
             {
                 channel_t *c = &vChannels[i];
                 c->sEqualizer.destroy();
-                c->sPlayer.destroy(false);
+                dspu::Sample *gc_list = c->sPlayer.destroy(false);
+                destroy_gc_samples(gc_list);
                 c->vOut     = NULL;
                 c->vBuffer  = NULL;
             }
+        }
+
+        void room_builder::destroy_sample(dspu::Sample * &s)
+        {
+            if (s == NULL)
+                return;
+
+            s->destroy();
+            delete s;
+            lsp_trace("Destroyed sample %p", s);
+            s = NULL;
+        }
+
+        void room_builder::destroy_convolver(dspu::Convolver * &c)
+        {
+            if (c == NULL)
+                return;
+
+            c->destroy();
+            delete c;
+            lsp_trace("Destroyed convolver %p", c);
+            c = NULL;
         }
 
         void room_builder::destroy_gc_samples(dspu::Sample *gc_list)
@@ -893,9 +901,7 @@ namespace lsp
             while (gc_list != NULL)
             {
                 dspu::Sample *next = gc_list->gc_next();
-                gc_list->destroy();
-                delete gc_list;
-                lsp_trace("Destroyed sample %p", gc_list);
+                destroy_sample(gc_list);
                 gc_list = next;
             }
         }
@@ -1878,30 +1884,11 @@ namespace lsp
         {
             status_t res;
 
-            // Collect the garbage
-            for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
-            {
-                convolver_t *c  = &vConvolvers[i];
-                if (c->pSwap != NULL)
-                {
-                    c->pSwap->destroy();
-                    delete c->pSwap;
-                    c->pSwap    = NULL;
-                }
-            }
-
             // Re-render samples
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *c    = &vCaptures[i];
-
-                // Collect the garbage
-                if (c->pProcessed != NULL)
-                {
-                    c->pProcessed->destroy();
-                    delete c->pProcessed;
-                    c->pProcessed   = NULL;
-                }
+                destroy_sample(c->pProcessed);
 
                 // Update status and commit request
                 c->nStatus      = STATUS_OK;
@@ -1913,9 +1900,7 @@ namespace lsp
                     c->nStatus      = STATUS_BAD_STATE;
                     continue;
                 }
-                lsp_finally {
-                    kvt_release();
-                };
+                lsp_finally { kvt_release(); };
 
                 // Fetch KVT sample
                 dspu::sample_header_t hdr;
@@ -1934,13 +1919,7 @@ namespace lsp
                     c->nStatus      = STATUS_NO_MEM;
                     continue;
                 }
-                lsp_finally {
-                    if (s != NULL)
-                    {
-                        s->destroy();
-                        delete s;
-                    }
-                };
+                lsp_finally { destroy_sample(s); };
 
                 c->nLength          = hdr.samples;
                 c->fMaxLen          = dspu::samples_to_millis(hdr.sample_rate, hdr.samples);
@@ -2026,6 +2005,7 @@ namespace lsp
             for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
             {
                 convolver_t *c  = &vConvolvers[i];
+                destroy_convolver(c->pSwap);
 
                 // Check that routing has changed
                 size_t capture  = c->nSampleID;
@@ -2042,15 +2022,15 @@ namespace lsp
 
                 // Now we can create convolver
                 dspu::Convolver *cv   = new dspu::Convolver();
+                if (cv == NULL)
+                    continue;
+                lsp_finally { destroy_convolver(cv); };
+
                 if (!cv->init(s->channel(track), s->length(), nFftRank, float((phase + i*step)& 0x7fffffff)/float(0x80000000)))
-                {
-                    cv->destroy();
-                    delete cv;
                     return STATUS_NO_MEM;
-                }
 
                 lsp_trace("Allocated convolver pSwap=%p for channel %d (pCurr=%p)", cv, int(i), c->pCurr);
-                c->pSwap        = cv;
+                lsp::swap(c->pSwap, cv);
             }
 
             return STATUS_OK;
