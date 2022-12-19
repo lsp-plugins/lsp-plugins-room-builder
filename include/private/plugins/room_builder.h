@@ -27,6 +27,7 @@
 #include <lsp-plug.in/common/atomic.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/ctl/Bypass.h>
+#include <lsp-plug.in/dsp-units/ctl/Toggle.h>
 #include <lsp-plug.in/dsp-units/filters/Equalizer.h>
 #include <lsp-plug.in/dsp-units/sampling/Sample.h>
 #include <lsp-plug.in/dsp-units/sampling/SamplePlayer.h>
@@ -152,6 +153,8 @@ namespace lsp
 
                 typedef struct capture_t: public dspu::room_capture_config_t
                 {
+                    dspu::Toggle            sListen;        // Listen toggle
+
                     bool                    bEnabled;       // Enabled flag
                     ssize_t                 nRMin;          // Minimum reflection order
                     ssize_t                 nRMax;          // Maximum reflection order
@@ -167,14 +170,10 @@ namespace lsp
                     float                   fCurrLen;
                     float                   fMaxLen;
 
-                    volatile uatomic_t      nChangeReq;     // Reconfiguration request
-                    uatomic_t               nChangeResp;    // Reconfiguration response
-                    bool                    bCommit;        // Commit reconfiguration
                     bool                    bSync;          // Sync with UI
                     bool                    bExport;        // Export flag
 
-                    dspu::Sample           *pCurr;          // Current sample for playback (rendered)
-                    dspu::Sample           *pSwap;          // Swap sample (garbage or pending)
+                    dspu::Sample           *pProcessed;     // Processed sample for playback (rendered)
 
                     float                  *vThumbs[meta::room_builder_metadata::TRACKS_MAX];
 
@@ -222,29 +221,20 @@ namespace lsp
                     dspu::rt_capture_config_t   enConfig;
                 } sample_t;
 
-                typedef struct reconfig_t
-                {
-                    bool                    bReconfigure[meta::room_builder_metadata::CAPTURES];
-                    uatomic_t               nChangeResp[meta::room_builder_metadata::CAPTURES];
-                    size_t                  nSampleID[meta::room_builder_metadata::CONVOLVERS];
-                    size_t                  nTrack[meta::room_builder_metadata::CONVOLVERS];
-                    size_t                  nRank[meta::room_builder_metadata::CONVOLVERS];
-                } reconfig_t;
-
             protected:
                 class SceneLoader: public ipc::ITask
                 {
                     public:
                         size_t                  nFlags;
                         char                    sPath[PATH_MAX];
-                        room_builder           *pCore;
+                        room_builder           *pBuilder;
                         dspu::Scene3D           sScene;
 
                     public:
                         inline SceneLoader()
                         {
                             nFlags      = 0;
-                            pCore       = NULL;
+                            pBuilder       = NULL;
                         }
 
                         void                init(room_builder *base);
@@ -290,10 +280,9 @@ namespace lsp
                 class Configurator: public ipc::ITask
                 {
                     public:
-                        room_builder      *pBuilder;
+                        room_builder           *pBuilder;
                         volatile uatomic_t      nChangeReq;
                         uatomic_t               nChangeResp;
-                        reconfig_t              sConfig;
 
                     public:
                         inline Configurator(room_builder *bld):
@@ -305,17 +294,19 @@ namespace lsp
 
                         virtual status_t    run();
 
-                        inline bool         need_launch() const { return nChangeReq != nChangeResp; }
+                        inline bool         need_launch() const         { return nChangeReq != nChangeResp; }
 
-                        inline void         queue_launch() { atomic_add(&nChangeReq, 1); }
+                        inline void         query_launch()              { atomic_add(&nChangeReq, 1);       }
 
-                        inline void         launched() { nChangeResp = nChangeReq; }
+                        inline size_t       change_req() const          { return nChangeReq;                }
+
+                        inline void         commit(size_t change_req)   { nChangeResp = change_req;         }
                 };
 
                 class SampleSaver: public ipc::ITask
                 {
                     public:
-                        room_builder      *pBuilder;
+                        room_builder           *pBuilder;
                         char                    sPath[PATH_MAX+1];
                         size_t                  nSampleID;
 
@@ -333,10 +324,23 @@ namespace lsp
                         virtual status_t    run();
                 };
 
+                class GCTask: public ipc::ITask
+                {
+                    private:
+                        room_builder           *pBuilder;
+
+                    public:
+                        explicit GCTask(room_builder *base);
+                        virtual ~GCTask();
+
+                    public:
+                        virtual status_t run();
+
+                        void        dump(dspu::IStateDumper *v) const;
+                };
+
             protected:
                 size_t                  nInputs;
-                size_t                  nReconfigReq;
-                size_t                  nReconfigResp;
                 ssize_t                 nRenderThreads;
                 float                   fRenderQuality;
                 bool                    bRenderNormalize;
@@ -344,6 +348,7 @@ namespace lsp
                 float                   fRenderProgress;
                 float                   fRenderCmd;
                 size_t                  nFftRank;
+                dspu::Sample           *pGCList;        // Garbage collection list
 
                 input_t                 vInputs[2];
                 channel_t               vChannels[2];
@@ -363,6 +368,7 @@ namespace lsp
                 RenderLauncher          s3DLauncher;
                 Configurator            sConfigurator;
                 SampleSaver             sSaver;
+                GCTask                  sGCTask;
 
                 plug::IPort            *pBypass;
                 plug::IPort            *pRank;
@@ -389,18 +395,32 @@ namespace lsp
 
             protected:
                 static size_t       get_fft_rank(size_t rank);
-                void                sync_offline_tasks();
+                static void         destroy_convolver(dspu::Convolver * &c);
+                static void         destroy_sample(dspu::Sample * &s);
+                static void         destroy_samples(lltl::parray<sample_t> &samples);
+                static void         destroy_gc_samples(dspu::Sample *gc_list);
+                static status_t     progress_callback(float progress, void *ptr);
+                static status_t     fetch_kvt_sample(core::KVTStorage *kvt, size_t sample_id, dspu::sample_header_t *hdr, const float **samples);
+
+            protected:
                 status_t            start_rendering();
+                void                perform_gc();
                 status_t            run_rendring(void *arg);
                 status_t            bind_sources(dspu::RayTrace3D *rt);
                 status_t            bind_captures(lltl::parray<sample_t> &samples, dspu::RayTrace3D *rt);
                 status_t            bind_scene(core::KVTStorage *kvt, dspu::RayTrace3D *rt);
                 status_t            commit_samples(lltl::parray<sample_t> &samples);
-                status_t            reconfigure(const reconfig_t *cfg);
+                status_t            reconfigure();
                 status_t            save_sample(const char *path, size_t sample_id);
-                static void         destroy_samples(lltl::parray<sample_t> &samples);
-                static status_t     progress_callback(float progress, void *ptr);
-                static status_t     fetch_kvt_sample(core::KVTStorage *kvt, size_t sample_id, dspu::sample_header_t *hdr, const float **samples);
+
+                void                process_render_requests();
+                void                process_scene_load_requests();
+                void                process_save_sample_requests();
+                void                process_configuration_requests();
+                void                process_gc_requests();
+                void                process_listen_requests();
+                void                perform_convolution(size_t samples);
+                void                output_parameters();
 
             public:
                 explicit room_builder(const meta::plugin_t *metadata, size_t inputs);
