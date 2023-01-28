@@ -24,7 +24,8 @@ ARTIFACT_NAME               = lsp-plugins-room-builder
 ARTIFACT_TYPE               = plug
 ARTIFACT_DESC               = LSP Room Builder Plugin Series
 ARTIFACT_HEADERS            = lsp-plug.in
-ARTIFACT_VERSION            = 1.0.6
+ARTIFACT_EXPORT_HEADERS     = 0
+ARTIFACT_VERSION            = 1.0.7
 
 
 

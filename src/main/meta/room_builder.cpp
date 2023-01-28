@@ -26,7 +26,7 @@
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MAJOR       1
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MINOR       0
-#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       6
+#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       7
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -432,8 +432,6 @@ namespace lsp
             PORTS_END
         };
 
-        static const int room_builder_classes[] = { C_REVERB, -1 };
-
         const room_material_t room_builder_metadata::materials[] =
         {
             { "Alder",          "room_bld.mat.alder",           5060.0f,    6.0f    },
@@ -477,6 +475,10 @@ namespace lsp
             { NULL,             NULL,                           0.0f,       0.0f    }
         };
 
+        static const int plugin_classes[]           = { C_REVERB, -1 };
+        static const int clap_features_mono[]       = { CF_AUDIO_EFFECT, CF_REVERB, CF_MONO, -1 };
+        static const int clap_features_stereo[]     = { CF_AUDIO_EFFECT, CF_REVERB, CF_STEREO, -1 };
+
         const meta::bundle_t room_builder_bundle =
         {
             "room_builder",
@@ -498,8 +500,10 @@ namespace lsp
             "cqbr",
             0,
             NULL,
+            LSP_CLAP_URI("room_builder_mono"),
             LSP_PLUGINS_ROOM_BUILDER_VERSION,
-            room_builder_classes,
+            plugin_classes,
+            clap_features_mono,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_mono_ports,
             "simulation/room_builder/mono.xml",
@@ -520,8 +524,10 @@ namespace lsp
             "mprh",
             0,
             NULL,
+            LSP_CLAP_URI("room_builder_stereo"),
             LSP_PLUGINS_ROOM_BUILDER_VERSION,
-            room_builder_classes,
+            plugin_classes,
+            clap_features_stereo,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_stereo_ports,
             "simulation/room_builder/stereo.xml",
@@ -529,5 +535,5 @@ namespace lsp
             stereo_plugin_port_groups,
             &room_builder_bundle
         };
-    } // namespace meta
-} // namespace lsp
+    } /* namespace meta */
+} /* namespace lsp */
