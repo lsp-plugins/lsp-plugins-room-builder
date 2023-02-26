@@ -255,7 +255,7 @@ namespace lsp
             // Try to copy name of parameter
             if (value != NULL)
                 *v = ::strdup(value);
-            else if (::asprintf(v, "<unnamed #%d>", int(id)) < 0)
+            else if (asprintf(v, "<unnamed #%d>", int(id)) < 0)
                 *v  = NULL;
 
             // If all is bad, do this
