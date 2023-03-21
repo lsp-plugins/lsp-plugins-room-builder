@@ -2,6 +2,10 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.9 ===
+* Fixed compilation by MinGW under Windows.
+* Updated build scripts and dependencies.
+
 === 1.0.8 ===
 * Updated build scripts and dependencies.
 

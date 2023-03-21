@@ -17,54 +17,14 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/meta/room_builder.o: \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  main/plug/room_builder.cpp \
- $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/plugins/room_builder.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/forge.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/parse.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/pattern.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/debug.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IWrapper.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/KVTStorage.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IExecutor.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/ITask.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IRunnable.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Module.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/iface/IStateDumper.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Factory.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/endian.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/endian.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -97,6 +57,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -109,6 +70,58 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/smath.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation/linear.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/fade.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/lspc.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/AudioWriter.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/File.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReader.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkAccessor.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReaderStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriter.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriterStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/plugins/room_builder.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IWrapper.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/core/KVTStorage.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IExecutor.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/ITask.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/IRunnable.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/ILoader.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/PrefixLoader.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Module.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/iface/IStateDumper.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Factory.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Bypass.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/ctl/Toggle.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/filters/Equalizer.h \
@@ -139,44 +152,22 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/plug/room_builder.o: \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/3d/rt/plan.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Thread.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
- $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/meta/room_builder.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/endian.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/endian.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/misc/fade.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/lspc.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/AudioWriter.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/File.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReader.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkAccessor.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkReaderStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriter.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/lspc/ChunkWriterStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h
+ $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/meta/room_builder.h
 $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  main/ui/room_builder.cpp \
- $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/meta/room_builder.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
- $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
- $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
- $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/ui/room_builder.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/version.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/types.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/const.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPort.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPortListener.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IWrapper.h \
@@ -281,6 +272,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Vector2D.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/ColorRanges.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/FileFilters.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/FloatArray.h \
@@ -373,14 +365,9 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/Module.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/data.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/const.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/const.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/midi.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/forge.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/parse.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/pattern.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/protocol/osc/debug.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/IPort.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvas.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/ICanvasFactory.h \
@@ -389,6 +376,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/ITask.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Module.h \
  $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/iface/IStateDumper.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/version.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/plug/Factory.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/SwitchedPort.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/ValuePort.h \
@@ -402,6 +390,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/IPlayListener.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/ControlPort.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/PathPort.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/ProxyPort.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/Factory.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/UIOverrides.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ui/UIContext.h \
@@ -449,6 +438,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -465,6 +455,8 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Padding.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Enum.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Direction.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/Layout.h \
+ $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/util/TextLayout.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Widget.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Registry.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/Factory.h \
@@ -529,4 +521,7 @@ $(LSP_PLUGINS_ROOM_BUILDER_BIN)/main/ui/room_builder.o: \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/ctl/specific/ThreadComboBox.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/ports.h \
  $(LSP_PLUGIN_FW_INC)/lsp-plug.in/plug-fw/meta/func.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h \
+ $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/meta/room_builder.h \
+ $(LSP_DSP_UNITS_INC)/lsp-plug.in/dsp-units/units.h \
+ $(LSP_PLUGINS_ROOM_BUILDER_INC)/private/ui/room_builder.h

@@ -19,8 +19,8 @@
  * along with lsp-plugins-room-builder. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <private/plugins/room_builder.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/endian.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <lsp-plug.in/dsp-units/units.h>
@@ -28,6 +28,8 @@
 #include <lsp-plug.in/fmt/lspc/lspc.h>
 #include <lsp-plug.in/fmt/lspc/AudioWriter.h>
 #include <lsp-plug.in/stdlib/stdio.h>
+
+#include <private/plugins/room_builder.h>
 
 #define TMP_BUF_SIZE            4096
 #define CONV_RANK               10

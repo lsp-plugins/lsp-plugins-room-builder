@@ -19,13 +19,15 @@
  * along with lsp-plugins-room-builder. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <private/meta/room_builder.h>
-#include <private/ui/room_builder.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/plug-fw/ui.h>
 #include <lsp-plug.in/plug-fw/meta/types.h>
 #include <lsp-plug.in/plug-fw/meta/ports.h>
 #include <lsp-plug.in/plug-fw/meta/func.h>
 #include <lsp-plug.in/stdlib/stdio.h>
+
+#include <private/meta/room_builder.h>
+#include <private/ui/room_builder.h>
 
 namespace lsp
 {
@@ -255,7 +257,7 @@ namespace lsp
             // Try to copy name of parameter
             if (value != NULL)
                 *v = ::strdup(value);
-            else if (::asprintf(v, "<unnamed #%d>", int(id)) < 0)
+            else if (asprintf(v, "<unnamed #%d>", int(id)) < 0)
                 *v  = NULL;
 
             // If all is bad, do this
