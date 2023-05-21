@@ -1842,7 +1842,7 @@ namespace lsp
 
                 float *fdst         = reinterpret_cast<float *>(&hdr[1]);
                 for (size_t i=0; i<s->sSample.channels(); ++i, fdst += slen)
-                    ::memcpy(fdst, s->sSample.getBuffer(i), slen * sizeof(float));
+                    ::memcpy(fdst, s->sSample.channel(i), slen * sizeof(float));
 
                 // Post-process Mid/Side audio data
                 if (s->enConfig == dspu::RT_CC_MS)
