@@ -157,7 +157,7 @@ namespace lsp
             if (::strcmp(name, id) != 0)
                 return false;
 
-            notify_all();
+            notify_all(ui::PORT_USER_EDIT);
             return true;
         }
 
@@ -235,7 +235,7 @@ namespace lsp
             {
                 ui::IPort *p = vKvtPorts.get(i);
                 if (p != NULL)
-                    p->notify_all();
+                    p->notify_all(ui::PORT_USER_EDIT);
             }
         }
 
@@ -324,10 +324,10 @@ namespace lsp
                     index = 0;
                 else if (index >= ssize_t(nItems))
                     index = nItems-1;
-                set_value(index);           // Update the current selected value
+                set_value(index);               // Update the current selected value
 
-                sync_metadata();            // Call for metadata update
-                notify_all();               // Notify all bound listeners
+                sync_metadata();                // Call for metadata update
+                notify_all(ui::PORT_USER_EDIT); // Notify all bound listeners
                 return true;
             }
             else if ((value->type == core::KVT_FLOAT32) && (!strcmp(id, "/scene/selected")))
@@ -427,17 +427,17 @@ namespace lsp
             if (pSpeed != NULL)
             {
                 pSpeed->bind(this);
-                pSpeed->notify_all();
+                pSpeed->notify_all(ui::PORT_USER_EDIT);
             }
             if (pAbsorption != NULL)
             {
                 pAbsorption->bind(this);
-                pAbsorption->notify_all();
+                pAbsorption->notify_all(ui::PORT_USER_EDIT);
             }
             if (pSelected != NULL)
             {
                 pSelected->bind(this);
-                pSelected->notify_all();
+                pSelected->notify_all(ui::PORT_USER_EDIT);
             }
         }
 
@@ -480,7 +480,7 @@ namespace lsp
             {
                 ui::IPort *port     = notify.uget(i);
                 if (port != NULL)
-                    port->notify_all();
+                    port->notify_all(ui::PORT_USER_EDIT);
             }
 
             return STATUS_OK;
@@ -553,17 +553,17 @@ namespace lsp
             if (pLink != NULL)
             {
                 pLink->bind(this);
-                pLink->notify_all();
+                pLink->notify_all(ui::PORT_USER_EDIT);
             }
             if (pInner != NULL)
             {
                 pInner->bind(this);
-                pInner->notify_all();
+                pInner->notify_all(ui::PORT_USER_EDIT);
             }
             if (pOuter != NULL)
             {
                 pOuter->bind(this);
-                pOuter->notify_all();
+                pOuter->notify_all(ui::PORT_USER_EDIT);
             }
         }
 
@@ -589,7 +589,7 @@ namespace lsp
                 if (pOuter->value() != v)
                 {
                     pOuter->set_value(v);
-                    pOuter->notify_all();
+                    pOuter->notify_all(ui::PORT_USER_EDIT);
                 }
             }
             else if ((port == pOuter) && (pOuter != NULL))
@@ -602,7 +602,7 @@ namespace lsp
                 if (pInner->value() != v)
                 {
                     pInner->set_value(v);
-                    pInner->notify_all();
+                    pInner->notify_all(ui::PORT_USER_EDIT);
                 }
             }
         }
