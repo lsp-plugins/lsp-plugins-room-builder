@@ -486,7 +486,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void room_builder_ui::CtlMaterialPreset::notify(ui::IPort *port)
+        void room_builder_ui::CtlMaterialPreset::notify(ui::IPort *port, size_t flags)
         {
             if (pCBox == NULL)
                 return;
@@ -567,7 +567,7 @@ namespace lsp
             }
         }
 
-        void room_builder_ui::CtlKnobBinding::notify(ui::IPort *port)
+        void room_builder_ui::CtlKnobBinding::notify(ui::IPort *port, size_t flags)
         {
             if (port == NULL)
                 return;
@@ -589,7 +589,7 @@ namespace lsp
                 if (pOuter->value() != v)
                 {
                     pOuter->set_value(v);
-                    pOuter->notify_all(ui::PORT_USER_EDIT);
+                    pOuter->notify_all(flags);
                 }
             }
             else if ((port == pOuter) && (pOuter != NULL))
@@ -602,7 +602,7 @@ namespace lsp
                 if (pInner->value() != v)
                 {
                     pInner->set_value(v);
-                    pInner->notify_all(ui::PORT_USER_EDIT);
+                    pInner->notify_all(flags);
                 }
             }
         }
