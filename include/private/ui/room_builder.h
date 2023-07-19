@@ -90,12 +90,12 @@ namespace lsp
 
                     public:
                         explicit CtlMaterialPreset(room_builder_ui *ui);
-                        virtual ~CtlMaterialPreset();
+                        virtual ~CtlMaterialPreset() override;
 
                         void init(const char *preset, const char *selected, const char *speed, const char *absorption);
 
                     public:
-                        virtual void        notify(ui::IPort *port);
+                        virtual void        notify(ui::IPort *port, size_t flags) override;
 
                         static status_t     slot_submit(tk::Widget *sender, void *ptr, void *data);
                 };
@@ -111,12 +111,12 @@ namespace lsp
 
                     public:
                         explicit CtlKnobBinding(room_builder_ui *ui, bool reverse);
-                        virtual ~CtlKnobBinding();
+                        virtual ~CtlKnobBinding() override;
 
                         void init(const char *outer, const char *inner, const char *link);
 
                     public:
-                        virtual void        notify(ui::IPort *port);
+                        virtual void        notify(ui::IPort *port, size_t flags) override;
                 };
 
             protected:
