@@ -233,15 +233,16 @@ namespace lsp
                     public:
                         inline SceneLoader()
                         {
-                            nFlags      = 0;
-                            pBuilder       = NULL;
+                            nFlags          = 0;
+                            sPath[0]        = '\0';
+                            pBuilder        = NULL;
                         }
 
                         void                init(room_builder *base);
                         void                destroy();
 
                     public:
-                        virtual status_t    run();
+                        virtual status_t    run() override;
                 };
 
                 class RenderLauncher: public ipc::ITask
@@ -253,7 +254,7 @@ namespace lsp
                         explicit inline RenderLauncher(room_builder *builder): pBuilder(builder) {}
 
                     public:
-                        virtual status_t run();
+                        virtual status_t run() override;
                 };
 
                 class Renderer: public ipc::Thread
@@ -272,7 +273,7 @@ namespace lsp
                             vSamples.swap(&samples);
                         }
 
-                        virtual status_t    run();
+                        virtual status_t    run() override;
 
                         void                terminate();
                 };
@@ -292,7 +293,7 @@ namespace lsp
                             nChangeResp     = 0;
                         }
 
-                        virtual status_t    run();
+                        virtual status_t    run() override;
 
                         inline bool         need_launch() const         { return nChangeReq != nChangeResp; }
 
@@ -321,7 +322,7 @@ namespace lsp
                         void                bind(size_t sample_id, capture_t *capture);
 
                     public:
-                        virtual status_t    run();
+                        virtual status_t    run() override;
                 };
 
                 class GCTask: public ipc::ITask
@@ -331,10 +332,10 @@ namespace lsp
 
                     public:
                         explicit GCTask(room_builder *base);
-                        virtual ~GCTask();
+                        virtual ~GCTask() override;
 
                     public:
-                        virtual status_t run();
+                        virtual status_t run() override;
 
                         void        dump(dspu::IStateDumper *v) const;
                 };

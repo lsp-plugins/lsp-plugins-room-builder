@@ -90,7 +90,7 @@ namespace lsp
             pUI         = ui;
             sPattern    = pattern;
 
-            fValue      = default_value();
+            fValue      = (pMetadata != NULL) ? pMetadata->start : 0.0f;
         }
 
         room_builder_ui::CtlFloatPort::~CtlFloatPort()
