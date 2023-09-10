@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -233,15 +233,16 @@ namespace lsp
                     public:
                         inline SceneLoader()
                         {
-                            nFlags      = 0;
-                            pBuilder       = NULL;
+                            nFlags          = 0;
+                            sPath[0]        = '\0';
+                            pBuilder        = NULL;
                         }
 
                         void                init(room_builder *base);
                         void                destroy();
 
                     public:
-                        virtual status_t    run();
+                        virtual status_t    run() override;
                 };
 
                 class RenderLauncher: public ipc::ITask
@@ -253,7 +254,7 @@ namespace lsp
                         explicit inline RenderLauncher(room_builder *builder): pBuilder(builder) {}
 
                     public:
-                        virtual status_t run();
+                        virtual status_t run() override;
                 };
 
                 class Renderer: public ipc::Thread
@@ -272,7 +273,7 @@ namespace lsp
                             vSamples.swap(&samples);
                         }
 
-                        virtual status_t    run();
+                        virtual status_t    run() override;
 
                         void                terminate();
                 };
@@ -292,7 +293,7 @@ namespace lsp
                             nChangeResp     = 0;
                         }
 
-                        virtual status_t    run();
+                        virtual status_t    run() override;
 
                         inline bool         need_launch() const         { return nChangeReq != nChangeResp; }
 
@@ -321,7 +322,7 @@ namespace lsp
                         void                bind(size_t sample_id, capture_t *capture);
 
                     public:
-                        virtual status_t    run();
+                        virtual status_t    run() override;
                 };
 
                 class GCTask: public ipc::ITask
@@ -331,10 +332,10 @@ namespace lsp
 
                     public:
                         explicit GCTask(room_builder *base);
-                        virtual ~GCTask();
+                        virtual ~GCTask() override;
 
                     public:
-                        virtual status_t run();
+                        virtual status_t run() override;
 
                         void        dump(dspu::IStateDumper *v) const;
                 };
@@ -421,22 +422,23 @@ namespace lsp
                 void                process_listen_requests();
                 void                perform_convolution(size_t samples);
                 void                output_parameters();
+                void                do_destroy();
 
             public:
                 explicit room_builder(const meta::plugin_t *metadata, size_t inputs);
-                virtual ~room_builder();
+                virtual ~room_builder() override;
 
             public:
-                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports);
-                virtual void        destroy();
+                virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;
+                virtual void        destroy() override;
 
-                virtual void        update_settings();
-                virtual void        update_sample_rate(long sr);
+                virtual void        update_settings() override;
+                virtual void        update_sample_rate(long sr) override;
 
-                virtual void        process(size_t samples);
+                virtual void        process(size_t samples) override;
 
-                virtual void        state_loaded();
-                virtual void        ui_activated();
+                virtual void        state_loaded() override;
+                virtual void        ui_activated() override;
 
             public:
                 static dspu::rt_capture_config_t  decode_config(float value);
@@ -448,7 +450,7 @@ namespace lsp
                 static void                 read_object_properties(obj_props_t *props, const char *base, core::KVTStorage *kvt);
                 static void                 build_object_matrix(dsp::matrix3d_t *m, const obj_props_t *props, const dsp::matrix3d_t *world);
         };
-    } // namespace plugins
-} // namespace lsp
+    } /* namespace plugins */
+} /* namespace lsp */
 
 #endif /* PRIVATE_PLUGINS_ROOM_BUILDER_H_ */

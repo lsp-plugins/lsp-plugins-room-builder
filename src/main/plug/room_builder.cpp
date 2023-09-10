@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -364,6 +364,7 @@ namespace lsp
 
         room_builder::~room_builder()
         {
+            do_destroy();
         }
 
         void room_builder::init(plug::IWrapper *wrapper, plug::IPort **ports)
@@ -825,6 +826,12 @@ namespace lsp
         }
 
         void room_builder::destroy()
+        {
+            plug::Module::destroy();
+            do_destroy();
+        }
+
+        void room_builder::do_destroy()
         {
             // Stop active rendering task
             if (pRenderer != NULL)
@@ -1496,7 +1503,7 @@ namespace lsp
             {
                 // Output information about the convolver
                 convolver_t *c          = &vConvolvers[i];
-                c->pActivity->set_value(c->pCurr != NULL);
+                c->pActivity->set_value((c->pCurr != NULL) ? 1.0f : 0.0f);
             }
 
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
@@ -1755,15 +1762,18 @@ namespace lsp
             core::KVTStorage *kvt = kvt_lock();
             if (kvt != NULL)
             {
-                res = bind_scene(kvt, rt);
-                kvt_release();
+                lsp_finally { kvt_release(); };
+
+                if ((res = bind_scene(kvt, rt)) != STATUS_OK)
+                {
+                    rt->destroy(true);
+                    delete rt;
+                    return res;
+                }
             }
-            else
-                res = STATUS_NO_DATA;
 
             // Bind sources
-            res = bind_sources(rt);
-            if (res != STATUS_OK)
+            if ((res = bind_sources(rt)) != STATUS_OK)
             {
                 rt->destroy(true);
                 delete rt;
@@ -1772,8 +1782,7 @@ namespace lsp
 
             // Bind captures
             lltl::parray<sample_t> samples;
-            res = bind_captures(samples, rt);
-            if (res != STATUS_OK)
+            if ((res = bind_captures(samples, rt)) != STATUS_OK)
             {
                 destroy_samples(samples);
                 rt->destroy(true);
@@ -1782,20 +1791,19 @@ namespace lsp
             }
 
             // Create renderer and start execution
-            if (res == STATUS_OK)
+            pRenderer = new Renderer(this, rt, nRenderThreads, samples);
+            if (pRenderer == NULL)
             {
-                pRenderer = new Renderer(this, rt, nRenderThreads, samples);
-                if (pRenderer == NULL)
-                    res = STATUS_NO_MEM;
-                else if ((res = pRenderer->start()) != STATUS_OK)
-                {
-                    delete pRenderer;
-                    pRenderer = NULL;
-                }
+                destroy_samples(samples);
+                rt->destroy(true);
+                delete rt;
+                return STATUS_NO_MEM;
             }
 
-            if (res != STATUS_OK)
+            if ((res = pRenderer->start()) != STATUS_OK)
             {
+                delete pRenderer;
+                pRenderer = NULL;
                 destroy_samples(samples);
                 rt->destroy(true);
                 delete rt;
@@ -2127,9 +2135,7 @@ namespace lsp
 
                 // Write all samples to the file
                 res = wr.write_samples(vs, params.frames);
-                status_t res2 = wr.close();
-                if (res == STATUS_OK)
-                    res     = res2;
+                res = update_status(res, wr.close());
                 ::free(vs);
             }
             else
@@ -2273,7 +2279,7 @@ namespace lsp
             dsp::apply_matrix3d_mm1(m, &tmp);
         }
 
-    } // namespace plugins
-} // namespace lsp
+    } /* namespace plugins */
+} /* namespace lsp */
 
 
