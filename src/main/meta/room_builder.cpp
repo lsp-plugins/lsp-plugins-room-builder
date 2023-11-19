@@ -327,8 +327,8 @@ namespace lsp
             \
             { "sch" id, "Capture " label " hue", U_NONE, R_CONTROL, F_IN | F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }
 
-        #define RB_CONVOLVER_MONO(id, label, track, mix) \
-            COMBO("csf" id, "Channel source sample" label, 0, rb_samples), \
+        #define RB_CONVOLVER_MONO(id, label, file, track, mix) \
+            COMBO("csf" id, "Channel source sample" label, file, rb_samples), \
             COMBO("cst" id, "Channel source track" label, track, rb_tracks), \
             AMP_GAIN100("mk" id, "Makeup gain" label, 1.0f), \
             SWITCH("cam" id, "Channel mute" label, 0.0f), \
@@ -336,9 +336,9 @@ namespace lsp
             CONTROL("pd" id, "Channel pre-delay" label, U_MSEC, room_builder_metadata::PREDELAY), \
             PAN_CTL("com" id, "Channel Left/Right output mix" label, mix)
 
-        #define RB_CONVOLVER_STEREO(id, label, track, in_mix, out_mix) \
+        #define RB_CONVOLVER_STEREO(id, label, file, track, in_mix, out_mix) \
             PAN_CTL("cim" id, "Left/Right input mix" label, in_mix), \
-            RB_CONVOLVER_MONO(id, label, track, out_mix)
+            RB_CONVOLVER_MONO(id, label, file, track, out_mix)
 
         #define RB_EQ_BAND(id, freq)    \
             CONTROL("eq_" #id, "Band " freq "Hz gain", U_GAIN_AMP, room_builder_metadata::BA)
@@ -386,10 +386,10 @@ namespace lsp
             RB_CAPTURE("_6", "6", 6, 8, 0),
             RB_CAPTURE("_7", "7", 7, 8, 0),
 
-            RB_CONVOLVER_MONO("0", " 0", 0, -100.0f),
-            RB_CONVOLVER_MONO("1", " 1", 1, +100.0f),
-            RB_CONVOLVER_MONO("2", " 2", 0, -100.0f),
-            RB_CONVOLVER_MONO("3", " 3", 1, +100.0f),
+            RB_CONVOLVER_MONO("0", " 0", 1, 0, -100.0f),
+            RB_CONVOLVER_MONO("1", " 1", 1, 1, +100.0f),
+            RB_CONVOLVER_MONO("2", " 2", 2, 0, -100.0f),
+            RB_CONVOLVER_MONO("3", " 3", 2, 1, +100.0f),
 
             RB_EQUALIZER,
 
@@ -422,10 +422,10 @@ namespace lsp
             RB_CAPTURE("_6", "6", 6, 8, 0),
             RB_CAPTURE("_7", "7", 7, 8, 0),
 
-            RB_CONVOLVER_STEREO("0", " 0", 0, -100.0f, -100.0f),
-            RB_CONVOLVER_STEREO("1", " 1", 1, -100.0f, +100.0f),
-            RB_CONVOLVER_STEREO("2", " 2", 0, +100.0f, -100.0f),
-            RB_CONVOLVER_STEREO("3", " 3", 1, +100.0f, +100.0f),
+            RB_CONVOLVER_STEREO("0", " 0", 1, 0, -100.0f, -100.0f),
+            RB_CONVOLVER_STEREO("1", " 1", 1, 1, -100.0f, +100.0f),
+            RB_CONVOLVER_STEREO("2", " 2", 2, 0, +100.0f, -100.0f),
+            RB_CONVOLVER_STEREO("3", " 3", 2, 1, +100.0f, +100.0f),
 
             RB_EQUALIZER,
 
