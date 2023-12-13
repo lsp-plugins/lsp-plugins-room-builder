@@ -492,6 +492,7 @@ namespace lsp
         {
             "Raumbaumeister Mono",
             "Room Builder Mono",
+            "Room Builder Mono",
             "RB1M",
             &developers::v_sadovnikov,
             "room_builder_mono",
@@ -515,6 +516,7 @@ namespace lsp
         const meta::plugin_t  room_builder_stereo =
         {
             "Raumbaumeister Stereo",
+            "Room Builder Stereo",
             "Room Builder Stereo",
             "RB1S",
             &developers::v_sadovnikov,
