@@ -130,7 +130,15 @@
 							<value id="cpitch" sline="true"/>
 						</vbox>
 
-						<load id="ifn" progress.id="ifp" status=":ifs" fill="false" format="obj3d" path.id="_ui_dlg_model3d_path" pad.v="4"/>
+						<load
+							id="ifn"
+							progress.id="ifp"
+							status=":ifs"
+							fill="false"
+							format="obj3d"
+							path.id="_ui_dlg_model3d_path"
+							ftype.id="_ui_dlg_model3d_ftype"
+							pad.v="4"/>
 
 					</grid>
 				</vbox>
@@ -138,7 +146,17 @@
 				<!-- Sample editors -->
 				<ui:for id="i" first="0" last="7">
 					<vbox>
-						<asample expand="true" mesh_id="ifd_${i}" path_id="_ui_dlg_ir_path" hcut=":ihc_${i}" tcut=":itc_${i}" fadein=":ifi_${i}" fadeout=":ifo_${i}" length=":ifl_${i}" status=":ifs_${i}" width.min="340" height.min="210" active="false" pointer="arrow"/>
+						<asample
+							expand="true"
+							mesh_id="ifd_${i}"
+							path.id="_ui_dlg_ir_path"
+							ftype.id="_ui_dlg_ir_ftype"
+							hcut=":ihc_${i}" tcut=":itc_${i}"
+							fadein=":ifi_${i}" fadeout=":ifo_${i}"
+							length=":ifl_${i}"
+							status=":ifs_${i}"
+							width.min="340" height.min="210"
+							active="false" pointer="arrow"/>
 
 						<grid rows="4" cols="9" bg.color="bg_schema">
 							<!-- r1 -->
@@ -158,7 +176,17 @@
 
 							<!-- r2 -->
 							<cell cols="7"><hsep bg.color="bg" pad.v="2" vreduce="true"/></cell>
-							<cell rows="3"><save id="ofn_${i}" size="50" command.id="ofc_${i}" progress.id="ofp_${i}" status=":ofs_${i}" fill="false" format="wav,lspc,all" path.id="_ui_dlg_sample_path"/></cell>
+							<cell rows="3">
+								<save
+									id="ofn_${i}"
+									size="50"
+									command.id="ofc_${i}"
+									progress.id="ofp_${i}"
+									status=":ofs_${i}"
+									fill="false"
+									format="wav,lspc,all"
+									path.id="_ui_dlg_ir_path"/>
+							</cell>
 
 							<!-- r3 -->
 							<ui:with pad.h="6" pad.v="4">
