@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -499,6 +499,8 @@ namespace lsp
             LSP_LV2_URI("room_builder_mono"),
             LSP_LV2UI_URI("room_builder_mono"),
             "cqbr",
+            LSP_VST3_UID("rb1m    cqbr"),
+            LSP_VST3UI_UID("rb1m    cqbr"),
             0,
             NULL,
             LSP_CLAP_URI("room_builder_mono"),
@@ -524,6 +526,8 @@ namespace lsp
             LSP_LV2_URI("room_builder_stereo"),
             LSP_LV2UI_URI("room_builder_stereo"),
             "mprh",
+            LSP_VST3_UID("rb1s    mprh"),
+            LSP_VST3UI_UID("rb1s    mprh"),
             0,
             NULL,
             LSP_CLAP_URI("room_builder_stereo"),
