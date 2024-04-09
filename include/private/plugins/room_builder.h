@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -426,12 +426,17 @@ namespace lsp
 
             public:
                 explicit room_builder(const meta::plugin_t *metadata, size_t inputs);
+                room_builder(const room_builder &) = delete;
+                room_builder(room_builder &&) = delete;
                 virtual ~room_builder() override;
 
-            public:
+                room_builder & operator = (const room_builder &) = delete;
+                room_builder & operator = (room_builder &&) = delete;
+
                 virtual void        init(plug::IWrapper *wrapper, plug::IPort **ports) override;
                 virtual void        destroy() override;
 
+            public:
                 virtual void        update_settings() override;
                 virtual void        update_sample_rate(long sr) override;
 
