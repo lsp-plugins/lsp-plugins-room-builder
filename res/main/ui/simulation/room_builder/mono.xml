@@ -750,7 +750,7 @@
 		<!-- r7 -->
 		<!-- Output -->
 		<group text="groups.output" ipad="0">
-			<grid rows="4" cols="7" expand="true" fill="true">
+			<grid rows="4" cols="8" expand="true" fill="true">
 				<!-- r1 -->
 				<label text="labels.signal.dry_pan" vreduce="true" pad.v="4"/>
 				<cell rows="4"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
@@ -758,18 +758,20 @@
 				<cell rows="4"><vsep pad.h="2" bg.color="bg" hreduce="true"/></cell>
 				<label text="labels.signal.dry"/>
 				<label text="labels.signal.wet"/>
+				<label text="labels.signal.drywet"/>
 				<label text="labels.output"/>
 				<!-- r2 -->
 				<hsep pad.v="2" bg.color="bg" vreduce="true"/>
 				<hsep pad.v="2" bg.color="bg" vreduce="true"/>
-				<cell cols="3"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
+				<cell cols="4"><hsep pad.v="2" bg.color="bg" vreduce="true"/></cell>
 				<!-- r3 -->
 
 				<ui:with pad.h="6" pad.v="4">
 					<knob id="p" scolor="balance"/>
 					<knob id="pd"/>
-					<knob id="dry" scolor="yellow"/>
-					<knob id="wet" scolor="yellow"/>
+					<knob id="dry" scolor="dry"/>
+					<knob id="wet" scolor="wet"/>
+					<knob id="drywet" scolor="drywet"/>
 					<knob id="g_out"/>
 				</ui:with>
 				<!-- r4 -->
@@ -778,6 +780,7 @@
 					<value id="pd"/>
 					<value id="dry"/>
 					<value id="wet"/>
+					<value id="drywet"/>
 					<value id="g_out"/>
 				</ui:with>
 			</grid>

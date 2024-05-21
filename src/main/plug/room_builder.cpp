@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -28,17 +28,17 @@
 #include <lsp-plug.in/fmt/lspc/lspc.h>
 #include <lsp-plug.in/fmt/lspc/AudioWriter.h>
 #include <lsp-plug.in/stdlib/stdio.h>
+#include <lsp-plug.in/shared/debug.h>
 
 #include <private/plugins/room_builder.h>
-
-#define TMP_BUF_SIZE            4096
-#define CONV_RANK               10
-#define TRACE_PORT(p)           lsp_trace("  port id=%s", (p)->metadata()->id);
 
 namespace lsp
 {
     namespace plugins
     {
+        static constexpr size_t TMP_BUF_SIZE = 0x1000;
+        static constexpr size_t CONV_RANK = 10;
+
         static const float band_freqs[] =
         {
             73.0f,
@@ -67,34 +67,34 @@ namespace lsp
 
         //-------------------------------------------------------------------------
         template <class T>
-            static bool kvt_fetch(core::KVTStorage *s, const char *base, const char *branch, T *value, T dfl)
-            {
-                char name[0x100]; // Should be enough;
-                size_t len = ::strlen(base) + ::strlen(branch) + 2;
-                if (len >= 0x100)
-                    return false;
+        static bool kvt_fetch(core::KVTStorage *s, const char *base, const char *branch, T *value, T dfl)
+        {
+            char name[0x100]; // Should be enough;
+            size_t len = ::strlen(base) + ::strlen(branch) + 2;
+            if (len >= 0x100)
+                return false;
 
-                char *tail = ::stpcpy(name, base);
-                *(tail++)  = '/';
-                stpcpy(tail, branch);
+            char *tail = ::stpcpy(name, base);
+            *(tail++)  = '/';
+            stpcpy(tail, branch);
 
-                return s->get_dfl(name, value, dfl);
-            }
+            return s->get_dfl(name, value, dfl);
+        }
 
         template <class T>
-            static bool kvt_deploy(core::KVTStorage *s, const char *base, const char *branch, T value, size_t flags)
-            {
-                char name[0x100]; // Should be enough
-                size_t len = ::strlen(base) + ::strlen(branch) + 2;
-                if (len >= 0x100)
-                    return false;
+        static bool kvt_deploy(core::KVTStorage *s, const char *base, const char *branch, T value, size_t flags)
+        {
+            char name[0x100]; // Should be enough
+            size_t len = ::strlen(base) + ::strlen(branch) + 2;
+            if (len >= 0x100)
+                return false;
 
-                char *tail = ::stpcpy(name, base);
-                *(tail++)  = '/';
-                stpcpy(tail, branch);
+            char *tail = ::stpcpy(name, base);
+            *(tail++)  = '/';
+            stpcpy(tail, branch);
 
-                return s->put(name, value, flags) == STATUS_OK;
-            }
+            return s->put(name, value, flags) == STATUS_OK;
+        }
 
         //-------------------------------------------------------------------------
         // 3D Scene loader
@@ -339,6 +339,7 @@ namespace lsp
             pRank           = NULL;
             pDry            = NULL;
             pWet            = NULL;
+            pDryWet         = NULL;
             pRenderThreads  = NULL;
             pRenderQuality  = NULL;
             pRenderStatus   = NULL;
@@ -574,198 +575,117 @@ namespace lsp
 
             lsp_trace("Binding audio ports");
             for (size_t i=0; i<nInputs; ++i)
-            {
-                TRACE_PORT(ports[port_id]);
-                vInputs[i].pIn      = ports[port_id++];
-            }
+                BIND_PORT(vInputs[i].pIn);
+
             for (size_t i=0; i<2; ++i)
-            {
-                TRACE_PORT(ports[port_id]);
-                vChannels[i].pOut   = ports[port_id++];
-            }
+                BIND_PORT(vChannels[i].pOut);
 
             // Bind controlling ports
             lsp_trace("Binding common ports");
-            TRACE_PORT(ports[port_id]);
-            pBypass         = ports[port_id++];
-            TRACE_PORT(ports[port_id]);            // Skip view selector
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip editor selector
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip processor selector
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // FFT rank
-            pRank           = ports[port_id++];
-            TRACE_PORT(ports[port_id]);            // Pre-delay
-            pPredelay       = ports[port_id++];
+            BIND_PORT(pBypass);
+            SKIP_PORT("View selector");
+            SKIP_PORT("Editor selector");
+            SKIP_PORT("Processor selector");
+            BIND_PORT(pRank);
+            BIND_PORT(pPredelay);
 
-            for (size_t i=0; i<nInputs; ++i)        // Panning ports
-            {
-                TRACE_PORT(ports[port_id]);
-                vInputs[i].pPan     = ports[port_id++];
-            }
+            // Panning ports
+            for (size_t i=0; i<nInputs; ++i)
+                BIND_PORT(vInputs[i].pPan);
 
-            TRACE_PORT(ports[port_id]);
-            pDry            = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pWet            = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pOutGain        = ports[port_id++];
+            BIND_PORT(pDry);
+            BIND_PORT(pWet);
+            BIND_PORT(pDryWet);
+            BIND_PORT(pOutGain);
 
-            TRACE_PORT(ports[port_id]);
-            pRenderThreads  = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pRenderQuality  = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pRenderStatus   = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pRenderProgress = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pRenderNormalize= ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pRenderCmd      = ports[port_id++];
+            BIND_PORT(pRenderThreads);
+            BIND_PORT(pRenderQuality);
+            BIND_PORT(pRenderStatus);
+            BIND_PORT(pRenderProgress);
+            BIND_PORT(pRenderNormalize);
+            BIND_PORT(pRenderCmd);
 
-            TRACE_PORT(ports[port_id]);
-            p3DFile         = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            p3DStatus       = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            p3DProgress     = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            p3DOrientation  = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pScaleX         = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pScaleY         = ports[port_id++];
-            TRACE_PORT(ports[port_id]);
-            pScaleZ         = ports[port_id++];
+            BIND_PORT(p3DFile);
+            BIND_PORT(p3DStatus);
+            BIND_PORT(p3DProgress);
+            BIND_PORT(p3DOrientation);
+            BIND_PORT(pScaleX);
+            BIND_PORT(pScaleY);
+            BIND_PORT(pScaleZ);
 
             // Skip camera settings
-            TRACE_PORT(ports[port_id]);            // Skip camera x
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip camera y
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip camera z
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip camera yaw
-            port_id++;
-            TRACE_PORT(ports[port_id]);            // Skip camera pitch
-            port_id++;
+            SKIP_PORT("Camera X"); // Skip camera x
+            SKIP_PORT("Camera Y"); // Skip camera y
+            SKIP_PORT("Camera Z"); // Skip camera z
+            SKIP_PORT("Yaw"); // Skip camera yaw
+            SKIP_PORT("Pitch"); // Skip camera pitch
 
             // Bind sources
-            TRACE_PORT(ports[port_id]);            // Skip source selector
-            port_id++;
+            SKIP_PORT("Source selector"); // Skip source selector
 
             for (size_t i=0; i<meta::room_builder_metadata::SOURCES; ++i)
             {
                 source_t *src   = &vSources[i];
 
-                TRACE_PORT(ports[port_id]);
-                src->pEnabled       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pType          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pPhase         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pPosX          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pPosY          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pPosZ          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pYaw           = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pPitch         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pRoll          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pSize          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pHeight        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pAngle         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                src->pCurvature     = ports[port_id++];
+                BIND_PORT(src->pEnabled);
+                BIND_PORT(src->pType);
+                BIND_PORT(src->pPhase);
+                BIND_PORT(src->pPosX);
+                BIND_PORT(src->pPosY);
+                BIND_PORT(src->pPosZ);
+                BIND_PORT(src->pYaw);
+                BIND_PORT(src->pPitch);
+                BIND_PORT(src->pRoll);
+                BIND_PORT(src->pSize);
+                BIND_PORT(src->pHeight);
+                BIND_PORT(src->pAngle);
+                BIND_PORT(src->pCurvature);
 
-                TRACE_PORT(ports[port_id]);
-                port_id++;          // Skip hue value
+                SKIP_PORT("Source hue");          // Skip hue value
             }
 
             // Bind captures
-            TRACE_PORT(ports[port_id]);            // Skip capture selector
-            port_id++;
+            SKIP_PORT("Capture selector");            // Skip capture selector
 
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *cap  = &vCaptures[i];
 
-                TRACE_PORT(ports[port_id]);
-                cap->pEnabled       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pRMin          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pRMax          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pPosX          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pPosY          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pPosZ          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pYaw           = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pPitch         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pRoll          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pCapsule       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pConfig        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pAngle         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pDistance      = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pDirection     = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pSide          = ports[port_id++];
+                BIND_PORT(cap->pEnabled);
+                BIND_PORT(cap->pRMin);
+                BIND_PORT(cap->pRMax);
+                BIND_PORT(cap->pPosX);
+                BIND_PORT(cap->pPosY);
+                BIND_PORT(cap->pPosZ);
+                BIND_PORT(cap->pYaw);
+                BIND_PORT(cap->pPitch);
+                BIND_PORT(cap->pRoll);
+                BIND_PORT(cap->pCapsule);
+                BIND_PORT(cap->pConfig);
+                BIND_PORT(cap->pAngle);
+                BIND_PORT(cap->pDistance);
+                BIND_PORT(cap->pDirection);
+                BIND_PORT(cap->pSide);
 
-                TRACE_PORT(ports[port_id]);
-                cap->pHeadCut       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pTailCut       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pFadeIn        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pFadeOut       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pListen        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pReverse       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pMakeup        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pStatus        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pLength        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pCurrLen       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pMaxLen        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pThumbs        = ports[port_id++];
+                BIND_PORT(cap->pHeadCut);
+                BIND_PORT(cap->pTailCut);
+                BIND_PORT(cap->pFadeIn);
+                BIND_PORT(cap->pFadeOut);
+                BIND_PORT(cap->pListen);
+                BIND_PORT(cap->pReverse);
+                BIND_PORT(cap->pMakeup);
+                BIND_PORT(cap->pStatus);
+                BIND_PORT(cap->pLength);
+                BIND_PORT(cap->pCurrLen);
+                BIND_PORT(cap->pMaxLen);
+                BIND_PORT(cap->pThumbs);
 
-                TRACE_PORT(ports[port_id]);
-                cap->pOutFile       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pSaveCmd       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pSaveStatus    = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                cap->pSaveProgress  = ports[port_id++];
+                BIND_PORT(cap->pOutFile);
+                BIND_PORT(cap->pSaveCmd);
+                BIND_PORT(cap->pSaveStatus);
+                BIND_PORT(cap->pSaveProgress);
 
-                TRACE_PORT(ports[port_id]);
-                port_id++;          // Skip hue value
+                SKIP_PORT("Capture hue");          // Skip hue value
             }
 
             // Bind convolver ports
@@ -775,25 +695,15 @@ namespace lsp
                 convolver_t *c  = &vConvolvers[i];
 
                 if (nInputs > 1)    // Input panning
-                {
-                    TRACE_PORT(ports[port_id]);
-                    c->pPanIn       = ports[port_id++];
-                }
+                    BIND_PORT(c->pPanIn);
 
-                TRACE_PORT(ports[port_id]);
-                c->pSample      = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pTrack       = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pMakeup      = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pMute        = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pActivity    = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pPredelay    = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pPanOut      = ports[port_id++];
+                BIND_PORT(c->pSample);
+                BIND_PORT(c->pTrack);
+                BIND_PORT(c->pMakeup);
+                BIND_PORT(c->pMute);
+                BIND_PORT(c->pActivity);
+                BIND_PORT(c->pPredelay);
+                BIND_PORT(c->pPanOut);
             }
 
             // Bind wet processing ports
@@ -803,23 +713,15 @@ namespace lsp
             {
                 channel_t *c        = &vChannels[i];
 
-                TRACE_PORT(ports[port_id]);
-                c->pWetEq           = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pLowCut          = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pLowFreq         = ports[port_id++];
+                BIND_PORT(c->pWetEq);
+                BIND_PORT(c->pLowCut);
+                BIND_PORT(c->pLowFreq);
 
                 for (size_t j=0; j<meta::room_builder_metadata::EQ_BANDS; ++j)
-                {
-                    TRACE_PORT(ports[port_id]);
-                    c->pFreqGain[j]     = ports[port_id++];
-                }
+                    BIND_PORT(c->pFreqGain[j]);
 
-                TRACE_PORT(ports[port_id]);
-                c->pHighCut         = ports[port_id++];
-                TRACE_PORT(ports[port_id]);
-                c->pHighFreq        = ports[port_id++];
+                BIND_PORT(c->pHighCut);
+                BIND_PORT(c->pHighFreq);
 
                 port_id         = port;
             }
@@ -922,12 +824,15 @@ namespace lsp
 
         void room_builder::update_settings()
         {
-            float out_gain      = pOutGain->value();
-            float dry_gain      = pDry->value() * out_gain;
-            float wet_gain      = pWet->value() * out_gain;
-            bool bypass         = pBypass->value() >= 0.5f;
-            float predelay      = pPredelay->value();
-            size_t rank         = get_fft_rank(pRank->value());
+            const float out_gain    = pOutGain->value();
+            const float dry         = pDry->value();
+            const float wet         = pWet->value();
+            const float drywet      = pDryWet->value() * 0.01f;
+            const float dry_gain    = (dry * drywet + 1.0f - drywet) * out_gain;
+            const float wet_gain    = (wet * drywet) * out_gain;
+            const bool bypass       = pBypass->value() >= 0.5f;
+            const float predelay    = pPredelay->value();
+            const size_t rank       = get_fft_rank(pRank->value());
 
             // Adjust FFT rank
             if (rank != nFftRank)

@@ -26,7 +26,7 @@
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MAJOR       1
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MINOR       0
-#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       18
+#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       19
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -254,6 +254,7 @@ namespace lsp
             pan, \
             AMP_GAIN1000("dry", "Dry amount", 1.0f), \
             AMP_GAIN1000("wet", "Wet amount", 1.0f), \
+            DRYWET(100.0f), \
             OUT_GAIN, \
             CONTROL("threads", "Number of threads for processing", U_NONE, room_builder_metadata::THREADS), \
             PERCENTS("quality", "Quality factor", 50.0f, 0.1f), \
