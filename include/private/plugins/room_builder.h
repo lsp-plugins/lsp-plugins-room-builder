@@ -282,24 +282,24 @@ namespace lsp
                 {
                     public:
                         room_builder           *pBuilder;
-                        volatile uatomic_t      nChangeReq;
+                        mutable uatomic_t       nChangeReq;
                         uatomic_t               nChangeResp;
 
                     public:
                         inline Configurator(room_builder *bld):
                             pBuilder(bld)
                         {
-                            nChangeReq      = 0;
+                            atomic_store(&nChangeReq, 0);
                             nChangeResp     = 0;
                         }
 
                         virtual status_t    run() override;
 
-                        inline bool         need_launch() const         { return nChangeReq != nChangeResp; }
+                        inline bool         need_launch() const         { return atomic_load(&nChangeReq) != nChangeResp; }
 
                         inline void         query_launch()              { atomic_add(&nChangeReq, 1);       }
 
-                        inline size_t       change_req() const          { return nChangeReq;                }
+                        inline size_t       change_req() const          { return atomic_load(&nChangeReq);  }
 
                         inline void         commit(size_t change_req)   { nChangeResp = change_req;         }
                 };
