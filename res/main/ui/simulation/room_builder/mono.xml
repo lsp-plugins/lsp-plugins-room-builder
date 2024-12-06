@@ -201,6 +201,7 @@
 								<vbox fill="false" spacing="6">
 									<button id="irv_${i}" text="labels.sedit.reverse" size="19" ui:inject="Button_cyan" toggle="false"/>
 									<button id="ils_${i}" text="labels.listen" height="19" hfill="true" ui:inject="Button_yellow" toggle="false"/>
+									<button id="ilc_${i}" text="labels.stop" height="19" hfill="true" ui:inject="Button_yellow" toggle="false"/>
 								</vbox>
 							</cell>
 

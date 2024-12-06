@@ -110,6 +110,7 @@ namespace lsp
                     dspu::Bypass        sBypass;
                     dspu::SamplePlayer  sPlayer;
                     dspu::Equalizer     sEqualizer;     // Wet signal equalizer
+                    dspu::Playback      vPlaybacks[meta::room_builder_metadata::CAPTURES];
 
                     float              *vOut;
                     float              *vBuffer;        // Rendering buffer
@@ -154,6 +155,7 @@ namespace lsp
                 typedef struct capture_t: public dspu::room_capture_config_t
                 {
                     dspu::Toggle            sListen;        // Listen toggle
+                    dspu::Toggle            sStop;          // Stop toggle
 
                     bool                    bEnabled;       // Enabled flag
                     ssize_t                 nRMin;          // Minimum reflection order
@@ -200,6 +202,7 @@ namespace lsp
                     plug::IPort            *pFadeIn;
                     plug::IPort            *pFadeOut;
                     plug::IPort            *pListen;
+                    plug::IPort            *pStop;
                     plug::IPort            *pReverse;       // Reverse
                     plug::IPort            *pMakeup;        // Makeup gain
                     plug::IPort            *pStatus;        // Status of rendering
