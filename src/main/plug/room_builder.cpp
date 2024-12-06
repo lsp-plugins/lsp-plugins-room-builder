@@ -780,8 +780,8 @@ namespace lsp
             {
                 channel_t *c = &vChannels[i];
                 c->sEqualizer.destroy();
-                for (size_t j=0; i<meta::room_builder_metadata::CAPTURES; ++j)
-                    c->vPlaybacks[i].destroy();
+                for (size_t j=0; j<meta::room_builder_metadata::CAPTURES; ++j)
+                    c->vPlaybacks[j].destroy();
 
                 dspu::Sample *gc_list = c->sPlayer.destroy(false);
                 destroy_gc_samples(gc_list);
