@@ -467,6 +467,7 @@ namespace lsp
                 capture_t *cap      = &vCaptures[i];
 
                 cap->sListen.init();
+                cap->sStop.init();
 
                 dsp::init_point_xyz(&cap->sPos, 0.0f, 1.0f, 0.0f);
                 cap->fYaw           = 0.0f;
@@ -526,6 +527,7 @@ namespace lsp
                 cap->pFadeIn        = NULL;
                 cap->pFadeOut       = NULL;
                 cap->pListen        = NULL;
+                cap->pStop          = NULL;
                 cap->pReverse       = NULL;
                 cap->pMakeup        = NULL;
                 cap->pStatus        = NULL;
@@ -672,6 +674,7 @@ namespace lsp
                 BIND_PORT(cap->pFadeIn);
                 BIND_PORT(cap->pFadeOut);
                 BIND_PORT(cap->pListen);
+                BIND_PORT(cap->pStop);
                 BIND_PORT(cap->pReverse);
                 BIND_PORT(cap->pMakeup);
                 BIND_PORT(cap->pStatus);
@@ -777,6 +780,9 @@ namespace lsp
             {
                 channel_t *c = &vChannels[i];
                 c->sEqualizer.destroy();
+                for (size_t j=0; j<meta::room_builder_metadata::CAPTURES; ++j)
+                    c->vPlaybacks[j].destroy();
+
                 dspu::Sample *gc_list = c->sPlayer.destroy(false);
                 destroy_gc_samples(gc_list);
                 c->vOut     = NULL;
@@ -956,6 +962,8 @@ namespace lsp
                 // Listen button pressed?
                 if (cap->pListen != NULL)
                     cap->sListen.submit(cap->pListen->value());
+                if (cap->pStop != NULL)
+                    cap->sStop.submit(cap->pStop->value());
             }
 
             // Adjust channel setup
@@ -1300,23 +1308,45 @@ namespace lsp
 
         void room_builder::process_listen_requests()
         {
+            const size_t fadeout = dspu::millis_to_samples(fSampleRate, 5.0f);
+            dspu::PlaySettings ps;
+
             // Update capture settings
             for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
             {
                 capture_t *cap      = &vCaptures[i];
 
-                if (!cap->sListen.pending())
-                     continue;
+                // Need to start audio preview playback?
+                if (cap->sListen.pending())
+                {
+                    lsp_trace("Submitted listen toggle");
+                    dspu::Sample *s = vChannels[0].sPlayer.get(i);
+                    const size_t n_c = (s != NULL) ? s->channels() : 0;
+                    if (n_c > 0)
+                    {
+                        for (size_t j=0; j<2; ++j)
+                        {
+                            channel_t *c = &vChannels[j];
+                            ps.set_channel(i, j % n_c);
+                            ps.set_playback(0, 0, GAIN_AMP_0_DB);
 
-                lsp_trace("Submitted listen toggle");
-                dspu::Sample *s = vChannels[0].sPlayer.get(i);
-                size_t n_c      = (s != NULL) ? s->channels() : 0;
-                if (n_c > 0)
+                            c->vPlaybacks[i].cancel(fadeout, 0);
+                            c->vPlaybacks[i] = c->sPlayer.play(&ps);
+                        }
+                    }
+                    cap->sListen.commit();
+                }
+
+                // Need to cancel audio preview playback?
+                if (cap->sStop.pending())
                 {
                     for (size_t j=0; j<2; ++j)
-                        vChannels[j].sPlayer.play(i, j%n_c, cap->fMakeup, 0);
+                    {
+                        channel_t *c = &vChannels[j];
+                        c->vPlaybacks[i].cancel(fadeout, 0);
+                    }
+                    cap->sStop.commit();
                 }
-                cap->sListen.commit();
             }
         }
 

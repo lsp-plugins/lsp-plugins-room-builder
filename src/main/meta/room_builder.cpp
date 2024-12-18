@@ -26,7 +26,7 @@
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MAJOR       1
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MINOR       0
-#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       23
+#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       24
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -313,7 +313,8 @@ namespace lsp
             CONTROL("itc" id, "Tail cut" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
             CONTROL("ifi" id, "Fade in" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
             CONTROL("ifo" id, "Fade out" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
-            TRIGGER("ils" id, "Impulse listen" label), \
+            TRIGGER("ils" id, "Impulse listen preview" label), \
+            TRIGGER("ilc" id, "Impulse stop preview" label), \
             SWITCH("irv" id, "Impulse reverse" label, 0.0f), \
             AMP_GAIN_RANGE("imkp" id, "Impulse makeup gain" label, 1.0f, 0.001f, 1000.0f), \
             STATUS("ifs" id, "Impulse status" label), \
