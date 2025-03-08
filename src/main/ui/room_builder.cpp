@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -104,7 +104,7 @@ namespace lsp
             // Prepare the value
             char name[0x100];
             float value = 0.0f;
-            ::sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
 
             // Fetch value
             core::KVTStorage *kvt = pUI->wrapper()->kvt_lock();
@@ -129,7 +129,7 @@ namespace lsp
 
             // Prepare the value
             char name[0x100];
-            sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
             value       = limit_value(pMetadata, value);
 
             // Obtain KVT storage
@@ -153,7 +153,7 @@ namespace lsp
         bool room_builder_ui::CtlFloatPort::changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value)
         {
             char name[0x100];
-            ::sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
             if (::strcmp(name, id) != 0)
                 return false;
 
