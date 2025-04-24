@@ -105,13 +105,6 @@ namespace lsp
             { NULL, NULL }
         };
 
-        static const port_item_t rb_processors[] =
-        {
-            { "Convolvers",         "room_bld.convolvers" },
-            { "IR Equalizer",       "room_bld.ir_eq" },
-            { NULL, NULL }
-        };
-
         static const port_item_t rb_ssel[] =
         {
             { "0",                  NULL },
@@ -248,7 +241,6 @@ namespace lsp
             BYPASS, \
             COMBO("view", "Current view", 0, rb_view),              \
             COMBO("editor", "Current editor", 0, rb_editor),        \
-            COMBO("signal", "Current signal processor", 0, rb_processors),  \
             COMBO("fft", "FFT size", room_builder_metadata::FFT_RANK_DEFAULT, rb_fft_rank), \
             CONTROL("pd", "Pre-delay", U_MSEC, room_builder_metadata::PREDELAY), \
             pan, \
@@ -347,6 +339,7 @@ namespace lsp
 
         #define RB_EQUALIZER    \
             SWITCH("wpp", "Wet post-process", 0),    \
+            SWITCH("eqv", "Equalizer visibility", 0),    \
             COMBO("lcm", "Low-cut mode", 0, filter_slope),      \
             CONTROL("lcf", "Low-cut frequency", U_HZ, room_builder_metadata::LCF),   \
             RB_EQ_BAND(0, "50"), \
