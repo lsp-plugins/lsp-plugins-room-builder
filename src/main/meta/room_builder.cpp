@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -264,8 +264,8 @@ namespace lsp
             CONTROL_DFL("cposx", "Camera X position", U_M, room_builder_metadata::POSITION, 1.0f), \
             CONTROL_DFL("cposy", "Camera Y position", U_M, room_builder_metadata::POSITION, -0.2f), \
             CONTROL_DFL("cposz", "Camera Z position", U_M, room_builder_metadata::POSITION, 0.5f), \
-            { "cyaw", "Camera Yaw angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 80.0f, 0.1f, NULL, NULL }, \
-            { "cpitch", "Camera Pitch angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP, -89.0f, 89.0f, -25.0f, 0.1f, NULL, NULL }
+            CYC_CONTROL_ALL("cyaw", "Camera Yaw angle", U_DEG, 0, 360, 80.0f, 0.1f), \
+            CONTROL_ALL("cpitch", "Camera Pitch angle", U_DEG, -89.0f, 89.0f, -25.0f, 0.1f)
 
 
         #define RB_SOURCE(id, label, x, total, ena) \
@@ -275,14 +275,14 @@ namespace lsp
             CONTROL_DFL("sspx" id, "Source " label " X position", U_M, room_builder_metadata::POSITION, 0.0f), \
             CONTROL_DFL("sspy" id, "Source " label " Y position", U_M, room_builder_metadata::POSITION, -1.0f), \
             CONTROL_DFL("sspz" id, "Source " label " Z position", U_M, room_builder_metadata::POSITION, 0.0f), \
-            { "ssay" id , "Source " label " Yaw angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0.0f, 360, 90.0f, 0.1f, NULL, NULL }, \
-            { "ssap" id , "Source " label " Pitch angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP, -90.0f, 90.0f, 0, 0.1f, NULL, NULL }, \
-            { "ssar" id , "Source " label " Roll angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 0, 0.1f, NULL, NULL }, \
+            CYC_CONTROL_ALL("ssay" id , "Source " label " Yaw angle", U_DEG, 0.0f, 360, 90.0f, 0.1f), \
+            CONTROL_ALL("ssap" id , "Source " label " Pitch angle", U_DEG, -90.0f, 90.0f, 0, 0.1f), \
+            CYC_CONTROL_ALL("ssar" id , "Source " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
             CONTROL("sss" id, "Source " label " size", U_CM, room_builder_metadata::SOURCE), \
             CONTROL("shh" id, "Source " label " height", U_CM, room_builder_metadata::HEIGHT), \
             PERCENTS("ssa" id, "Source " label " angle", 50.0f, 0.025f), \
             PERCENTS("sscv" id, "Source " label " curvature", 100.0f, 0.05f), \
-            { "ssh" id, "Source " label " hue", U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }
+            CYC_CONTROL_ALL("ssh" id, "Source " label " hue", U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
 
         #define RB_CAPTURE(id, label, x, total, ena) \
             SWITCH("sce" id, "Capture " label " enable", ena), \
@@ -291,9 +291,9 @@ namespace lsp
             CONTROL_DFL("scpx" id, "Capture " label " X position", U_M, room_builder_metadata::POSITION, 0.0f), \
             CONTROL_DFL("scpy" id, "Capture " label " Y position", U_M, room_builder_metadata::POSITION, 1.0f), \
             CONTROL_DFL("scpz" id, "Capture " label " Z position", U_M, room_builder_metadata::POSITION, 0.0f), \
-            { "scay" id , "Capture " label " Yaw angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 270, 0.1f, NULL, NULL }, \
-            { "scap" id , "Capture " label " Pitch angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP, -90.0f, 90.0f, 0, 0.1f, NULL, NULL }, \
-            { "scar" id , "Capture " label " Roll angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 0, 0.1f, NULL, NULL }, \
+            CYC_CONTROL_ALL("scay" id , "Capture " label " Yaw angle", U_DEG, 0, 360, 270, 0.1f), \
+            CONTROL_ALL("scap" id , "Capture " label " Pitch angle", U_DEG, -90.0f, 90.0f, 0, 0.1f), \
+            CYC_CONTROL_ALL("scar" id , "Capture " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
             CONTROL("sccs" id, "Capture " label " capsule size", U_CM, room_builder_metadata::CAPSULE), \
             COMBO("sccf" id, "Capture " label " configuration", 1, rb_capture_config),      \
             CONTROL("sca" id, "Capture " label " angle", U_DEG, room_builder_metadata::ANGLE),      \
@@ -318,8 +318,7 @@ namespace lsp
             TRIGGER("ofc" id , "Sample save command" label), \
             STATUS("ofs" id, "Sample saving status" label), \
             METER_PERCENT("ofp" id, "Sample saving progress" label), \
-            \
-            { "sch" id, "Capture " label " hue", U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f, NULL     }
+            CYC_CONTROL_ALL("sch" id, "Capture " label " hue", U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
 
         #define RB_CONVOLVER_MONO(id, label, file, track, mix) \
             COMBO("csf" id, "Channel source sample" label, file, rb_samples), \
