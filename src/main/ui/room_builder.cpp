@@ -38,8 +38,8 @@ namespace lsp
 
         static const port_t room_builder_kvt_ports[] =
         {
-            COMBO(KVT_PORT("oid"), "Selected object index", 0, NULL),
-            SWITCH(KVT_PORT("enabled"), "Object enable", 0),
+            COMBO(KVT_PORT("oid"), "Selected object index", NULL, 0, NULL),
+            SWITCH(KVT_PORT("enabled"), "Object enable", NULL, 0),
             CONTROL_DFL(KVT_PORT("xpos"), "Object position X", U_M, room_builder_metadata::POSITION, 0.0f),
             CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", U_M, room_builder_metadata::POSITION, 0.0f),
             CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", U_M, room_builder_metadata::POSITION, 0.0f),
@@ -52,16 +52,16 @@ namespace lsp
             CYC_CONTROL_ALL(KVT_PORT("hue"), "Object hue", U_NONE, 0.0f, 1.0f, 0.0f, 0.25f/360.0f),
             LOG_CONTROL(KVT_PORT("oabs"), "Outer absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
             LOG_CONTROL(KVT_PORT("iabs"), "Inner absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
-            SWITCH(KVT_PORT("labs"), "Link absorption parameters", 1.0f),
+            SWITCH(KVT_PORT("labs"), "Link absorption parameters", NULL, 1.0f),
             LOG_CONTROL(KVT_PORT("odisp"), "Refracted wave outer dispersion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
             LOG_CONTROL(KVT_PORT("idisp"), "Refracted wave inner dispersion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH(KVT_PORT("ldisp"), "Link refracted wave dispersion parameters", 1.0f),
+            SWITCH(KVT_PORT("ldisp"), "Link refracted wave dispersion parameters", NULL, 1.0f),
             LOG_CONTROL(KVT_PORT("odiff"), "Reflected wave outer diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
             LOG_CONTROL(KVT_PORT("idiff"), "Reflected wave inner diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", 1.0f),
+            SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", NULL, 1.0f),
             CONTROL(KVT_PORT("otransp"), "Material outer transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
             CONTROL(KVT_PORT("itransp"), "Material inner transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", 1.0f),
+            SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", NULL, 1.0f),
             CONTROL(KVT_PORT("speed"), "Sound speed in material", U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
         };
     }
