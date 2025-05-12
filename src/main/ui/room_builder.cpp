@@ -40,15 +40,15 @@ namespace lsp
         {
             COMBO(KVT_PORT("oid"), "Selected object index", NULL, 0, NULL),
             SWITCH(KVT_PORT("enabled"), "Object enable", NULL, 0),
-            CONTROL_DFL(KVT_PORT("xpos"), "Object position X", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("xpos"), "Object position X", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
             CYC_CONTROL_ALL(KVT_PORT("yaw"), "Object Yaw angle", U_DEG, 0.0f, 360, 0.0f, 0.1f),
-            CONTROL_ALL(KVT_PORT("pitch"), "Object Pitch angle", U_DEG, -90.0f, 90.0f, 0, 0.1f),
+            CONTROL_ALL(KVT_PORT("pitch"), "Object Pitch angle", NULL, U_DEG, -90.0f, 90.0f, 0, 0.1f),
             CYC_CONTROL_ALL(KVT_PORT("roll"), "Object Roll angle", U_DEG, 0, 360, 0, 0.1f),
-            CONTROL(KVT_PORT("xscale"), "Object scaling X", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL(KVT_PORT("yscale"), "Object scaling Y", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL(KVT_PORT("zscale"), "Object scaling Z", U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("xscale"), "Object scaling X", NULL, U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("yscale"), "Object scaling Y", NULL, U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("zscale"), "Object scaling Z", NULL, U_PERCENT, room_builder_metadata::OSIZE),
             CYC_CONTROL_ALL(KVT_PORT("hue"), "Object hue", U_NONE, 0.0f, 1.0f, 0.0f, 0.25f/360.0f),
             LOG_CONTROL(KVT_PORT("oabs"), "Outer absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
             LOG_CONTROL(KVT_PORT("iabs"), "Inner absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
@@ -59,10 +59,10 @@ namespace lsp
             LOG_CONTROL(KVT_PORT("odiff"), "Reflected wave outer diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
             LOG_CONTROL(KVT_PORT("idiff"), "Reflected wave inner diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
             SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", NULL, 1.0f),
-            CONTROL(KVT_PORT("otransp"), "Material outer transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            CONTROL(KVT_PORT("itransp"), "Material inner transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            CONTROL(KVT_PORT("otransp"), "Material outer transparency", NULL, U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            CONTROL(KVT_PORT("itransp"), "Material inner transparency", NULL, U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
             SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", NULL, 1.0f),
-            CONTROL(KVT_PORT("speed"), "Sound speed in material", U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
+            CONTROL(KVT_PORT("speed"), "Sound speed in material", NULL, U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
         };
     }
 

@@ -240,15 +240,15 @@ namespace lsp
         #define RB_COMMON(pan) \
             BYPASS, \
             COMBO("view", "Current view", "View", 0, rb_view),              \
-            COMBO("editor", "Current editor", "Edirot", 0, rb_editor),        \
+            COMBO("editor", "Current editor", "Editor", 0, rb_editor),        \
             COMBO("fft", "FFT size", "FFT size", room_builder_metadata::FFT_RANK_DEFAULT, rb_fft_rank), \
-            CONTROL("pd", "Pre-delay", U_MSEC, room_builder_metadata::PREDELAY), \
+            CONTROL("pd", "Pre-delay", "Pre-delay", U_MSEC, room_builder_metadata::PREDELAY), \
             pan, \
             AMP_GAIN1000("dry", "Dry amount", 1.0f), \
             AMP_GAIN1000("wet", "Wet amount", 1.0f), \
             DRYWET(100.0f), \
             OUT_GAIN, \
-            CONTROL("threads", "Number of threads for processing", U_NONE, room_builder_metadata::THREADS), \
+            CONTROL("threads", "Number of threads for processing", "Threads", U_NONE, room_builder_metadata::THREADS), \
             PERCENTS("quality", "Quality factor", 50.0f, 0.1f), \
             STATUS("status", "Render status"), \
             OUT_PERCENTS("prog", "Rendering progress"), \
@@ -258,28 +258,28 @@ namespace lsp
             STATUS("ifs", "Input 3D model load status"), \
             METER_PERCENT("ifp", "File loading progress"), \
             COMBO("ifo", "Input 3D model orientation", "Orientation", 9, rb_orientation), \
-            CONTROL("xscale", "Scene X scale", U_PERCENT, room_builder_metadata::OSIZE), \
-            CONTROL("yscale", "Scene Y scale", U_PERCENT, room_builder_metadata::OSIZE), \
-            CONTROL("zscale", "Scene Z scale", U_PERCENT, room_builder_metadata::OSIZE), \
-            CONTROL_DFL("cposx", "Camera X position", U_M, room_builder_metadata::POSITION, 1.0f), \
-            CONTROL_DFL("cposy", "Camera Y position", U_M, room_builder_metadata::POSITION, -0.2f), \
-            CONTROL_DFL("cposz", "Camera Z position", U_M, room_builder_metadata::POSITION, 0.5f), \
+            CONTROL("xscale", "Scene X scale", "X scale", U_PERCENT, room_builder_metadata::OSIZE), \
+            CONTROL("yscale", "Scene Y scale", "Y scale", U_PERCENT, room_builder_metadata::OSIZE), \
+            CONTROL("zscale", "Scene Z scale", "Z scale", U_PERCENT, room_builder_metadata::OSIZE), \
+            CONTROL_DFL("cposx", "Camera X position", "X position", U_M, room_builder_metadata::POSITION, 1.0f), \
+            CONTROL_DFL("cposy", "Camera Y position", "Y position", U_M, room_builder_metadata::POSITION, -0.2f), \
+            CONTROL_DFL("cposz", "Camera Z position", "Z position", U_M, room_builder_metadata::POSITION, 0.5f), \
             CYC_CONTROL_ALL("cyaw", "Camera Yaw angle", U_DEG, 0, 360, 80.0f, 0.1f), \
-            CONTROL_ALL("cpitch", "Camera Pitch angle", U_DEG, -89.0f, 89.0f, -25.0f, 0.1f)
+            CONTROL_ALL("cpitch", "Camera Pitch angle", "Pitch", U_DEG, -89.0f, 89.0f, -25.0f, 0.1f)
 
 
         #define RB_SOURCE(id, label, x, total, ena) \
             SWITCH("sse" id, "Source " label " enable", "Src on " label, ena), \
             COMBO("sscf" id, "Source " label " type", "Src type " label, 4, rb_source_mode), \
             SWITCH("ssph" id, "Source " label " phase invert", "Src phase " label, 0), \
-            CONTROL_DFL("sspx" id, "Source " label " X position", U_M, room_builder_metadata::POSITION, 0.0f), \
-            CONTROL_DFL("sspy" id, "Source " label " Y position", U_M, room_builder_metadata::POSITION, -1.0f), \
-            CONTROL_DFL("sspz" id, "Source " label " Z position", U_M, room_builder_metadata::POSITION, 0.0f), \
+            CONTROL_DFL("sspx" id, "Source " label " X position", "Src X pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
+            CONTROL_DFL("sspy" id, "Source " label " Y position", "Src Y pos " label, U_M, room_builder_metadata::POSITION, -1.0f), \
+            CONTROL_DFL("sspz" id, "Source " label " Z position", "Src Z pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
             CYC_CONTROL_ALL("ssay" id , "Source " label " Yaw angle", U_DEG, 0.0f, 360, 90.0f, 0.1f), \
-            CONTROL_ALL("ssap" id , "Source " label " Pitch angle", U_DEG, -90.0f, 90.0f, 0, 0.1f), \
+            CONTROL_ALL("ssap" id , "Source " label " Pitch angle", "Src pitch " label, U_DEG, -90.0f, 90.0f, 0, 0.1f), \
             CYC_CONTROL_ALL("ssar" id , "Source " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
-            CONTROL("sss" id, "Source " label " size", U_CM, room_builder_metadata::SOURCE), \
-            CONTROL("shh" id, "Source " label " height", U_CM, room_builder_metadata::HEIGHT), \
+            CONTROL("sss" id, "Source " label " size", "Src size " label, U_CM, room_builder_metadata::SOURCE), \
+            CONTROL("shh" id, "Source " label " height", "Src height " label, U_CM, room_builder_metadata::HEIGHT), \
             PERCENTS("ssa" id, "Source " label " angle", 50.0f, 0.025f), \
             PERCENTS("sscv" id, "Source " label " curvature", 100.0f, 0.05f), \
             CYC_CONTROL_ALL("ssh" id, "Source " label " hue", U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
@@ -288,23 +288,23 @@ namespace lsp
             SWITCH("sce" id, "Capture " label " enable", "Cap on " label, ena), \
             COMBO("scf" id, "Capture " label " first reflection order", "Cap first " label, 2, rb_reflection), \
             COMBO("scl" id, "Capture " label " last reflection order", "Cap last " label, 0, rb_reflection), \
-            CONTROL_DFL("scpx" id, "Capture " label " X position", U_M, room_builder_metadata::POSITION, 0.0f), \
-            CONTROL_DFL("scpy" id, "Capture " label " Y position", U_M, room_builder_metadata::POSITION, 1.0f), \
-            CONTROL_DFL("scpz" id, "Capture " label " Z position", U_M, room_builder_metadata::POSITION, 0.0f), \
+            CONTROL_DFL("scpx" id, "Capture " label " X position", "Capt X pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
+            CONTROL_DFL("scpy" id, "Capture " label " Y position", "Capt Y pos " label, U_M, room_builder_metadata::POSITION, 1.0f), \
+            CONTROL_DFL("scpz" id, "Capture " label " Z position", "Capt Z pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
             CYC_CONTROL_ALL("scay" id , "Capture " label " Yaw angle", U_DEG, 0, 360, 270, 0.1f), \
-            CONTROL_ALL("scap" id , "Capture " label " Pitch angle", U_DEG, -90.0f, 90.0f, 0, 0.1f), \
+            CONTROL_ALL("scap" id , "Capture " label " Pitch angle", "Capt pitch " label, U_DEG, -90.0f, 90.0f, 0, 0.1f), \
             CYC_CONTROL_ALL("scar" id , "Capture " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
-            CONTROL("sccs" id, "Capture " label " capsule size", U_CM, room_builder_metadata::CAPSULE), \
-            COMBO("sccf" id, "Capture " label " configuration", "Cap config " label, 1, rb_capture_config),      \
-            CONTROL("sca" id, "Capture " label " angle", U_DEG, room_builder_metadata::ANGLE),      \
-            CONTROL("scab" id, "Capture " label " AB distance", U_M, room_builder_metadata::DISTANCE),      \
+            CONTROL("sccs" id, "Capture " label " capsule size", "Capt size " label, U_CM, room_builder_metadata::CAPSULE), \
+            COMBO("sccf" id, "Capture " label " configuration", "Capt config " label, 1, rb_capture_config),      \
+            CONTROL("sca" id, "Capture " label " angle", "Capt angle " label, U_DEG, room_builder_metadata::ANGLE),      \
+            CONTROL("scab" id, "Capture " label " AB distance", "Capt dist " label, U_M, room_builder_metadata::DISTANCE),      \
             COMBO("scmd" id, "Capture " label " microphone direction", "Cap dir " label, 0, rb_capture_direction),      \
             COMBO("scsd" id, "Capture " label " side microphone direction", "Cap S dir " label, 0, rb_capture_side_direction), \
             \
-            CONTROL("ihc" id, "Head cut" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
-            CONTROL("itc" id, "Tail cut" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
-            CONTROL("ifi" id, "Fade in" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
-            CONTROL("ifo" id, "Fade out" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
+            CONTROL("ihc" id, "Head cut" label, "Head cut " label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
+            CONTROL("itc" id, "Tail cut" label, "Tail cut " label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
+            CONTROL("ifi" id, "Fade in" label, "Fade in " label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
+            CONTROL("ifo" id, "Fade out" label, "Fade out " label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
             TRIGGER("ils" id, "Impulse listen preview" label, "Play " label), \
             TRIGGER("ilc" id, "Impulse stop preview" label, "Stop " label), \
             SWITCH("irv" id, "Impulse reverse" label, "Reverse " label, 0.0f), \
@@ -326,7 +326,7 @@ namespace lsp
             AMP_GAIN100("mk" id, "Makeup gain" label, 1.0f), \
             SWITCH("cam" id, "Channel mute" label, "Chan mute " label, 0.0f), \
             BLINK("ca" id, "Channel activity" label), \
-            CONTROL("pd" id, "Channel pre-delay" label, U_MSEC, room_builder_metadata::PREDELAY), \
+            CONTROL("pd" id, "Channel pre-delay" label, "Pre-delay " label, U_MSEC, room_builder_metadata::PREDELAY), \
             PAN_CTL("com" id, "Channel Left/Right output mix" label, mix)
 
         #define RB_CONVOLVER_STEREO(id, label, file, track, in_mix, out_mix) \
@@ -334,13 +334,13 @@ namespace lsp
             RB_CONVOLVER_MONO(id, label, file, track, out_mix)
 
         #define RB_EQ_BAND(id, freq)    \
-            CONTROL("eq_" #id, "Band " freq "Hz gain", U_GAIN_AMP, room_builder_metadata::BA)
+            CONTROL("eq_" #id, "Band " freq "Hz gain", "Eq " freq, U_GAIN_AMP, room_builder_metadata::BA)
 
         #define RB_EQUALIZER    \
             SWITCH("wpp", "Wet post-process", "Wet postproc", 0),    \
             SWITCH("eqv", "Equalizer visibility", "Show Eq", 0),    \
             COMBO("lcm", "Low-cut mode", "LC mode", 0, filter_slope),      \
-            CONTROL("lcf", "Low-cut frequency", U_HZ, room_builder_metadata::LCF),   \
+            LOG_CONTROL("lcf", "Low-cut frequency", "LC Freq", U_HZ, room_builder_metadata::LCF),   \
             RB_EQ_BAND(0, "50"), \
             RB_EQ_BAND(1, "107"), \
             RB_EQ_BAND(2, "227"), \
@@ -350,7 +350,7 @@ namespace lsp
             RB_EQ_BAND(6, "4.7 k"), \
             RB_EQ_BAND(7, "10 k"), \
             COMBO("hcm", "High-cut mode", "HC mode", 0, filter_slope),      \
-            CONTROL("hcf", "High-cut frequency", U_HZ, room_builder_metadata::HCF)
+            LOG_CONTROL("hcf", "High-cut frequency", "HC freq", U_HZ, room_builder_metadata::HCF)
 
         static const port_t room_builder_mono_ports[] =
         {
