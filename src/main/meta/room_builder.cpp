@@ -231,11 +231,11 @@ namespace lsp
         };
 
         #define RB_PAN_MONO \
-            PAN_CTL("p", "Panorama", 0.0f)
+            PAN_CTL("p", "Panorama", "Pan", 0.0f)
 
         #define RB_PAN_STEREO \
-            PAN_CTL("pl", "Left channel panorama", -100.0f), \
-            PAN_CTL("pr", "Right channel panorama", 100.0f)
+            PAN_CTL("pl", "Left channel panorama", "Pan L", -100.0f), \
+            PAN_CTL("pr", "Right channel panorama", "Pan R", 100.0f)
 
         #define RB_COMMON(pan) \
             BYPASS, \
@@ -244,12 +244,12 @@ namespace lsp
             COMBO("fft", "FFT size", "FFT size", room_builder_metadata::FFT_RANK_DEFAULT, rb_fft_rank), \
             CONTROL("pd", "Pre-delay", "Pre-delay", U_MSEC, room_builder_metadata::PREDELAY), \
             pan, \
-            AMP_GAIN1000("dry", "Dry amount", 1.0f), \
-            AMP_GAIN1000("wet", "Wet amount", 1.0f), \
+            AMP_GAIN1000("dry", "Dry amount", "Dry amount", 1.0f), \
+            AMP_GAIN1000("wet", "Wet amount", "Wet amount", 1.0f), \
             DRYWET(100.0f), \
             OUT_GAIN, \
             CONTROL("threads", "Number of threads for processing", "Threads", U_NONE, room_builder_metadata::THREADS), \
-            PERCENTS("quality", "Quality factor", 50.0f, 0.1f), \
+            PERCENTS("quality", "Quality factor", "Quality", 50.0f, 0.1f), \
             STATUS("status", "Render status"), \
             OUT_PERCENTS("prog", "Rendering progress"), \
             SWITCH("normal", "Normalize rendered samples", "Normalize", 1.0f), \
@@ -264,7 +264,7 @@ namespace lsp
             CONTROL_DFL("cposx", "Camera X position", "X position", U_M, room_builder_metadata::POSITION, 1.0f), \
             CONTROL_DFL("cposy", "Camera Y position", "Y position", U_M, room_builder_metadata::POSITION, -0.2f), \
             CONTROL_DFL("cposz", "Camera Z position", "Z position", U_M, room_builder_metadata::POSITION, 0.5f), \
-            CYC_CONTROL_ALL("cyaw", "Camera Yaw angle", U_DEG, 0, 360, 80.0f, 0.1f), \
+            CYC_CONTROL_ALL("cyaw", "Camera Yaw angle", "Yaw", U_DEG, 0, 360, 80.0f, 0.1f), \
             CONTROL_ALL("cpitch", "Camera Pitch angle", "Pitch", U_DEG, -89.0f, 89.0f, -25.0f, 0.1f)
 
 
@@ -275,14 +275,14 @@ namespace lsp
             CONTROL_DFL("sspx" id, "Source " label " X position", "Src X pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
             CONTROL_DFL("sspy" id, "Source " label " Y position", "Src Y pos " label, U_M, room_builder_metadata::POSITION, -1.0f), \
             CONTROL_DFL("sspz" id, "Source " label " Z position", "Src Z pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
-            CYC_CONTROL_ALL("ssay" id , "Source " label " Yaw angle", U_DEG, 0.0f, 360, 90.0f, 0.1f), \
+            CYC_CONTROL_ALL("ssay" id , "Source " label " Yaw angle", "Src yaw " label, U_DEG, 0.0f, 360, 90.0f, 0.1f), \
             CONTROL_ALL("ssap" id , "Source " label " Pitch angle", "Src pitch " label, U_DEG, -90.0f, 90.0f, 0, 0.1f), \
-            CYC_CONTROL_ALL("ssar" id , "Source " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
+            CYC_CONTROL_ALL("ssar" id , "Source " label " Roll angle", "Src roll " label, U_DEG, 0, 360, 0, 0.1f), \
             CONTROL("sss" id, "Source " label " size", "Src size " label, U_CM, room_builder_metadata::SOURCE), \
             CONTROL("shh" id, "Source " label " height", "Src height " label, U_CM, room_builder_metadata::HEIGHT), \
-            PERCENTS("ssa" id, "Source " label " angle", 50.0f, 0.025f), \
-            PERCENTS("sscv" id, "Source " label " curvature", 100.0f, 0.05f), \
-            CYC_CONTROL_ALL("ssh" id, "Source " label " hue", U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
+            PERCENTS("ssa" id, "Source " label " angle", "Src angle " label, 50.0f, 0.025f), \
+            PERCENTS("sscv" id, "Source " label " curvature", "Src curve " label, 100.0f, 0.05f), \
+            CYC_CONTROL_ALL("ssh" id, "Source " label " hue", "Src hue " label, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
 
         #define RB_CAPTURE(id, label, x, total, ena) \
             SWITCH("sce" id, "Capture " label " enable", "Cap on " label, ena), \
@@ -291,9 +291,9 @@ namespace lsp
             CONTROL_DFL("scpx" id, "Capture " label " X position", "Capt X pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
             CONTROL_DFL("scpy" id, "Capture " label " Y position", "Capt Y pos " label, U_M, room_builder_metadata::POSITION, 1.0f), \
             CONTROL_DFL("scpz" id, "Capture " label " Z position", "Capt Z pos " label, U_M, room_builder_metadata::POSITION, 0.0f), \
-            CYC_CONTROL_ALL("scay" id , "Capture " label " Yaw angle", U_DEG, 0, 360, 270, 0.1f), \
+            CYC_CONTROL_ALL("scay" id , "Capture " label " Yaw angle", "Capt yaw " label, U_DEG, 0, 360, 270, 0.1f), \
             CONTROL_ALL("scap" id , "Capture " label " Pitch angle", "Capt pitch " label, U_DEG, -90.0f, 90.0f, 0, 0.1f), \
-            CYC_CONTROL_ALL("scar" id , "Capture " label " Roll angle", U_DEG, 0, 360, 0, 0.1f), \
+            CYC_CONTROL_ALL("scar" id , "Capture " label " Roll angle", "Capt roll " label, U_DEG, 0, 360, 0, 0.1f), \
             CONTROL("sccs" id, "Capture " label " capsule size", "Capt size " label, U_CM, room_builder_metadata::CAPSULE), \
             COMBO("sccf" id, "Capture " label " configuration", "Capt config " label, 1, rb_capture_config),      \
             CONTROL("sca" id, "Capture " label " angle", "Capt angle " label, U_DEG, room_builder_metadata::ANGLE),      \
@@ -308,7 +308,7 @@ namespace lsp
             TRIGGER("ils" id, "Impulse listen preview" label, "Play " label), \
             TRIGGER("ilc" id, "Impulse stop preview" label, "Stop " label), \
             SWITCH("irv" id, "Impulse reverse" label, "Reverse " label, 0.0f), \
-            AMP_GAIN_RANGE("imkp" id, "Impulse makeup gain" label, 1.0f, 0.001f, 1000.0f), \
+            AMP_GAIN_RANGE("imkp" id, "Impulse makeup gain" label, "Makeup " label, 1.0f, 0.001f, 1000.0f), \
             STATUS("ifs" id, "Impulse status" label), \
             METER("ifl" id, "Impulse length" label, U_MSEC, room_builder_metadata::CONV_LENGTH), \
             METER("sdur" id, "Impulse current duration" label, U_MSEC, room_builder_metadata::DURATION), \
@@ -318,19 +318,19 @@ namespace lsp
             TRIGGER("ofc" id , "Sample save command" label, "Save " label), \
             STATUS("ofs" id, "Sample saving status" label), \
             METER_PERCENT("ofp" id, "Sample saving progress" label), \
-            CYC_CONTROL_ALL("sch" id, "Capture " label " hue", U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
+            CYC_CONTROL_ALL("sch" id, "Capture " label " hue", "Capt hue " label, U_NONE, 0.0f, 1.0f, (float(x) / float(total)), 0.25f/360.0f)
 
         #define RB_CONVOLVER_MONO(id, label, file, track, mix) \
             COMBO("csf" id, "Channel source sample" label, "Chan src " label, file, rb_samples), \
             COMBO("cst" id, "Channel source track" label, "Chan track " label, track, rb_tracks), \
-            AMP_GAIN100("mk" id, "Makeup gain" label, 1.0f), \
+            AMP_GAIN100("mk" id, "Makeup gain" label, "Chan makeup " label, 1.0f), \
             SWITCH("cam" id, "Channel mute" label, "Chan mute " label, 0.0f), \
             BLINK("ca" id, "Channel activity" label), \
             CONTROL("pd" id, "Channel pre-delay" label, "Pre-delay " label, U_MSEC, room_builder_metadata::PREDELAY), \
-            PAN_CTL("com" id, "Channel Left/Right output mix" label, mix)
+            PAN_CTL("com" id, "Channel Left/Right output mix" label, "Out pan " label, mix)
 
         #define RB_CONVOLVER_STEREO(id, label, file, track, in_mix, out_mix) \
-            PAN_CTL("cim" id, "Left/Right input mix" label, in_mix), \
+            PAN_CTL("cim" id, "Left/Right input mix" label, "In pan " label, in_mix), \
             RB_CONVOLVER_MONO(id, label, file, track, out_mix)
 
         #define RB_EQ_BAND(id, freq)    \
