@@ -119,12 +119,12 @@ namespace lsp
             static constexpr float LCF_MIN                  = 10.0f;
             static constexpr float LCF_MAX                  = 1000.0f;
             static constexpr float LCF_DFL                  = 50.0f;
-            static constexpr float LCF_STEP                 = 0.1f;
+            static constexpr float LCF_STEP                 = 0.001f;
 
             static constexpr float HCF_MIN                  = 2000.0f;
             static constexpr float HCF_MAX                  = 22000.0f;
             static constexpr float HCF_DFL                  = 10000.0f;
-            static constexpr float HCF_STEP                 = 0.8f;
+            static constexpr float HCF_STEP                 = 0.001f;
 
             static constexpr float BA_MIN                   = GAIN_AMP_M_12_DB;
             static constexpr float BA_MAX                   = GAIN_AMP_P_12_DB;

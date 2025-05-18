@@ -587,7 +587,6 @@ namespace lsp
             BIND_PORT(pBypass);
             SKIP_PORT("View selector");
             SKIP_PORT("Editor selector");
-            SKIP_PORT("Processor selector");
             BIND_PORT(pRank);
             BIND_PORT(pPredelay);
 
@@ -717,6 +716,7 @@ namespace lsp
                 channel_t *c        = &vChannels[i];
 
                 BIND_PORT(c->pWetEq);
+                SKIP_PORT("Equalizer visibility"); // Skip equalizer visibility port
                 BIND_PORT(c->pLowCut);
                 BIND_PORT(c->pLowFreq);
 

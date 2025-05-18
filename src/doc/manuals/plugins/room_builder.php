@@ -65,7 +65,7 @@ This allows to understand the final result with minimum number of actions.</p>
 <p><b>Controls</b>:</p>
 <ul>
     <li><b>FFT frame</b> - the maximum size of the FFT frame used for convolvers.</li>
-    <li><b>IR Eequalizer</b> - enables additional equalizer for processed (wet) signal.</li>
+	<li><b>IR equalizer</b> - shows wet signal equalization overlay.</li>
 </ul>
 
 <p><b>'Room browser' section:</b></p>
@@ -250,8 +250,9 @@ This allows to understand the final result with minimum number of actions.</p>
 	<li><b>Out L/R</b> - the output balance of the processed signal between two channels in the stereo pair.</li>
 </ul>
 
-<p><b>'IR Equalizer' section:</b></p>
+<p><b>Wet Signal Equalization</b> overlay:</p>
 <ul>
+	<li><b>Enabled</b> - enables wet (processed) signal equalization.</li>
 	<li><b>Low-cut</b> - sets the slope of the high-pass butterworth filter, possible slopes are 6, 12 and 18 dB/octave.</li>
 	<li><b>Low-cut freq</b> - the cutoff frequency of the high-pass butterworth filter.</li>
 	<li><b>Faders</b> - faders that allow to change the loudness of eight corresponding frequency bands in range of -12..+12 dB</li>

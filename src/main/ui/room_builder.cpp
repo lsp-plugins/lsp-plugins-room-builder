@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -38,31 +38,31 @@ namespace lsp
 
         static const port_t room_builder_kvt_ports[] =
         {
-            COMBO(KVT_PORT("oid"), "Selected object index", 0, NULL),
-            SWITCH(KVT_PORT("enabled"), "Object enable", 0),
-            CONTROL_DFL(KVT_PORT("xpos"), "Object position X", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", U_M, room_builder_metadata::POSITION, 0.0f),
-            CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", U_M, room_builder_metadata::POSITION, 0.0f),
-            { KVT_PORT("yaw"), "Object Yaw angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0.0f, 360, 0.0f, 0.1f, NULL, NULL },
-            { KVT_PORT("pitch"), "Object Pitch angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP, -90.0f, 90.0f, 0, 0.1f, NULL, NULL },
-            { KVT_PORT("roll"), "Object Roll angle", U_DEG, R_CONTROL, F_LOWER | F_UPPER | F_STEP | F_CYCLIC, 0, 360, 0, 0.1f, NULL, NULL },
-            CONTROL(KVT_PORT("xscale"), "Object scaling X", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL(KVT_PORT("yscale"), "Object scaling Y", U_PERCENT, room_builder_metadata::OSIZE),
-            CONTROL(KVT_PORT("zscale"), "Object scaling Z", U_PERCENT, room_builder_metadata::OSIZE),
-            { KVT_PORT("hue"), "Object hue", U_NONE, R_CONTROL, F_UPPER | F_LOWER | F_STEP | F_CYCLIC, 0.0f, 1.0f, 0.0f, 0.25f/360.0f, NULL     },
-            LOG_CONTROL(KVT_PORT("oabs"), "Outer absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
-            LOG_CONTROL(KVT_PORT("iabs"), "Inner absorption", U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
-            SWITCH(KVT_PORT("labs"), "Link absorption parameters", 1.0f),
-            LOG_CONTROL(KVT_PORT("odisp"), "Refracted wave outer dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            LOG_CONTROL(KVT_PORT("idisp"), "Refracted wave inner dispersion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH(KVT_PORT("ldisp"), "Link refracted wave dispersion parameters", 1.0f),
-            LOG_CONTROL(KVT_PORT("odiff"), "Reflected wave outer diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            LOG_CONTROL(KVT_PORT("idiff"), "Reflected wave inner diffusion", U_NONE, room_builder_metadata::MAT_DISPERSION),
-            SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", 1.0f),
-            CONTROL(KVT_PORT("otransp"), "Material outer transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            CONTROL(KVT_PORT("itransp"), "Material inner transparency", U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
-            SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", 1.0f),
-            CONTROL(KVT_PORT("speed"), "Sound speed in material", U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
+            COMBO(KVT_PORT("oid"), "Selected object index", NULL, 0, NULL),
+            SWITCH(KVT_PORT("enabled"), "Object enable", NULL, 0),
+            CONTROL_DFL(KVT_PORT("xpos"), "Object position X", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("ypos"), "Object position Y", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
+            CONTROL_DFL(KVT_PORT("zpos"), "Object position Z", NULL, U_M, room_builder_metadata::POSITION, 0.0f),
+            CYC_CONTROL_ALL(KVT_PORT("yaw"), "Object Yaw angle", NULL, U_DEG, 0.0f, 360, 0.0f, 0.1f),
+            CONTROL_ALL(KVT_PORT("pitch"), "Object Pitch angle", NULL, U_DEG, -90.0f, 90.0f, 0, 0.1f),
+            CYC_CONTROL_ALL(KVT_PORT("roll"), "Object Roll angle", NULL, U_DEG, 0, 360, 0, 0.1f),
+            CONTROL(KVT_PORT("xscale"), "Object scaling X", NULL, U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("yscale"), "Object scaling Y", NULL, U_PERCENT, room_builder_metadata::OSIZE),
+            CONTROL(KVT_PORT("zscale"), "Object scaling Z", NULL, U_PERCENT, room_builder_metadata::OSIZE),
+            CYC_CONTROL_ALL(KVT_PORT("hue"), "Object hue", NULL, U_NONE, 0.0f, 1.0f, 0.0f, 0.25f/360.0f),
+            LOG_CONTROL(KVT_PORT("oabs"), "Outer absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
+            LOG_CONTROL(KVT_PORT("iabs"), "Inner absorption", NULL, U_PERCENT, room_builder_metadata::MAT_ABSORPTION),
+            SWITCH(KVT_PORT("labs"), "Link absorption parameters", NULL, 1.0f),
+            LOG_CONTROL(KVT_PORT("odisp"), "Refracted wave outer dispersion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
+            LOG_CONTROL(KVT_PORT("idisp"), "Refracted wave inner dispersion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
+            SWITCH(KVT_PORT("ldisp"), "Link refracted wave dispersion parameters", NULL, 1.0f),
+            LOG_CONTROL(KVT_PORT("odiff"), "Reflected wave outer diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
+            LOG_CONTROL(KVT_PORT("idiff"), "Reflected wave inner diffusion", NULL, U_NONE, room_builder_metadata::MAT_DISPERSION),
+            SWITCH(KVT_PORT("ldiff"), "Link reflected wave inner diffusion parameters", NULL, 1.0f),
+            CONTROL(KVT_PORT("otransp"), "Material outer transparency", NULL, U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            CONTROL(KVT_PORT("itransp"), "Material inner transparency", NULL, U_NONE, room_builder_metadata::MAT_TRANSPARENCY),
+            SWITCH(KVT_PORT("ltransp"), "Link material transparency parameters", NULL, 1.0f),
+            CONTROL(KVT_PORT("speed"), "Sound speed in material", NULL, U_MPS, room_builder_metadata::MAT_SOUND_SPEED)
         };
     }
 
@@ -104,7 +104,7 @@ namespace lsp
             // Prepare the value
             char name[0x100];
             float value = 0.0f;
-            ::sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
 
             // Fetch value
             core::KVTStorage *kvt = pUI->wrapper()->kvt_lock();
@@ -129,7 +129,7 @@ namespace lsp
 
             // Prepare the value
             char name[0x100];
-            sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
             value       = limit_value(pMetadata, value);
 
             // Obtain KVT storage
@@ -153,7 +153,7 @@ namespace lsp
         bool room_builder_ui::CtlFloatPort::changed(core::KVTStorage *storage, const char *id, const core::kvt_param_t *value)
         {
             char name[0x100];
-            ::sprintf(name, "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
+            ::snprintf(name, sizeof(name), "/scene/object/%d/%s", int(pUI->nSelected), sPattern);
             if (::strcmp(name, id) != 0)
                 return false;
 
