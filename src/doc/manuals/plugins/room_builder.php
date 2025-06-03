@@ -11,18 +11,18 @@
 </p>
 <p>
 	So, in fact, this algorithm is a kind of raytracing algorithm but instead of single rays it
-	performs tracing of ray groups. This allows to simulate large spaces withous significantly loose
+	performs tracing of ray groups. This allows to simulate large spaces without significantly loose
 	in quality and precision.
 </p>
-<p>The typical simulation workflow is peformed in the following way:</p>
+<p>The typical simulation workflow is performed in the following way:</p>
 <ul>
 	<li>Prepare a room model in <a href="https://en.wikipedia.org/wiki/Wavefront_.obj_file">Wavefront OBJ file format</a>.</li>
 	<li>Load room model in the plugin's main window.</li>
-	<li>Edit environment settings like: audio sources, audio captures, objects' spacial parameters and material properties.</li>
+	<li>Edit environment settings like: audio sources, audio captures, objects' spatial parameters and material properties.</li>
 	<li>Launch the rendering process which will simulate physical processes and generate the impulse response of the room.</li>
 	<li>Obtain final samples after the rendeing is complete.</li>
 </ul>
-<p>Additionally, generated samples can be immediately applied to the input signal as a convolution. 
+<p>Additionally, generated samples can be immediately applied to the input signal as a convolution.
 This allows to understand the final result with minimum number of actions.</p>
 
 <p>The simulation algorithm relays on the following physical model.</p>
@@ -50,7 +50,7 @@ This allows to understand the final result with minimum number of actions.</p>
 </p>
 <p>All these rules can be written using the following equations:</p>
 
-<?php out_image('graph/roombuilder-equations', 'The physical equations of Room Builder simulations') ?>     
+<?php out_image('graph/roombuilder-equations', 'The physical equations of Room Builder simulations') ?>
 
 <p>
 	To simulate sharpness of the surface, additional coefficients K<sub>diffusion</sub> and
@@ -130,7 +130,7 @@ This allows to understand the final result with minimum number of actions.</p>
 		<li><b>ORTF</b> - two capsules simulating the location of human ears.</li>
 		<li><b>MS</b> - mid/side configuration of microphones.</li>
 	</ul>
-	<li><b>Reflections</b> - sets the range of reflection orders that will be captured by this audio capture. 
+	<li><b>Reflections</b> - sets the range of reflection orders that will be captured by this audio capture.
 		This allows to eliminate early reflections or late reflections in the rendered result.
 	</li>
 	<li><b>Mic. direction</b> - specifies the microphone direction:</li>
@@ -220,10 +220,10 @@ This allows to understand the final result with minimum number of actions.</p>
 	<li><b>Launch</b> - the button that starts the offline rendering process.</li>
 	<li><b>Stop</b> - the button that terminates the offline rendering process.</li>
 </ul>
-    
+
 <p><b>'Output' section:</b></p>
 <ul>
-	<?php if ($s) { ?>	
+	<?php if ($s) { ?>
 		<li><b>Dry Pan L/R</b> - the panning of the left and right channels of the dry (unprocessed) signal.</li>
 	<?php } else { ?>
 		<li><b>Dry Pan L/R</b> - the panning of the dry (unprocessed) signal.</li>
