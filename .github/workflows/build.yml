@@ -235,5 +235,3 @@ jobs:
         run: gmake fetch
       - name: Build project
         run: gmake VERBOSE=1
-      - name: Install binaries
-        run: gmake install
