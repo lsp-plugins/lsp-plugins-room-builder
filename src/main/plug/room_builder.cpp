@@ -171,7 +171,7 @@ namespace lsp
                 }
                 const dsp::point3d_t *c  = obj->center();
 
-                sprintf(base, "/scene/object/%d", int(i));
+                snprintf(base, sizeof(base), "/scene/object/%d", int(i));
                 lsp_trace("Deploying KVT parameters for %s", base);
 
                 kvt_deploy(kvt, base, "name", obj->get_name(), core::KVT_TX); // Always overwrite name
@@ -1612,7 +1612,7 @@ namespace lsp
                     continue;
 
                 // Read object properties
-                sprintf(base, "/scene/object/%d", int(i));
+                snprintf(base, sizeof(base), "/scene/object/%d", int(i));
                 read_object_properties(&props, base, kvt);
 
                 // Update object matrix and visibility
@@ -1807,7 +1807,7 @@ namespace lsp
                 p.blob.data     = hdr;
 
                 // Deploy KVT parameter
-                sprintf(path, "/samples/%d", int(s->nID));
+                snprintf(path, sizeof(path), "/samples/%d", int(s->nID));
                 core::KVTStorage *kvt = kvt_lock();
                 if (kvt != NULL)
                 {
@@ -1988,7 +1988,7 @@ namespace lsp
             const dspu::sample_header_t *phdr;
             char path[0x40];
 
-            sprintf(path, "/samples/%d", int(sample_id));
+            snprintf(path, sizeof(path), "/samples/%d", int(sample_id));
 
             // Fetch parameter
             res = kvt->get(path, &p, core::KVT_BLOB);
