@@ -117,15 +117,15 @@ LIBAUDIOTOOLBOX_NAME       := libaudiotoolbox
 LIBAUDIOTOOLBOX_TYPE       := opt
 LIBAUDIOTOOLBOX_LDFLAGS    := -framework AudioToolbox
 
-LIBCOREFOUNDATION_VERSION  := system
-LIBCOREFOUNDATION_NAME     := libcorefoundation
-LIBCOREFOUNDATION_TYPE     := opt
-LIBCOREFOUNDATION_LDFLAGS  := -framework CoreFoundation
-
 LIBCOCOA_VERSION           := system
 LIBCOCOA_NAME              := libcocoa
 LIBCOCOA_TYPE              := opt
 LIBCOCOA_LDFLAGS           := -framework Cocoa
+
+LIBCOREFOUNDATION_VERSION  := system
+LIBCOREFOUNDATION_NAME     := libcorefoundation
+LIBCOREFOUNDATION_TYPE     := opt
+LIBCOREFOUNDATION_LDFLAGS  := -framework CoreFoundation
 
 LIBADVAPI_VERSION          := system
 LIBADVAPI_NAME             := libadvapi32
