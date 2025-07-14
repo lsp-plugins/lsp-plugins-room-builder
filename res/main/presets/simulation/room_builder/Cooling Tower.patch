@@ -80,7 +80,7 @@ zscale = 100.00000
 /scene/object/1/position/y = f32:0.00000
 /scene/object/1/position/x = f32:0.00000
 /scene/object/1/enabled = f32:1.00000
-/scene/object/1/name = "Cooling_systems"
+/scene/object/1/name = "Cooling systems"
 
 /scene/object/0/material/sound_speed = f32:4250.00000
 /scene/object/0/material/transparency/link = f32:1.00000
