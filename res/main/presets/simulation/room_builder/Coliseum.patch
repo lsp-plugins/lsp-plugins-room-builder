@@ -1,4 +1,4 @@
-ifn = "builtin://models/3d/suntory-hall-tokyo.obj"
+ifn = "builtin://models/3d/coliseum.obj"
 ifo = 9
 xscale = 100.00000
 yscale = 100.00000
@@ -28,6 +28,5 @@ zscale = 100.00000
 /scene/object/0/position/y = f32:0.00000
 /scene/object/0/position/x = f32:0.00000
 /scene/object/0/enabled = f32:1.00000
-/scene/object/0/name = "Suntory Hall Tokyo"
-/scene/selected = f32:0.00000
-/scene/objects = i32:1
+/scene/object/0/name = "Coliseum"
+
