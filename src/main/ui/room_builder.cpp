@@ -225,7 +225,7 @@ namespace lsp
                 core::kvt_param_t p;
                 p.type      = core::KVT_FLOAT32;
                 p.f32       = index;
-                kvt->put("/scene/selected", &p, core::KVT_RX);
+                kvt->put("/scene/selected", &p, core::KVT_TO_DSP);
                 pUI->wrapper()->kvt_notify_write(kvt, "/scene/selected", &p);
                 pUI->wrapper()->kvt_release();
             }
