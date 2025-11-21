@@ -111,6 +111,10 @@ namespace lsp
 
         status_t room_builder::SceneLoader::run()
         {
+            dsp::context_t ctx;
+            dsp::start(&ctx);
+            lsp_finally { dsp::finish(&ctx); };
+
             // Clear scene
             sScene.clear();
 
@@ -220,12 +224,20 @@ namespace lsp
         //-------------------------------------------------------------------------
         status_t room_builder::RenderLauncher::run()
         {
+            dsp::context_t ctx;
+            dsp::start(&ctx);
+            lsp_finally { dsp::finish(&ctx); };
+
             return pBuilder->start_rendering();
         }
 
         //-------------------------------------------------------------------------
         status_t room_builder::Renderer::run()
         {
+            dsp::context_t ctx;
+            dsp::start(&ctx);
+            lsp_finally { dsp::finish(&ctx); };
+
             // Perform processing
             lsp_trace("Launching process() method");
             pBuilder->enRenderStatus    = STATUS_IN_PROCESS;
@@ -262,6 +274,10 @@ namespace lsp
         //-------------------------------------------------------------------------
         status_t room_builder::Configurator::run()
         {
+            dsp::context_t ctx;
+            dsp::start(&ctx);
+            lsp_finally { dsp::finish(&ctx); };
+
             return pBuilder->reconfigure();
         }
 
@@ -287,6 +303,10 @@ namespace lsp
 
         status_t room_builder::SampleSaver::run()
         {
+            dsp::context_t ctx;
+            dsp::start(&ctx);
+            lsp_finally { dsp::finish(&ctx); };
+
             return pBuilder->save_sample(sPath, nSampleID);
         }
 
