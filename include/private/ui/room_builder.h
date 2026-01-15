@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 12 авг. 2021 г.
@@ -132,12 +132,17 @@ namespace lsp
 
             public:
                 explicit room_builder_ui(const meta::plugin_t *metadata);
-                virtual ~room_builder_ui();
+                room_builder_ui(const room_builder_ui &) = delete;
+                room_builder_ui(room_builder_ui &&) = delete;
+                virtual ~room_builder_ui() override;
 
-                virtual status_t        init(ui::IWrapper *wrapper, tk::Display *dpy);
+                room_builder_ui & operator = (const room_builder_ui &) = delete;
+                room_builder_ui & operator = (room_builder_ui &&) = delete;
+
+                virtual status_t        init(ui::IWrapper *wrapper) override;
 
             public:
-                virtual status_t        post_init();
+                virtual status_t        post_init() override;
         };
     } // namespace plugins
 } // namespace lsp
