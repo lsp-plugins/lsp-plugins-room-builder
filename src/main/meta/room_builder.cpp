@@ -507,7 +507,7 @@ namespace lsp
             clap_features_mono,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_mono_ports,
-            "simulation/room_builder/mono.xml",
+            "plugins/simulation/room_builder/mono.xml",
             "simulation/room_builder",
             mono_to_stereo_plugin_port_groups,
             &room_builder_bundle
@@ -538,7 +538,7 @@ namespace lsp
             clap_features_stereo,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_stereo_ports,
-            "simulation/room_builder/stereo.xml",
+            "plugins/simulation/room_builder/stereo.xml",
             "simulation/room_builder",
             stereo_plugin_port_groups,
             &room_builder_bundle
