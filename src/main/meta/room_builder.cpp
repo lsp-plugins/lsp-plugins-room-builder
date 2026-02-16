@@ -510,7 +510,8 @@ namespace lsp
             "plugins/simulation/room_builder/mono.xml",
             "simulation/room_builder",
             mono_to_stereo_plugin_port_groups,
-            &room_builder_bundle
+            &room_builder_bundle,
+            2
         };
         LSP_REGISTER_METADATA(room_builder_mono);
 
@@ -541,7 +542,8 @@ namespace lsp
             "plugins/simulation/room_builder/stereo.xml",
             "simulation/room_builder",
             stereo_plugin_port_groups,
-            &room_builder_bundle
+            &room_builder_bundle,
+            1
         };
         LSP_REGISTER_METADATA(room_builder_stereo);
 
