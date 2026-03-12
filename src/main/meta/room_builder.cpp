@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -20,13 +20,14 @@
  */
 
 #include <lsp-plug.in/plug-fw/meta/ports.h>
+#include <lsp-plug.in/plug-fw/meta/registry.h>
 #include <lsp-plug.in/shared/meta/developers.h>
 #include <lsp-plug.in/common/status.h>
 #include <private/meta/room_builder.h>
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MAJOR       1
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION_MINOR       0
-#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       30
+#define LSP_PLUGINS_ROOM_BUILDER_VERSION_MICRO       31
 
 #define LSP_PLUGINS_ROOM_BUILDER_VERSION  \
     LSP_MODULE_VERSION( \
@@ -39,6 +40,10 @@ namespace lsp
 {
     namespace meta
     {
+        // Lisf of different revisions for adding controls
+        #define REV_0       0
+        #define REV_1       1
+
         static const port_item_t rb_fft_rank[] =
         {
             { "512",                NULL },
@@ -90,9 +95,9 @@ namespace lsp
         static const port_item_t filter_slope[] =
         {
             { "off",                "eq.slope.off" },
-            { "6 dB/oct",           "eq.slope.6dbo" },
             { "12 dB/oct",          "eq.slope.12dbo" },
-            { "18 dB/oct",          "eq.slope.18dbo" },
+            { "24 dB/oct",          "eq.slope.24dbo" },
+            { "36 dB/oct",          "eq.slope.36dbo" },
             { NULL, NULL }
         };
 
@@ -333,31 +338,35 @@ namespace lsp
             PAN_CTL("cim" id, "Left/Right input mix" label, "In pan " label, in_mix), \
             RB_CONVOLVER_MONO(id, label, file, track, out_mix)
 
-        #define RB_EQ_BAND(id, freq)    \
-            CONTROL("eq_" #id, "Band " freq "Hz gain", "Eq " freq, U_GAIN_AMP, room_builder_metadata::BA)
+        #define RB_EQ_BAND(rev, id, name, alias, freq)    \
+            ADDON_CONTROL(rev, "eq_" id, "Band " name freq "Hz gain", "Eq " alias freq, U_GAIN_AMP, room_builder_metadata::BA)
 
-        #define RB_EQUALIZER    \
+        #define IR_EQ_BANDS(rev, id, name, alias) \
+            ADDON_COMBO(rev, "lcm" id, "Low-cut mode" name, "LC mode" alias, 0, filter_slope),      \
+            ADDON_LOG_CONTROL(rev, "lcf" id, "Low-cut frequency" name, "LC freq" alias, U_HZ, room_builder_metadata::LCF),   \
+            RB_EQ_BAND(rev, "0" id, name, alias, "50"), \
+            RB_EQ_BAND(rev, "1" id, name, alias, "107"), \
+            RB_EQ_BAND(rev, "2" id, name, alias, "227"), \
+            RB_EQ_BAND(rev, "3" id, name, alias, "484"), \
+            RB_EQ_BAND(rev, "4" id, name, alias, "1 k"), \
+            RB_EQ_BAND(rev, "5" id, name, alias, "2.2 k"), \
+            RB_EQ_BAND(rev, "6" id, name, alias, "4.7 k"), \
+            RB_EQ_BAND(rev, "7" id, name, alias, "10 k"), \
+            ADDON_COMBO(rev, "hcm" id, "High-cut mode" name, "HC mode" alias, 0, filter_slope),      \
+            ADDON_LOG_CONTROL(rev, "hcf" id, "High-cut frequency" name, "HC freq" alias, U_HZ, room_builder_metadata::HCF)
+
+        #define RB_EQUALIZER \
             SWITCH("wpp", "Wet post-process", "Wet postproc", 0),    \
             SWITCH("eqv", "Equalizer visibility", "Show Eq", 0),    \
-            COMBO("lcm", "Low-cut mode", "LC mode", 0, filter_slope),      \
-            LOG_CONTROL("lcf", "Low-cut frequency", "LC Freq", U_HZ, room_builder_metadata::LCF),   \
-            RB_EQ_BAND(0, "50"), \
-            RB_EQ_BAND(1, "107"), \
-            RB_EQ_BAND(2, "227"), \
-            RB_EQ_BAND(3, "484"), \
-            RB_EQ_BAND(4, "1 k"), \
-            RB_EQ_BAND(5, "2.2 k"), \
-            RB_EQ_BAND(6, "4.7 k"), \
-            RB_EQ_BAND(7, "10 k"), \
-            COMBO("hcm", "High-cut mode", "HC mode", 0, filter_slope),      \
-            LOG_CONTROL("hcf", "High-cut frequency", "HC freq", U_HZ, room_builder_metadata::HCF)
+            ADDON_SWITCH(REV_1, "ssplit", "Stereo equalizer split", "Eq split", 0.0f), \
+            IR_EQ_BANDS(REV_0, "", "", ""), \
+            IR_EQ_BANDS(REV_1, "r", "Right ", "R ")
 
         static const port_t room_builder_mono_ports[] =
         {
             // Input audio ports
             AUDIO_INPUT_MONO,
-            AUDIO_OUTPUT_LEFT,
-            AUDIO_OUTPUT_RIGHT,
+            AUDIO_OUTPUT_STEREO,
             RB_COMMON(RB_PAN_MONO),
 
             COMBO("ssel", "Source selector", "Source", 0, rb_ssel),
@@ -506,11 +515,13 @@ namespace lsp
             clap_features_mono,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_mono_ports,
-            "simulation/room_builder/mono.xml",
+            "plugins/simulation/room_builder/mono.xml",
             "simulation/room_builder",
             mono_to_stereo_plugin_port_groups,
-            &room_builder_bundle
+            &room_builder_bundle,
+            2
         };
+        LSP_REGISTER_METADATA(room_builder_mono);
 
         const meta::plugin_t  room_builder_stereo =
         {
@@ -536,10 +547,13 @@ namespace lsp
             clap_features_stereo,
             E_3D_BACKEND | E_KVT_SYNC | E_DUMP_STATE,
             room_builder_stereo_ports,
-            "simulation/room_builder/stereo.xml",
+            "plugins/simulation/room_builder/stereo.xml",
             "simulation/room_builder",
             stereo_plugin_port_groups,
-            &room_builder_bundle
+            &room_builder_bundle,
+            1
         };
+        LSP_REGISTER_METADATA(room_builder_stereo);
+
     } /* namespace meta */
 } /* namespace lsp */

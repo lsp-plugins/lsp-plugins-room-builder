@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-plugins-room-builder
  * Created on: 3 авг. 2021 г.
@@ -360,6 +360,8 @@ namespace lsp
             pDry            = NULL;
             pWet            = NULL;
             pDryWet         = NULL;
+            pWetEq          = NULL;
+            pWetSplit       = NULL;
             pRenderThreads  = NULL;
             pRenderQuality  = NULL;
             pRenderStatus   = NULL;
@@ -439,7 +441,6 @@ namespace lsp
 
                 c->pOut         = NULL;
 
-                c->pWetEq       = NULL;
                 c->pLowCut      = NULL;
                 c->pLowFreq     = NULL;
                 c->pHighCut     = NULL;
@@ -730,13 +731,14 @@ namespace lsp
 
             // Bind wet processing ports
             lsp_trace("Binding wet processing ports");
-            size_t port         = port_id;
+            BIND_PORT(pWetEq);
+            SKIP_PORT("Equalizer visibility"); // Skip equalizer visibility port
+            BIND_PORT(pWetSplit);
+
             for (size_t i=0; i<2; ++i)
             {
                 channel_t *c        = &vChannels[i];
 
-                BIND_PORT(c->pWetEq);
-                SKIP_PORT("Equalizer visibility"); // Skip equalizer visibility port
                 BIND_PORT(c->pLowCut);
                 BIND_PORT(c->pLowFreq);
 
@@ -745,8 +747,6 @@ namespace lsp
 
                 BIND_PORT(c->pHighCut);
                 BIND_PORT(c->pHighFreq);
-
-                port_id         = port;
             }
         }
 
@@ -986,16 +986,19 @@ namespace lsp
                     cap->sStop.submit(cap->pStop->value());
             }
 
+            const dspu::equalizer_mode_t eq_mode    = (pWetEq->value() >= 0.5f) ? dspu::EQM_IIR : dspu::EQM_BYPASS;
+            const bool ssplit                       = pWetSplit->value() >= 0.5f;
+
             // Adjust channel setup
             for (size_t i=0; i<2; ++i)
             {
-                channel_t *c        = &vChannels[i];
+                channel_t * const c             = &vChannels[i];
+                channel_t * const sc            = (ssplit) ? &vChannels[i] : &vChannels[0];     // The channel to take settings from
                 c->sBypass.set_bypass(bypass);
                 c->sPlayer.set_gain(out_gain);
 
                 // Update equalization parameters
-                dspu::Equalizer *eq             = &c->sEqualizer;
-                dspu::equalizer_mode_t eq_mode  = (c->pWetEq->value() >= 0.5f) ? dspu::EQM_IIR : dspu::EQM_BYPASS;
+                dspu::Equalizer * const eq      = &c->sEqualizer;
                 eq->set_mode(eq_mode);
 
                 if (eq_mode != dspu::EQM_BYPASS)
@@ -1025,7 +1028,7 @@ namespace lsp
                             fp.nType        = dspu::FLT_MT_LRX_LADDERPASS;
                         }
 
-                        fp.fGain        = c->pFreqGain[band]->value();
+                        fp.fGain        = sc->pFreqGain[band]->value();
                         fp.nSlope       = 2;
                         fp.fQuality     = 0.0f;
 
@@ -1034,9 +1037,9 @@ namespace lsp
                     }
 
                     // Setup hi-pass filter
-                    size_t hp_slope = c->pLowCut->value() * 2;
+                    size_t hp_slope = sc->pLowCut->value() * 2;
                     fp.nType        = (hp_slope > 0) ? dspu::FLT_BT_BWC_HIPASS : dspu::FLT_NONE;
-                    fp.fFreq        = c->pLowFreq->value();
+                    fp.fFreq        = sc->pLowFreq->value();
                     fp.fFreq2       = fp.fFreq;
                     fp.fGain        = 1.0f;
                     fp.nSlope       = hp_slope;
@@ -1044,9 +1047,9 @@ namespace lsp
                     eq->set_params(band++, &fp);
 
                     // Setup low-pass filter
-                    size_t lp_slope = c->pHighCut->value() * 2;
+                    size_t lp_slope = sc->pHighCut->value() * 2;
                     fp.nType        = (lp_slope > 0) ? dspu::FLT_BT_BWC_LOPASS : dspu::FLT_NONE;
-                    fp.fFreq        = c->pHighFreq->value();
+                    fp.fFreq        = sc->pHighFreq->value();
                     fp.fFreq2       = fp.fFreq;
                     fp.fGain        = 1.0f;
                     fp.nSlope       = lp_slope;
@@ -2232,6 +2235,250 @@ namespace lsp
             // Move center to (0, 0, 0) point
             dsp::init_matrix3d_translate(&tmp, -props->sCenter.x, -props->sCenter.y, -props->sCenter.z);
             dsp::apply_matrix3d_mm1(m, &tmp);
+        }
+
+        void room_builder::dump(dspu::IStateDumper *v) const
+        {
+            plug::Module::dump(v);
+
+            v->write("nInputs", nInputs);
+            v->write("nRenderThreads", nRenderThreads);
+            v->write("fRenderQuality", fRenderQuality);
+            v->write("bRenderNormalize", bRenderNormalize);
+            v->write("enRenderStatus", enRenderStatus);
+            v->write("fRenderProgress", fRenderProgress);
+            v->write("fRenderCmd", fRenderCmd);
+            v->write("nFftRank", nFftRank);
+            v->write("pGCList", pGCList);
+
+            v->begin_array("vInputs", vInputs, 2);
+            {
+                for (size_t i=0; i<2; ++i)
+                {
+                    const input_t * const in   = &vInputs[i];
+                    v->begin_object(in, sizeof(input_t));
+                    {
+                        v->write("vIn", in->vIn);
+                        v->write("pIn", in->pIn);
+                        v->write("pPan", in->pPan);
+                    }
+                    v->end_object();
+                }
+            }
+            v->end_array();
+
+            v->begin_array("vChannels", vChannels, 2);
+            {
+                for (size_t i=0; i<2; ++i)
+                {
+                    const channel_t * const c = &vChannels[i];
+                    v->begin_object(c, sizeof(channel_t));
+                    {
+                        v->write_object("sBypass", &c->sBypass);
+                        v->write_object("sPlayer", &c->sPlayer);
+                        v->write_object("sEqualizer", &c->sEqualizer);
+                        v->write_object_array("vPlaybacks", c->vPlaybacks, meta::room_builder_metadata::CAPTURES);
+
+                        v->write("vOut", c->vOut);
+                        v->write("vBuffer", c->vBuffer);
+                        v->writev("fDryPan", c->fDryPan, 2);
+
+                        v->write("pOut", c->pOut);
+
+                        v->write("pLowCut", c->pLowCut);
+                        v->write("pLowFreq", c->pLowFreq);
+                        v->write("pHighCut", c->pHighCut);
+                        v->write("pHighFreq", c->pHighFreq);
+
+                        v->writev("pFreqGain", c->pFreqGain, meta::room_builder_metadata::EQ_BANDS);
+                    }
+                    v->end_object();
+                }
+            }
+            v->end_array();
+
+            v->begin_array("vConvolvers", vConvolvers, meta::room_builder_metadata::CONVOLVERS);
+            {
+                for (size_t i=0; i<meta::room_builder_metadata::CONVOLVERS; ++i)
+                {
+                    const convolver_t * const c = &vConvolvers[i];
+                    v->begin_object(c, sizeof(convolver_t));
+                    {
+                        v->write_object("sDelay", &c->sDelay);
+
+                        v->write_object("pCurr", c->pCurr);
+                        v->write_object("pSwap", c->pSwap);
+                        v->write("nSampleID", c->nSampleID);
+                        v->write("nTrackID", c->nTrackID);
+
+                        v->write("vBuffer", c->vBuffer);
+                        v->writev("fPanIn", c->fPanIn, 2);
+                        v->writev("fPanOut", c->fPanOut, 2);
+
+                        v->write("pMakeup", c->pMakeup);
+                        v->write("pPanIn", c->pPanIn);
+                        v->write("pPanOut", c->pPanOut);
+                        v->write("pSample", c->pSample);
+                        v->write("pTrack", c->pTrack);
+                        v->write("pPredelay", c->pPredelay);
+                        v->write("pMute", c->pMute);
+                        v->write("pActivity", c->pActivity);
+                    }
+                    v->end_object();
+                }
+            }
+            v->end_array();
+
+            v->begin_array("vCaptures", vCaptures, meta::room_builder_metadata::CAPTURES);
+            {
+                for (size_t i=0; i<meta::room_builder_metadata::CAPTURES; ++i)
+                {
+                    const capture_t * const c = &vCaptures[i];
+                    v->begin_object(c, sizeof(capture_t));
+                    {
+                        v->writev("sPos", &c->sPos.x, 4);
+                        v->write("fYaw", c->fYaw);
+                        v->write("fPitch", c->fPitch);
+                        v->write("fRoll", c->fRoll);
+                        v->write("fCapsule", c->fCapsule);
+                        v->write("sConfig", c->sConfig);
+                        v->write("fAngle", c->fAngle);
+                        v->write("fDistance", c->fDistance);
+                        v->write("enDirection", c->enDirection);
+                        v->write("enSide", c->enSide);
+
+                        v->write_object("sListen", &c->sListen);
+                        v->write_object("sStop", &c->sStop);
+
+                        v->write("bEnabled", c->bEnabled);
+                        v->write("nRMin", c->nRMin);
+                        v->write("nRMax", c->nRMax);
+
+                        v->write("fHeadCut", c->fHeadCut);
+                        v->write("fTailCut", c->fTailCut);
+                        v->write("fFadeIn", c->fFadeIn);
+                        v->write("fFadeOut", c->fFadeOut);
+                        v->write("bReverse", c->bReverse);
+                        v->write("fMakeup", c->fMakeup);
+                        v->write("nLength", c->nLength);
+                        v->write("nStatus", c->nStatus);
+                        v->write("fCurrLen", c->fCurrLen);
+                        v->write("fMaxLen", c->fMaxLen);
+                        v->write("bSync", c->bSync);
+                        v->write("bExport", c->bExport);
+                        v->write("pProcessed", c->pProcessed);
+
+                        v->writev("vThumbs", c->vThumbs, meta::room_builder_metadata::TRACKS_MAX);
+
+                        v->write("pEnabled", c->pEnabled);
+                        v->write("pRMin", c->pRMin);
+                        v->write("pRMax", c->pRMax);
+                        v->write("pPosX", c->pPosX);
+                        v->write("pPosY", c->pPosY);
+                        v->write("pPosZ", c->pPosZ);
+                        v->write("pYaw", c->pYaw);
+                        v->write("pPitch", c->pPitch);
+                        v->write("pRoll", c->pRoll);
+                        v->write("pCapsule", c->pCapsule);
+                        v->write("pConfig", c->pConfig);
+                        v->write("pAngle", c->pAngle);
+                        v->write("pDistance", c->pDistance);
+                        v->write("pDirection", c->pDirection);
+                        v->write("pSide", c->pSide);
+
+                        v->write("pHeadCut", c->pHeadCut);
+                        v->write("pTailCut", c->pTailCut);
+                        v->write("pFadeIn", c->pFadeIn);
+                        v->write("pFadeOut", c->pFadeOut);
+                        v->write("pListen", c->pListen);
+                        v->write("pStop", c->pStop);
+                        v->write("pReverse", c->pReverse);
+                        v->write("pMakeup", c->pMakeup);
+                        v->write("pStatus", c->pStatus);
+                        v->write("pLength", c->pLength);
+                        v->write("pCurrLen", c->pCurrLen);
+                        v->write("pMaxLen", c->pMaxLen);
+                        v->write("pThumbs", c->pThumbs);
+                        v->write("pOutFile", c->pOutFile);
+                        v->write("pSaveCmd", c->pSaveCmd);
+                        v->write("pSaveStatus", c->pSaveStatus);
+                        v->write("pSaveProgress", c->pSaveProgress);
+                    }
+                    v->end_object();
+                }
+            }
+            v->end_array();
+
+            v->begin_array("vSources", vSources, meta::room_builder_metadata::SOURCES);
+            {
+                for (size_t i=0; i<meta::room_builder_metadata::SOURCES; ++i)
+                {
+                    const source_t * const c = &vSources[i];
+                    v->begin_object(c, sizeof(capture_t));
+                    {
+                        v->writev("sPos", &c->sPos.x, 4);
+                        v->write("fYaw", c->fYaw);
+                        v->write("fPitch", c->fPitch);
+                        v->write("fRoll", c->fRoll);
+                        v->write("enType", c->enType);
+                        v->write("fSize", c->fSize);
+                        v->write("fHeight", c->fHeight);
+                        v->write("fAngle", c->fAngle);
+                        v->write("fCurvature", c->fCurvature);
+                        v->write("fAmplitude", c->fAmplitude);
+
+                        v->write("bEnabled", c->bEnabled);
+
+                        v->write("pEnabled", c->pEnabled);
+                        v->write("pType", c->pType);
+                        v->write("pPhase", c->pPhase);
+                        v->write("pPosX", c->pPosX);
+                        v->write("pPosY", c->pPosY);
+                        v->write("pPosZ", c->pPosZ);
+                        v->write("pYaw", c->pYaw);
+                        v->write("pPitch", c->pPitch);
+                        v->write("pRoll", c->pRoll);
+                        v->write("pSize", c->pSize);
+                        v->write("pHeight", c->pHeight);
+                        v->write("pAngle", c->pAngle);
+                        v->write("pCurvature", c->pCurvature);
+                    }
+                    v->end_object();
+                }
+            }
+            v->end_array();
+
+            v->writev("sScale", &sScale.dx, 4);
+            v->write("pRenderer", pRenderer);
+
+            v->write("nSceneStatus", nSceneStatus);
+            v->write("fSceneProgress", fSceneProgress);
+            v->write("nSync", nSync);
+
+            v->write("pBypass", pBypass);
+            v->write("pRank", pRank);
+            v->write("pDry", pDry);
+            v->write("pWet", pWet);
+            v->write("pDryWet", pDryWet);
+            v->write("pWetEq", pWetEq);
+            v->write("pWetSplit", pWetSplit);
+            v->write("pRenderThreads", pRenderThreads);
+            v->write("pRenderQuality", pRenderQuality);
+            v->write("pRenderStatus", pRenderStatus);
+            v->write("pRenderProgress", pRenderProgress);
+            v->write("pRenderNormalize", pRenderNormalize);
+            v->write("pRenderCmd", pRenderCmd);
+            v->write("pOutGain", pOutGain);
+            v->write("pPredelay", pPredelay);
+            v->write("p3DFile", p3DFile);
+            v->write("p3DProgress", p3DProgress);
+            v->write("p3DStatus", p3DStatus);
+            v->write("p3DOrientation", p3DOrientation);
+            v->write("pScaleX", pScaleX);
+            v->write("pScaleY", pScaleY);
+            v->write("pScaleZ", pScaleZ);
+            v->write("pData", pData);
+            v->write("pExecutor", pExecutor);
         }
 
     } /* namespace plugins */
