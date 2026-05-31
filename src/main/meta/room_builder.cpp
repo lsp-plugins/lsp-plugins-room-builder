@@ -338,20 +338,20 @@ namespace lsp
             PAN_CTL("cim" id, "Left/Right input mix" label, "In pan " label, in_mix), \
             RB_CONVOLVER_MONO(id, label, file, track, out_mix)
 
-        #define RB_EQ_BAND(rev, id, name, alias, freq)    \
-            ADDON_CONTROL(rev, "eq_" id, "Band " name freq "Hz gain", "Eq " alias freq, U_GAIN_AMP, room_builder_metadata::BA)
+        #define RB_EQ_BAND(rev, id, name, alias, freq, freq_a)    \
+            ADDON_CONTROL(rev, "eq_" id, "Band " name freq "Hz gain", "Eq " alias freq_a, U_GAIN_AMP, room_builder_metadata::BA)
 
         #define IR_EQ_BANDS(rev, id, name, alias) \
             ADDON_COMBO(rev, "lcm" id, "Low-cut mode" name, "LC mode" alias, 0, filter_slope),      \
             ADDON_LOG_CONTROL(rev, "lcf" id, "Low-cut frequency" name, "LC freq" alias, U_HZ, room_builder_metadata::LCF),   \
-            RB_EQ_BAND(rev, "0" id, name, alias, "50 "), \
-            RB_EQ_BAND(rev, "1" id, name, alias, "107 "), \
-            RB_EQ_BAND(rev, "2" id, name, alias, "227 "), \
-            RB_EQ_BAND(rev, "3" id, name, alias, "484 "), \
-            RB_EQ_BAND(rev, "4" id, name, alias, "1 k"), \
-            RB_EQ_BAND(rev, "5" id, name, alias, "2.2 k"), \
-            RB_EQ_BAND(rev, "6" id, name, alias, "4.7 k"), \
-            RB_EQ_BAND(rev, "7" id, name, alias, "10 k"), \
+            RB_EQ_BAND(rev, "0" id, name, alias, "50 ", "50"), \
+            RB_EQ_BAND(rev, "1" id, name, alias, "107 ", "107"), \
+            RB_EQ_BAND(rev, "2" id, name, alias, "227 ", "227"), \
+            RB_EQ_BAND(rev, "3" id, name, alias, "484 ", "484"), \
+            RB_EQ_BAND(rev, "4" id, name, alias, "1 k", "1k"), \
+            RB_EQ_BAND(rev, "5" id, name, alias, "2.2 k", "2.2k"), \
+            RB_EQ_BAND(rev, "6" id, name, alias, "4.7 k", "4.7k"), \
+            RB_EQ_BAND(rev, "7" id, name, alias, "10 k", "10k"), \
             ADDON_COMBO(rev, "hcm" id, "High-cut mode" name, "HC mode" alias, 0, filter_slope),      \
             ADDON_LOG_CONTROL(rev, "hcf" id, "High-cut frequency" name, "HC freq" alias, U_HZ, room_builder_metadata::HCF)
 
