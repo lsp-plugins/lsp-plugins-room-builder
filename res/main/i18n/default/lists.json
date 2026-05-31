@@ -95,7 +95,6 @@
 		"room_browser": "Room Browser",
 		
 		"samp": {
-			"0": "Sample 0",
 			"1": "Sample 1",
 			"2": "Sample 2",
 			"3": "Sample 3",
@@ -103,6 +102,7 @@
 			"5": "Sample 5",
 			"6": "Sample 6",
 			"7": "Sample 7",
+			"8": "Sample 8",
 			"none": "None"
 		},
 		

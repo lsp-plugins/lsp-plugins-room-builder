@@ -95,7 +95,6 @@
 		"room_browser": "Navegador de salas",
 		
 		"samp": {
-			"0": "Muestra 0",
 			"1": "Muestra 1",
 			"2": "Muestra 2",
 			"3": "Muestra 3",
@@ -103,6 +102,7 @@
 			"5": "Muestra 5",
 			"6": "Muestra 6",
 			"7": "Muestra 7",
+			"8": "Muestra 8",
 			"none": "Ninguno"
 		},
 		"select_mat": "<seleccionar material>",

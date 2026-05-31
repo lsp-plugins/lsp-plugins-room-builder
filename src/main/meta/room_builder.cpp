@@ -60,7 +60,6 @@ namespace lsp
         static const port_item_t rb_view[] =
         {
             { "Room browser",       "room_bld.room_browser" },
-            { "Sample 0",           "room_bld.samp.0" },
             { "Sample 1",           "room_bld.samp.1" },
             { "Sample 2",           "room_bld.samp.2" },
             { "Sample 3",           "room_bld.samp.3" },
@@ -68,13 +67,13 @@ namespace lsp
             { "Sample 5",           "room_bld.samp.5" },
             { "Sample 6",           "room_bld.samp.6" },
             { "Sample 7",           "room_bld.samp.7" },
+            { "Sample 8",           "room_bld.samp.8" },
             { NULL, NULL }
         };
 
         static const port_item_t rb_samples[] =
         {
             { "None",               "room_bld.samp.none" },
-            { "Sample 0",           "room_bld.samp.0" },
             { "Sample 1",           "room_bld.samp.1" },
             { "Sample 2",           "room_bld.samp.2" },
             { "Sample 3",           "room_bld.samp.3" },
@@ -82,6 +81,7 @@ namespace lsp
             { "Sample 5",           "room_bld.samp.5" },
             { "Sample 6",           "room_bld.samp.6" },
             { "Sample 7",           "room_bld.samp.7" },
+            { "Sample 8",           "room_bld.samp.8" },
             { NULL, NULL }
         };
 
@@ -112,7 +112,6 @@ namespace lsp
 
         static const port_item_t rb_ssel[] =
         {
-            { "0",                  NULL },
             { "1",                  NULL },
             { "2",                  NULL },
             { "3",                  NULL },
@@ -120,12 +119,12 @@ namespace lsp
             { "5",                  NULL },
             { "6",                  NULL },
             { "7",                  NULL },
+            { "8",                  NULL },
             { NULL, NULL }
         };
 
         static const port_item_t rb_csel[] =
         {
-            { "0",                  NULL },
             { "1",                  NULL },
             { "2",                  NULL },
             { "3",                  NULL },
@@ -133,6 +132,7 @@ namespace lsp
             { "5",                  NULL },
             { "6",                  NULL },
             { "7",                  NULL },
+            { "8",                  NULL },
             { NULL, NULL }
         };
 
@@ -344,10 +344,10 @@ namespace lsp
         #define IR_EQ_BANDS(rev, id, name, alias) \
             ADDON_COMBO(rev, "lcm" id, "Low-cut mode" name, "LC mode" alias, 0, filter_slope),      \
             ADDON_LOG_CONTROL(rev, "lcf" id, "Low-cut frequency" name, "LC freq" alias, U_HZ, room_builder_metadata::LCF),   \
-            RB_EQ_BAND(rev, "0" id, name, alias, "50"), \
-            RB_EQ_BAND(rev, "1" id, name, alias, "107"), \
-            RB_EQ_BAND(rev, "2" id, name, alias, "227"), \
-            RB_EQ_BAND(rev, "3" id, name, alias, "484"), \
+            RB_EQ_BAND(rev, "0" id, name, alias, "50 "), \
+            RB_EQ_BAND(rev, "1" id, name, alias, "107 "), \
+            RB_EQ_BAND(rev, "2" id, name, alias, "227 "), \
+            RB_EQ_BAND(rev, "3" id, name, alias, "484 "), \
             RB_EQ_BAND(rev, "4" id, name, alias, "1 k"), \
             RB_EQ_BAND(rev, "5" id, name, alias, "2.2 k"), \
             RB_EQ_BAND(rev, "6" id, name, alias, "4.7 k"), \
@@ -370,29 +370,29 @@ namespace lsp
             RB_COMMON(RB_PAN_MONO),
 
             COMBO("ssel", "Source selector", "Source", 0, rb_ssel),
-            RB_SOURCE("_0", "0", 0, 8, 1),
-            RB_SOURCE("_1", "1", 1, 8, 0),
-            RB_SOURCE("_2", "2", 2, 8, 0),
-            RB_SOURCE("_3", "3", 3, 8, 0),
-            RB_SOURCE("_4", "4", 4, 8, 0),
-            RB_SOURCE("_5", "5", 5, 8, 0),
-            RB_SOURCE("_6", "6", 6, 8, 0),
-            RB_SOURCE("_7", "7", 7, 8, 0),
+            RB_SOURCE("_0", "1", 0, 8, 1),
+            RB_SOURCE("_1", "2", 1, 8, 0),
+            RB_SOURCE("_2", "3", 2, 8, 0),
+            RB_SOURCE("_3", "4", 3, 8, 0),
+            RB_SOURCE("_4", "5", 4, 8, 0),
+            RB_SOURCE("_5", "6", 5, 8, 0),
+            RB_SOURCE("_6", "7", 6, 8, 0),
+            RB_SOURCE("_7", "8", 7, 8, 0),
 
             COMBO("csel", "Capture selector", "Capture", 0, rb_csel),
-            RB_CAPTURE("_0", "0", 0, 8, 1),
-            RB_CAPTURE("_1", "1", 1, 8, 0),
-            RB_CAPTURE("_2", "2", 2, 8, 0),
-            RB_CAPTURE("_3", "3", 3, 8, 0),
-            RB_CAPTURE("_4", "4", 4, 8, 0),
-            RB_CAPTURE("_5", "5", 5, 8, 0),
-            RB_CAPTURE("_6", "6", 6, 8, 0),
-            RB_CAPTURE("_7", "7", 7, 8, 0),
+            RB_CAPTURE("_0", "1", 0, 8, 1),
+            RB_CAPTURE("_1", "2", 1, 8, 0),
+            RB_CAPTURE("_2", "3", 2, 8, 0),
+            RB_CAPTURE("_3", "4", 3, 8, 0),
+            RB_CAPTURE("_4", "5", 4, 8, 0),
+            RB_CAPTURE("_5", "6", 5, 8, 0),
+            RB_CAPTURE("_6", "7", 6, 8, 0),
+            RB_CAPTURE("_7", "8", 7, 8, 0),
 
-            RB_CONVOLVER_MONO("0", " 0", 1, 0, -100.0f),
-            RB_CONVOLVER_MONO("1", " 1", 1, 1, +100.0f),
-            RB_CONVOLVER_MONO("2", " 2", 2, 0, -100.0f),
-            RB_CONVOLVER_MONO("3", " 3", 2, 1, +100.0f),
+            RB_CONVOLVER_MONO("0", " 1", 1, 0, -100.0f),
+            RB_CONVOLVER_MONO("1", " 2", 1, 1, +100.0f),
+            RB_CONVOLVER_MONO("2", " 3", 2, 0, -100.0f),
+            RB_CONVOLVER_MONO("3", " 4", 2, 1, +100.0f),
 
             RB_EQUALIZER,
 
@@ -406,29 +406,29 @@ namespace lsp
             RB_COMMON(RB_PAN_STEREO),
 
             COMBO("ssel", "Source selector", "Sourec", 0, rb_ssel),
-            RB_SOURCE("_0", "0", 0, 8, 1),
-            RB_SOURCE("_1", "1", 1, 8, 0),
-            RB_SOURCE("_2", "2", 2, 8, 0),
-            RB_SOURCE("_3", "3", 3, 8, 0),
-            RB_SOURCE("_4", "4", 4, 8, 0),
-            RB_SOURCE("_5", "5", 5, 8, 0),
-            RB_SOURCE("_6", "6", 6, 8, 0),
-            RB_SOURCE("_7", "7", 7, 8, 0),
+            RB_SOURCE("_0", "1", 0, 8, 1),
+            RB_SOURCE("_1", "2", 1, 8, 0),
+            RB_SOURCE("_2", "3", 2, 8, 0),
+            RB_SOURCE("_3", "4", 3, 8, 0),
+            RB_SOURCE("_4", "5", 4, 8, 0),
+            RB_SOURCE("_5", "6", 5, 8, 0),
+            RB_SOURCE("_6", "7", 6, 8, 0),
+            RB_SOURCE("_7", "8", 7, 8, 0),
 
             COMBO("csel", "Capture selector", "Capture", 0, rb_csel),
-            RB_CAPTURE("_0", "0", 0, 8, 1),
-            RB_CAPTURE("_1", "1", 1, 8, 0),
-            RB_CAPTURE("_2", "2", 2, 8, 0),
-            RB_CAPTURE("_3", "3", 3, 8, 0),
-            RB_CAPTURE("_4", "4", 4, 8, 0),
-            RB_CAPTURE("_5", "5", 5, 8, 0),
-            RB_CAPTURE("_6", "6", 6, 8, 0),
-            RB_CAPTURE("_7", "7", 7, 8, 0),
+            RB_CAPTURE("_0", "1", 0, 8, 1),
+            RB_CAPTURE("_1", "2", 1, 8, 0),
+            RB_CAPTURE("_2", "3", 2, 8, 0),
+            RB_CAPTURE("_3", "4", 3, 8, 0),
+            RB_CAPTURE("_4", "5", 4, 8, 0),
+            RB_CAPTURE("_5", "6", 5, 8, 0),
+            RB_CAPTURE("_6", "7", 6, 8, 0),
+            RB_CAPTURE("_7", "8", 7, 8, 0),
 
-            RB_CONVOLVER_STEREO("0", " 0", 1, 0, -100.0f, -100.0f),
-            RB_CONVOLVER_STEREO("1", " 1", 1, 1, -100.0f, +100.0f),
-            RB_CONVOLVER_STEREO("2", " 2", 2, 0, +100.0f, -100.0f),
-            RB_CONVOLVER_STEREO("3", " 3", 2, 1, +100.0f, +100.0f),
+            RB_CONVOLVER_STEREO("0", " 1", 1, 0, -100.0f, -100.0f),
+            RB_CONVOLVER_STEREO("1", " 2", 1, 1, -100.0f, +100.0f),
+            RB_CONVOLVER_STEREO("2", " 3", 2, 0, +100.0f, -100.0f),
+            RB_CONVOLVER_STEREO("3", " 4", 2, 1, +100.0f, +100.0f),
 
             RB_EQUALIZER,
 
