@@ -165,7 +165,7 @@ namespace lsp
         static const char *UNNAMED_STR = "<unnamed>";
 
         room_builder_ui::CtlListPort::CtlListPort(room_builder_ui *ui, const meta::port_t *meta):
-            ui::IPort(&sMetadata)
+            ui::IPort(NULL)
         {
             pUI         = ui;
             sMetadata   = *meta;
@@ -173,6 +173,7 @@ namespace lsp
             nCapacity   = 0;
             pItems      = NULL;
             nSelectedReq= -1;
+            pMetadata   = &sMetadata;
         }
 
         room_builder_ui::CtlListPort::~CtlListPort()
